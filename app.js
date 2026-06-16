@@ -231,7 +231,7 @@
                 }
                 // Avatar system (new)
                 if (!gameState.selectedAvatarId || !PLAYER_AVATARS.some(a => a.id === gameState.selectedAvatarId)) {
-                    gameState.selectedAvatarId = 'fusion-panda';
+                    gameState.selectedAvatarId = 'red-panda';
                 }
                 if (!gameState.avatarLevels || typeof gameState.avatarLevels !== 'object') {
                     gameState.avatarLevels = { ...DEFAULT_AVATAR_LEVELS };
@@ -245,7 +245,7 @@
                 }
             } else {
                 gameState.recentFusions = [];
-                gameState.selectedAvatarId = 'fusion-panda';
+                gameState.selectedAvatarId = 'red-panda';
                 gameState.avatarLevels = { ...DEFAULT_AVATAR_LEVELS };
                 saveGameState();
             }
