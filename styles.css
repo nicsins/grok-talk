@@ -472,6 +472,77 @@
             }
         }
 
+        /* Live agency video in player fighter for cinematic player turns */
+        #player-action-video {
+            display: none;
+            background: #0a0c12;
+            box-shadow: 0 0 0 1px rgba(16, 185, 129, 0.25), 0 10px 30px -10px rgba(0,0,0,0.6);
+            object-fit: contain;
+        }
+        #player-action-video.playing {
+            display: block;
+        }
+
+        /* Block shield overlay (for when player chooses BLOCK / defend before enemy turn) — ENHANCED for awesome being-attacked feel */
+        .battle-block-shield {
+            position: absolute;
+            inset: 0;
+            border-radius: 1.5rem;
+            border: 4px solid #60a5fa;
+            box-shadow: 0 0 0 12px rgba(59, 130, 246, 0.22), inset 0 0 42px rgba(96, 165, 250, 0.45), 0 0 28px rgba(59, 130, 246, 0.6);
+            opacity: 0.95;
+            pointer-events: none;
+            z-index: 4;
+            animation: battleShieldPulse 1.05s cubic-bezier(0.23, 1, 0.32, 1) forwards;
+            background: linear-gradient(135deg, rgba(59,130,246,0.12) 0%, rgba(96,165,250,0.06) 50%, transparent 80%);
+        }
+        .battle-block-shield--strong {
+            border-color: #7dd3fc;
+            box-shadow: 0 0 0 18px rgba(59, 130, 246, 0.32), inset 0 0 55px rgba(103, 232, 249, 0.55), 0 0 42px rgba(59, 130, 246, 0.8);
+            animation: battleShieldPulseStrong 1.25s cubic-bezier(0.23, 1, 0.32, 1) forwards;
+        }
+        @keyframes battleShieldPulse {
+            0% { transform: scale(0.9); opacity: 0.92; }
+            22% { transform: scale(1.06); opacity: 1; }
+            55% { transform: scale(1.015); }
+            100% { transform: scale(1); opacity: 0; }
+        }
+        @keyframes battleShieldPulseStrong {
+            0% { transform: scale(0.88); opacity: 0.96; }
+            18% { transform: scale(1.09); opacity: 1; }
+            48% { transform: scale(1.02); box-shadow: 0 0 0 20px rgba(59, 130, 246, 0.38), inset 0 0 60px rgba(103, 232, 249, 0.6); }
+            100% { transform: scale(1); opacity: 0; }
+        }
+        /* Extra ripple for receiving block impact (awesome enemy attack moment) */
+        .battle-block-shield::after {
+            content: '';
+            position: absolute;
+            inset: 8px;
+            border-radius: 1.25rem;
+            border: 1px solid rgba(103, 232, 249, 0.5);
+            animation: shieldRipple 0.85s ease-out forwards;
+            pointer-events: none;
+        }
+        @keyframes shieldRipple {
+            0% { transform: scale(0.7); opacity: 0.85; }
+            60% { transform: scale(1.08); opacity: 0.3; }
+            100% { transform: scale(1.2); opacity: 0; }
+        }
+
+        .battle-outcome-badge {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            font-size: 9px;
+            padding: 1px 7px;
+            border-radius: 999px;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            z-index: 6;
+            pointer-events: none;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.4);
+        }
+
         @media (prefers-reduced-motion: reduce) {
             *,
             *::before,
@@ -480,4 +551,204 @@
                 animation-iteration-count: 1 !important;
                 transition-duration: 0.01ms !important;
             }
+        }
+
+        /* Player Avatar / Profile styles */
+        .avatar-card {
+            transition: transform 0.2s cubic-bezier(0.23, 1, 0.32, 1), 
+                        box-shadow 0.2s ease, border-color 0.2s ease;
+            overflow: hidden;
+        }
+        .avatar-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+        .avatar-card.active {
+            border-color: #00ff9d;
+            box-shadow: 0 0 0 1px rgba(0, 255, 157, 0.4);
+        }
+        .avatar-portrait {
+            width: 100%;
+            aspect-ratio: 1 / 1;
+            object-fit: cover;
+            background: #11151f;
+            display: block;
+        }
+        .avatar-portrait.large {
+            aspect-ratio: 4 / 3;
+            max-height: 320px;
+            border-radius: 16px;
+        }
+        .outfit-thumb {
+            width: 68px;
+            height: 68px;
+            object-fit: cover;
+            border-radius: 10px;
+            border: 2px solid transparent;
+            cursor: pointer;
+            transition: all 0.15s ease;
+        }
+        .outfit-thumb:hover {
+            transform: scale(1.05);
+            border-color: #64748b;
+        }
+        .outfit-thumb.active {
+            border-color: #00ff9d;
+            box-shadow: 0 0 0 3px rgba(0, 255, 157, 0.2);
+        }
+        .avatar-director {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            background: #0f1117;
+            border: 1px solid #1f2937;
+            border-radius: 16px;
+            padding: 10px 14px;
+            margin-bottom: 16px;
+        }
+        .avatar-director img {
+            width: 52px;
+            height: 52px;
+            border-radius: 9999px;
+            object-fit: cover;
+            border: 2px solid #334155;
+        }
+        .director-bonus {
+            font-size: 11px;
+            font-family: ui-monospace, monospace;
+            color: #64748b;
+        }
+
+        /* Battle Arena Turn-Based Choice UI - cyber-neon */
+        .battle-action-btn {
+            padding: 0.65rem 1rem;
+            font-size: 0.75rem;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            border-radius: 0.875rem;
+            transition: all 0.2s cubic-bezier(0.23, 1, 0.32, 1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            border: 1px solid #374151;
+            background: #0f1117;
+        }
+        .battle-action-btn:hover:not(:disabled) {
+            border-color: #00ff9d;
+            box-shadow: 0 0 15px rgba(0, 255, 157, 0.2);
+            transform: translateY(-1px);
+        }
+        .battle-action-btn.selected-neon {
+            border-color: #00ff9d;
+            box-shadow: 0 0 0 1px #00ff9d, 0 0 18px rgba(0, 255, 157, 0.4);
+            background: #11151f;
+        }
+        .battle-action-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .move-card, .tactic-card {
+            background: #0f1117;
+            border: 1px solid #374151;
+            border-radius: 0.875rem;
+            padding: 0.6rem 0.7rem;
+            font-size: 0.71rem;
+            line-height: 1.15;
+            text-align: left;
+            transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+        .move-card:hover, .tactic-card:hover {
+            border-color: #64748b;
+            transform: translateY(-1px);
+        }
+        .move-card.selected-neon,
+        .tactic-card.selected-neon {
+            border-color: #00ff9d;
+            box-shadow: 0 0 0 1px #00ff9d, 0 0 18px rgba(0, 255, 157, 0.35);
+            background: #0a0f18;
+        }
+        .move-card .move-type {
+            font-size: 0.62rem;
+            padding: 1px 6px;
+            border-radius: 999px;
+            font-weight: 700;
+            letter-spacing: .5px;
+            display: inline-block;
+        }
+        .move-type.melee { background: #451a03; color: #f59e0b; }
+        .move-type.ranged { background: #083344; color: #67e8f9; }
+        .move-type.special { background: #4c1d95; color: #c084fc; }
+        .move-type.block { background: #0e3a5c; color: #7dd3fc; }
+
+        .tactic-card .cat-badge {
+            font-size: 0.62rem;
+            padding: 0 5px;
+            border-radius: 4px;
+            font-weight: 700;
+        }
+        .cat-badge.attack { background: #3f1f1f; color: #f87171; }
+        .cat-badge.defense { background: #11361f; color: #4ade80; }
+        .cat-badge.block { background: #0e3a5c; color: #7dd3fc; }
+
+        .special-meter {
+            background: #0f1117;
+            border: 1px solid #1f2937;
+            border-radius: 9999px;
+            overflow: hidden;
+        }
+        .execute-turn-btn {
+            font-size: 0.95rem;
+            letter-spacing: 1.5px;
+            padding-top: 0.85rem;
+            padding-bottom: 0.85rem;
+            border-radius: 1rem;
+            font-weight: 800;
+            transition: all .2s cubic-bezier(0.23,1,0.32,1);
+        }
+        .execute-turn-btn:not(:disabled):hover {
+            box-shadow: 0 0 35px rgba(0,255,157,0.45);
+            transform: translateY(-2px) scale(1.01);
+        }
+
+        /* SPECIAL ENERGIZED FLASH when meter fills (awesome polish on charge) */
+        .special-meter-energized,
+        #special-meter-bar.energized,
+        #battle-special-meter.energized {
+            animation: specialEnergizedFlash 1.6s cubic-bezier(0.23, 1.0, 0.32, 1) 1;
+            box-shadow: 0 0 18px #67e8f9, 0 0 36px #a78bfa, inset 0 0 10px rgba(255,255,255,0.6);
+            filter: brightness(1.25) saturate(1.35);
+        }
+        @keyframes specialEnergizedFlash {
+            0% { box-shadow: 0 0 6px #f0abfc, 0 0 14px #67e8f9; filter: brightness(1); }
+            14% { box-shadow: 0 0 26px #67e8f9, 0 0 52px #c084fc, inset 0 2px 8px #fff; filter: brightness(1.4) saturate(1.6); transform: scale(1.015); }
+            32% { box-shadow: 0 0 22px #67e8f9, 0 0 46px #a78bfa; filter: brightness(1.22); transform: scale(1.005); }
+            58% { box-shadow: 0 0 14px #c084fc, 0 0 28px #67e8f9; }
+            100% { box-shadow: 0 0 8px #67e8f9; filter: brightness(1); transform: scale(1); }
+        }
+        .special-energized-badge {
+            position: absolute;
+            top: -9px;
+            right: 6px;
+            font-size: 8px;
+            padding: 1px 7px;
+            border-radius: 999px;
+            background: linear-gradient(90deg, #67e8f9, #c084fc);
+            color: #0a0a0f;
+            font-weight: 900;
+            letter-spacing: .5px;
+            box-shadow: 0 0 10px rgba(103, 232, 249, 0.8);
+            z-index: 20;
+            pointer-events: none;
+            animation: energizedBadgePop 1.35s ease forwards;
+        }
+        @keyframes energizedBadgePop {
+            0% { transform: translateY(4px) scale(0.6); opacity: 0; }
+            18% { transform: translateY(-1px) scale(1.1); opacity: 1; }
+            82% { opacity: 1; }
+            100% { transform: translateY(-4px) scale(0.8); opacity: 0; }
         }

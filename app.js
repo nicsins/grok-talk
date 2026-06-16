@@ -36,22 +36,152 @@
             recentFusions: []
         };
 
-        // Base Pandas Data
+        // Base Pandas Data - now with FUSION BONUSES (attack/defense/speed/special/energy + element)
+        // These are rendered on cards in lab/collection and evolve on fusion via elemental RPS
         const basePandas = [
-            { id: 1, name: "Classic Panda", emoji: "🐼", type: "Balanced", power: 12, rarity: "common", color: "#64748b", desc: "The original bamboo-loving legend. Reliable and steady in every fusion." },
-            { id: 2, name: "Inferno Panda", emoji: "🔥🐼", type: "Fire", power: 18, rarity: "rare", color: "#f97316", desc: "Born in volcanic craters. Brings explosive energy to any fusion." },
-            { id: 3, name: "Frostbite Panda", emoji: "❄️🐼", type: "Ice", power: 15, rarity: "rare", color: "#67e8f9", desc: "From the eternal glaciers of the north. Slows enemies with icy aura." },
-            { id: 4, name: "Shadow Panda", emoji: "🌑🐼", type: "Dark", power: 22, rarity: "epic", color: "#6366f1", desc: "Master of stealth and illusion. Vanishes in plain sight." },
-            { id: 5, name: "Thunder Panda", emoji: "⚡🐼", type: "Electric", power: 19, rarity: "rare", color: "#eab308", desc: "Channeling the power of storms. Fast and shocking." },
-            { id: 6, name: "Golden Fortune", emoji: "✨🐼", type: "Light", power: 27, rarity: "legendary", color: "#fbbf24", desc: "Extremely rare. Brings incredible luck and prosperity." },
-            { id: 7, name: "Mystic Panda", emoji: "🔮🐼", type: "Arcane", power: 24, rarity: "epic", color: "#c026ff", desc: "Wielder of ancient panda magic. Unpredictable and wise." },
-            { id: 8, name: "Crystal Panda", emoji: "💎🐼", type: "Crystal", power: 16, rarity: "rare", color: "#67e8f9", desc: "Crystalline armor protects it from harm. Beautiful but deadly." }
+            { id: 1, name: "Classic Panda", emoji: "🐼", type: "Balanced", power: 12, rarity: "common", color: "#64748b", desc: "The original bamboo-loving legend. Reliable and steady in every fusion.", bonus: { attack: 10, defense: 10, speed: 8, special: 6, energy: 1.0, element: "Balanced" } },
+            { id: 2, name: "Inferno Panda", emoji: "🔥🐼", type: "Fire", power: 18, rarity: "rare", color: "#f97316", desc: "Born in volcanic craters. Brings explosive energy to any fusion.", bonus: { attack: 20, defense: 7, speed: 11, special: 7, energy: 1.15, element: "Fire" } },
+            { id: 3, name: "Frostbite Panda", emoji: "❄️🐼", type: "Ice", power: 15, rarity: "rare", color: "#67e8f9", desc: "From the eternal glaciers of the north. Slows enemies with icy aura.", bonus: { attack: 11, defense: 15, speed: 6, special: 10, energy: 1.05, element: "Ice" } },
+            { id: 4, name: "Shadow Panda", emoji: "🌑🐼", type: "Dark", power: 22, rarity: "epic", color: "#6366f1", desc: "Master of stealth and illusion. Vanishes in plain sight.", bonus: { attack: 14, defense: 9, speed: 13, special: 12, energy: 0.95, element: "Dark" } },
+            { id: 5, name: "Thunder Panda", emoji: "⚡🐼", type: "Electric", power: 19, rarity: "rare", color: "#eab308", desc: "Channeling the power of storms. Fast and shocking.", bonus: { attack: 13, defense: 8, speed: 16, special: 8, energy: 1.1, element: "Electric" } },
+            { id: 6, name: "Golden Fortune", emoji: "✨🐼", type: "Light", power: 27, rarity: "legendary", color: "#fbbf24", desc: "Extremely rare. Brings incredible luck and prosperity.", bonus: { attack: 16, defense: 12, speed: 10, special: 14, energy: 1.2, element: "Light" } },
+            { id: 7, name: "Mystic Panda", emoji: "🔮🐼", type: "Arcane", power: 24, rarity: "epic", color: "#c026ff", desc: "Wielder of ancient panda magic. Unpredictable and wise.", bonus: { attack: 15, defense: 11, speed: 9, special: 15, energy: 1.08, element: "Arcane" } },
+            { id: 8, name: "Crystal Panda", emoji: "💎🐼", type: "Crystal", power: 16, rarity: "rare", color: "#67e8f9", desc: "Crystalline armor protects it from harm. Beautiful but deadly.", bonus: { attack: 12, defense: 17, speed: 5, special: 9, energy: 0.9, element: "Crystal" } }
         ];
 
         // User's unlocked pandas (new users start with one fair starter)
         let userPandas = [
             { ...basePandas[0], id: 'u1', acquired: new Date().toISOString().split('T')[0] }
         ];
+
+        // ========== PLAYER AVATARS (new feature: consistent characters with outfit progression) ==========
+        // Extended with dedicated BATTLE MOVES for arena playback system.
+        // Each avatar has its own "agency" of themed attacks. Outcomes (hit/miss/block) drive specific generated clips.
+        const PLAYER_AVATARS = [
+            {
+                id: 'fusion-panda',
+                name: 'Fusion Panda',
+                title: 'The Catalyst',
+                color: '#22d3ee',
+                element: 'Fusion',
+                bio: 'The legendary red panda warrior of the Grok-Talk Arena. Master of energy combination and creation. His focused presence in the Fusion Lab channels raw potential into every hybrid, increasing overall power and unlocking surprising synergies. Use existing arena imagery as the core of his look.',
+                bonuses: [
+                    'Result power +12% to +28% (scales with level)',
+                    'Chance for extra elemental synergy on any fusion'
+                ],
+                outfitStages: {
+                    initiate: 'fusion-panda-lab.jpg',
+                    adept: 'fusion-panda-base.jpg',
+                    sovereign: 'fusion-panda-ascended.jpg'
+                },
+                stageLabels: {
+                    initiate: 'Lab Initiate Harness',
+                    adept: 'Armored Catalyst',
+                    sovereign: 'Sovereign of Fusion'
+                },
+                levelThresholds: { initiate: 1, adept: 5, sovereign: 14 },
+                specialThreshold: 10,
+                // Battle agency moves: 4 signature attacks. Each produces hit/miss/block result clips for accurate log playback.
+                moves: [
+                    { id: 'fusion_beam', name: 'Fusion Beam', desc: 'Concentrated energy blast from the core.', type: 'ranged' },
+                    { id: 'rift_slam', name: 'Rift Slam', desc: 'Teleports above foe for a devastating portal smash.', type: 'melee' },
+                    { id: 'catalyst_surge', name: 'Catalyst Surge', desc: 'Channel massive fusion energy for AOE overload.', type: 'special' },
+                    { id: 'synergy_pulse', name: 'Synergy Pulse', desc: 'Empowering wave that disrupts and damages.', type: 'ranged' }
+                ],
+                // Player deck of bonuses / tactic cards - rock-paper-scissors elemental system
+                // Each card: category (attack/defense/block), element for RPS, speedMod (+ faster initiative/accuracy, - slower), specialCharge (energizes special meter), energyMult (damage mitigation or output modifier)
+                tacticDeck: [
+                    { id: 'core_overload', name: 'Core Overload', category: 'attack', element: 'Fusion', speedMod: 0, specialCharge: 4, energyMult: 1.1, bonusDesc: '+Attack, Fusion affinity' },
+                    { id: 'shield_matrix', name: 'Shield Matrix', category: 'block', element: 'Crystal', speedMod: -1, specialCharge: 2, energyMult: 0.7, bonusDesc: '+Block, high mitigation' },
+                    { id: 'speed_synapse', name: 'Speed Synapse', category: 'attack', element: 'Electric', speedMod: 2, specialCharge: 1, energyMult: 1.0, bonusDesc: '+Speed, higher hit chance' },
+                    { id: 'ritual_focus', name: 'Ritual Focus', category: 'defense', element: 'Arcane', speedMod: 0, specialCharge: 5, energyMult: 0.85, bonusDesc: '+Special charge, good vs dark' }
+                ]
+            },
+            {
+                id: 'red-panda',
+                name: 'Red Panda',
+                title: 'The Emberheart',
+                color: '#f97316',
+                element: 'Fire / Primal',
+                bio: 'A swift, instinct-driven explorer pulled straight from the arena cinematic replays. Brings raw primal fire, sharper crits and discovery luck. Develop this red panda to favor aggressive, high-variance fusion outcomes and fire-dominant hybrids.',
+                bonuses: [
+                    'Higher critical fusion chance',
+                    'Fire-type and hybrid results gain extra power',
+                    'Slightly improved rare outcome odds'
+                ],
+                outfitStages: {
+                    initiate: 'red-panda-wildling.jpg',
+                    adept: 'red-panda-base.jpg',
+                    sovereign: 'red-panda-scout.jpg'
+                },
+                stageLabels: {
+                    initiate: 'Wildling Initiate',
+                    adept: 'Emberheart',
+                    sovereign: 'Apex Scout'
+                },
+                levelThresholds: { initiate: 1, adept: 4, sovereign: 11 },
+                specialThreshold: 10,
+                // Red Panda agency moves — agile primal fire theme. Hit/Miss/Block outcomes for precise playback.
+                moves: [
+                    { id: 'ember_claw', name: 'Ember Claw Dash', desc: 'Blazing fast claw strike with trailing fire.', type: 'melee' },
+                    { id: 'flame_tail', name: 'Flame Tail Whip', desc: 'Spinning tail lash that ignites the air.', type: 'ranged' },
+                    { id: 'primal_pounce', name: 'Primal Pounce', desc: 'Explosive leap attack from the shadows.', type: 'melee' },
+                    { id: 'wildfire_barrage', name: 'Wildfire Barrage', desc: 'Rapid multi-hit fire orb volley.', type: 'special' }
+                ],
+                tacticDeck: [
+                    { id: 'wild_hunt', name: 'Wild Hunt', category: 'attack', element: 'Fire', speedMod: 2, specialCharge: 3, energyMult: 1.0, bonusDesc: '+Speed, aggressive fire' },
+                    { id: 'ember_ward', name: 'Ember Ward', category: 'block', element: 'Crystal', speedMod: 0, specialCharge: 2, energyMult: 0.75, bonusDesc: '+Block, good mitigation' },
+                    { id: 'primal_rage', name: 'Primal Rage', category: 'attack', element: 'Dark', speedMod: 1, specialCharge: 4, energyMult: 1.15, bonusDesc: '+Attack power, high charge' },
+                    { id: 'scout_instinct', name: 'Scout Instinct', category: 'defense', element: 'Electric', speedMod: 3, specialCharge: 1, energyMult: 1.05, bonusDesc: '+Speed, evasive' }
+                ]
+            },
+            {
+                id: 'lich-queen',
+                name: 'Lich Queen',
+                title: 'The Veilweaver',
+                color: '#a78bfa',
+                element: 'Dark / Ritual',
+                bio: 'Ancient sovereign who fused death, code and the original fusion protocol. Commands necrotic and ritual energies. Leveling the Lich Queen dramatically boosts ritual mode success rates and the chance of truly legendary or mythic panda discoveries.',
+                bonuses: [
+                    'Strong ritual mode bonuses (power + success)',
+                    'Greatly increased chance of legendary & mythic results in ritual',
+                    'Dark & Arcane results are empowered'
+                ],
+                outfitStages: {
+                    initiate: 'lich-queen-acolyte.jpg',
+                    adept: 'lich-queen-base.jpg',
+                    sovereign: 'lich-queen-sovereign.jpg'
+                },
+                stageLabels: {
+                    initiate: 'Veiled Acolyte',
+                    adept: 'Royal Necromancer',
+                    sovereign: 'Eternal Sovereign'
+                },
+                levelThresholds: { initiate: 1, adept: 6, sovereign: 15 },
+                specialThreshold: 10,
+                // Lich Queen agency — dark ritual and necrotic magic. Explicit hit/miss/block for accurate battle replay.
+                moves: [
+                    { id: 'necrotic_bolt', name: 'Necrotic Bolt', desc: 'Homing bolt of pure death energy.', type: 'ranged' },
+                    { id: 'soul_siphon', name: 'Soul Siphon', desc: 'Drains life force in a direct tether.', type: 'melee' },
+                    { id: 'shadow_bind', name: 'Shadow Bind', desc: 'Curses the foe, rooting and damaging over time.', type: 'special' },
+                    { id: 'veil_ruin', name: 'Veil of Ruin', desc: 'Ultimate ritual that rends the veil itself.', type: 'special' }
+                ],
+                // Tactic deck for Lich Queen (rock-paper-scissors style deck, added for turn-based choice UI)
+                tacticDeck: [
+                    { id: 'necrotic_veil', name: 'Necrotic Veil', category: 'block', element: 'Dark', speedMod: -1, specialCharge: 3, energyMult: 0.6, bonusDesc: '+Block, dark mitigation' },
+                    { id: 'death_ritual', name: 'Death Ritual', category: 'attack', element: 'Arcane', speedMod: 0, specialCharge: 5, energyMult: 1.2, bonusDesc: '+Special charge, ritual power' },
+                    { id: 'soul_link', name: 'Soul Link', category: 'defense', element: 'Dark', speedMod: 1, specialCharge: 2, energyMult: 0.9, bonusDesc: '+Drain synergy' },
+                    { id: 'shadow_step', name: 'Shadow Step', category: 'attack', element: 'Electric', speedMod: 3, specialCharge: 1, energyMult: 1.05, bonusDesc: '+Speed, evasive strike' }
+                ]
+            }
+        ];
+
+        // Default avatar progress (persisted)
+        const DEFAULT_AVATAR_LEVELS = {
+            'fusion-panda': 3,
+            'red-panda': 1,
+            'lich-queen': 1
+        };
 
         // Current selected for fusion
         let selectedAlpha = null;
@@ -73,6 +203,10 @@
                 gameState = { ...gameState, ...parsed };
                 if (parsed.collection) userPandas = parsed.collection;
                 if (parsed.recentFusions) gameState.recentFusions = parsed.recentFusions;
+                // Migrate old saves: ensure every panda has bonus for lab RPS evolution
+                userPandas.forEach(p => {
+                    if (!p.bonus) p.bonus = getDefaultBonus(p.type || 'Balanced');
+                });
                 if (typeof gameState.ritualFusionsCount !== "number" || gameState.ritualFusionsCount < 0) {
                     gameState.ritualFusionsCount = 0;
                 }
@@ -95,8 +229,24 @@
                     gameState.fireChallengeFusions = approxFire;
                     gameState.saveSchemaVersion = 2;
                 }
+                // Avatar system (new)
+                if (!gameState.selectedAvatarId || !PLAYER_AVATARS.some(a => a.id === gameState.selectedAvatarId)) {
+                    gameState.selectedAvatarId = 'fusion-panda';
+                }
+                if (!gameState.avatarLevels || typeof gameState.avatarLevels !== 'object') {
+                    gameState.avatarLevels = { ...DEFAULT_AVATAR_LEVELS };
+                } else {
+                    // fill missing
+                    PLAYER_AVATARS.forEach(av => {
+                        if (typeof gameState.avatarLevels[av.id] !== 'number') {
+                            gameState.avatarLevels[av.id] = DEFAULT_AVATAR_LEVELS[av.id] || 1;
+                        }
+                    });
+                }
             } else {
                 gameState.recentFusions = [];
+                gameState.selectedAvatarId = 'fusion-panda';
+                gameState.avatarLevels = { ...DEFAULT_AVATAR_LEVELS };
                 saveGameState();
             }
             
@@ -172,6 +322,9 @@
 
             syncDailyChallengeRewardUi();
             syncFireChallengeUi();
+
+            // Keep director in sync (no-op if not on lab)
+            if (typeof renderAvatarDirector === 'function') renderAvatarDirector();
         }
 
         function __resultCountsTowardFireChallenge(panda) {
@@ -230,6 +383,7 @@
                 const card = document.createElement('div');
                 card.className = `panda-card cyber-card rounded-2xl p-3 border border-gray-700 cursor-pointer flex flex-col items-center text-center ${!isUnlocked ? 'opacity-60' : ''}`;
                 
+                const b = panda.bonus || getDefaultBonus(panda.type);
                 card.innerHTML = `
                     <div class="text-5xl mb-2 transition-transform">${panda.emoji}</div>
                     <div class="font-bold text-sm">${panda.name}</div>
@@ -239,6 +393,14 @@
                     <div class="mt-auto pt-2 text-xs flex items-center justify-center gap-x-1">
                         <span class="font-mono text-emerald-400">${panda.power}</span>
                         <span class="text-gray-500">PWR</span>
+                    </div>
+                    <!-- FUSION BONUSES rendered on every lab/collection card -->
+                    <div class="mt-1.5 w-full text-[9px] bg-[#1a1f2e]/60 rounded-xl px-2 py-1 flex flex-wrap justify-center gap-x-2 gap-y-0.5 font-mono text-gray-300">
+                        <span title="Attack bonus">⚔️${b.attack}</span>
+                        <span title="Defense bonus">🛡️${b.defense}</span>
+                        <span title="Speed bonus">⚡${b.speed}</span>
+                        <span title="Special bonus">✨${b.special}</span>
+                        <span title="Energy mult (damage endurance)">🔋${b.energy.toFixed(1)}x</span>
                     </div>
                 `;
                 
@@ -302,6 +464,25 @@
                     <div class="flex items-center gap-x-2 text-xs">
                         <span class="px-2 py-px rounded" style="background: ${panda.color}25; color: ${panda.color}">${panda.type}</span>
                     </div>
+                    
+                    ${panda.mentorAvatar ? `
+                    <div class="mt-1.5 flex items-center gap-x-1.5 text-[10px] text-gray-500">
+                        <img src="${ (typeof getAvatarOutfitPath==='function' ? getAvatarOutfitPath(panda.mentorAvatar) : 'assets/avatars/fusion-panda-base.jpg') }" style="width:16px;height:16px;border-radius:9999px;object-fit:cover;border:1px solid #334155; flex-shrink:0">
+                        <span>mentored by <span class="font-medium text-gray-400">${ (PLAYER_AVATARS.find(a=>a.id===panda.mentorAvatar)||{name:'Avatar'}).name }</span></span>
+                    </div>` : ''}
+                    
+                    <!-- FUSION BONUSES on every card (evolves on fusion via elemental RPS) -->
+                    ${(() => {
+                        const b = panda.bonus || getDefaultBonus(panda.type);
+                        return `
+                        <div class="mt-2 w-full text-[9px] bg-[#1a1f2e]/60 rounded-xl px-2 py-1 flex flex-wrap justify-center gap-x-2 gap-y-0.5 font-mono text-gray-300">
+                            <span title="Attack">⚔️${b.attack}</span>
+                            <span title="Defense">🛡️${b.defense}</span>
+                            <span title="Speed">⚡${b.speed}</span>
+                            <span title="Special">✨${b.special}</span>
+                            <span title="Energy (endurance)">🔋${b.energy.toFixed(1)}x</span>
+                        </div>`;
+                    })()}
                     
                     <div class="mt-4 flex items-end justify-between">
                         <div>
@@ -716,6 +897,23 @@
                                     <div class="text-xs mt-1 text-gray-400">TRAIT</div>
                                 </div>
                             </div>
+
+                            <!-- BONUSES in detail (RPS-evolvable on fusion) -->
+                            ${(() => {
+                                const b = panda.bonus || getDefaultBonus(panda.type || 'Balanced');
+                                return `
+                                <div class="mt-6">
+                                    <div class="text-xs uppercase tracking-widest text-gray-400 mb-2 px-1">FUSION BONUS ATTRIBUTES</div>
+                                    <div class="grid grid-cols-5 gap-2 text-center text-xs">
+                                        <div class="bg-[#1a1f2e] rounded-xl p-2"><div class="text-[10px] text-gray-400">ATK</div><div class="font-bold text-lg">${b.attack}</div></div>
+                                        <div class="bg-[#1a1f2e] rounded-xl p-2"><div class="text-[10px] text-gray-400">DEF</div><div class="font-bold text-lg">${b.defense}</div></div>
+                                        <div class="bg-[#1a1f2e] rounded-xl p-2"><div class="text-[10px] text-gray-400">SPD</div><div class="font-bold text-lg">${b.speed}</div></div>
+                                        <div class="bg-[#1a1f2e] rounded-xl p-2"><div class="text-[10px] text-gray-400">SPEC</div><div class="font-bold text-lg">${b.special}</div></div>
+                                        <div class="bg-[#1a1f2e] rounded-xl p-2"><div class="text-[10px] text-gray-400">NRG</div><div class="font-bold text-lg">${b.energy.toFixed(1)}x</div></div>
+                                    </div>
+                                    <div class="text-[10px] text-center mt-1 text-gray-500">Element: <span class="font-mono text-amber-300">${b.element}</span> (evolves via RPS on fusion)</div>
+                                </div>`;
+                            })()}
                             
                             <div class="mt-6 text-sm text-gray-300 leading-relaxed">
                                 ${panda.desc}
@@ -779,6 +977,7 @@
                 
                 const rarityColor = getRarityColor(panda.rarity);
                 
+                const b = panda.bonus || getDefaultBonus(panda.type);
                 card.innerHTML = `
                     <div class="flex justify-between">
                         <div class="text-5xl mb-2">${panda.emoji}</div>
@@ -791,7 +990,11 @@
                     <div class="font-bold">${panda.name}</div>
                     <div class="text-xs text-emerald-400">${panda.type}</div>
                     
-                    <div class="mt-auto pt-3 flex justify-between items-center">
+                    <div class="mt-1 text-[9px] bg-[#1a1f2e]/50 rounded px-1.5 py-0.5 flex flex-wrap gap-1 font-mono text-gray-300">
+                        <span>⚔️${b.attack}</span><span>🛡️${b.defense}</span><span>⚡${b.speed}</span><span>✨${b.special}</span><span>🔋${b.energy.toFixed(1)}x</span>
+                    </div>
+                    
+                    <div class="mt-auto pt-2 flex justify-between items-center">
                         <div class="font-mono text-lg">${panda.power}</div>
                         <div class="text-xs px-2 py-px bg-white/10 rounded">PWR</div>
                     </div>
@@ -822,6 +1025,7 @@
             else selectedBeta = panda;
             
             // Update slot UI
+            const b = panda.bonus || getDefaultBonus(panda.type);
             slotEl.innerHTML = `
                 <div class="p-5 w-full flex flex-col items-center justify-center text-center">
                     <div class="text-7xl mb-3 transition-all">${panda.emoji}</div>
@@ -831,8 +1035,14 @@
                         <span class="font-mono text-xs text-emerald-400">${panda.power} PWR</span>
                     </div>
                     
+                    <!-- Bonuses visible on lab fusion cards/slots -->
+                    <div class="mt-1.5 text-[9px] bg-black/30 rounded px-2 py-0.5 flex gap-1 font-mono text-gray-300">
+                        <span>⚔️${b.attack}</span><span>🛡️${b.defense}</span><span>⚡${b.speed}</span>
+                        <span>✨${b.special}</span><span>🔋${b.energy.toFixed(1)}x</span>
+                    </div>
+                    
                     <div onclick="event.stopImmediatePropagation(); clearSlot('${slot}')" 
-                         class="mt-4 text-xs flex items-center gap-x-1 text-red-400 hover:text-red-300 cursor-pointer">
+                         class="mt-3 text-xs flex items-center gap-x-1 text-red-400 hover:text-red-300 cursor-pointer">
                         <i class="fas fa-times"></i> <span>REMOVE</span>
                     </div>
                 </div>
@@ -938,6 +1148,1143 @@
             const finalCost = Math.floor(baseCost + (powerAvg * 1.8));
             costEl.innerText = `${finalCost} EP`;
             costEl.style.color = currentFusionMode === 'ritual' ? '#fbbf24' : '#10b981';
+        }
+
+        // ========== AVATAR HELPERS & RENDERERS (Player Avatars + Outfit Progression + Lab integration) ==========
+        function getCurrentAvatar() {
+            const id = gameState.selectedAvatarId || 'fusion-panda';
+            return PLAYER_AVATARS.find(a => a.id === id) || PLAYER_AVATARS[0];
+        }
+        function getAvatarLevel(avatarId) {
+            if (!gameState.avatarLevels) return 1;
+            return gameState.avatarLevels[avatarId] || 1;
+        }
+        function getEquippedStage(avatarId) {
+            const av = PLAYER_AVATARS.find(a => a.id === avatarId);
+            if (!av) return 'adept';
+            const lvl = getAvatarLevel(avatarId);
+            if (lvl >= (av.levelThresholds.sovereign || 99)) return 'sovereign';
+            if (lvl >= (av.levelThresholds.adept || 5)) return 'adept';
+            return 'initiate';
+        }
+        function getAvatarOutfitPath(avatarId) {
+            const av = PLAYER_AVATARS.find(a => a.id === avatarId);
+            if (!av) return 'assets/avatars/fusion-panda-base.jpg';
+            const stage = getEquippedStage(avatarId);
+            const file = av.outfitStages[stage] || Object.values(av.outfitStages)[0];
+            return `assets/avatars/${file}`;
+        }
+        function getAvatarBonus(avatarId) {
+            const lvl = getAvatarLevel(avatarId);
+            const powerMult = Math.min(0.28, 0.10 + Math.max(0, (lvl - 1)) * 0.014);
+            const critExtra = Math.min(0.13, Math.max(0, (lvl - 1)) * 0.009);
+            const ritualExtra = (avatarId === 'lich-queen') ? Math.min(0.38, Math.max(0, (lvl - 1)) * 0.022) : 0;
+            return { powerMult, critExtra, ritualExtra };
+        }
+        function getStageLabel(avatarId, stage) {
+            const av = PLAYER_AVATARS.find(a => a.id === avatarId);
+            return (av && av.stageLabels && av.stageLabels[stage]) || stage;
+        }
+
+        // ===== BATTLE AVATAR MOVES & ATTACK LOG HELPERS (for accurate playback) =====
+        function getAvatarMoves(avatarId) {
+            const av = PLAYER_AVATARS.find(a => a.id === avatarId);
+            return (av && av.moves) || [];
+        }
+
+        function getAvatarTactics(avatarId) {
+            const av = PLAYER_AVATARS.find(a => a.id === avatarId);
+            if (av && av.tacticDeck && av.tacticDeck.length >= 4) return av.tacticDeck;
+            // Fallback generic cyber-tactics (4 cards) for any avatar without explicit deck
+            return [
+                { id: 'power_strike', name: 'Power Strike', category: 'attack', element: 'Fusion', speedMod: 1, specialCharge: 2, energyMult: 1.1, bonusDesc: '+Attack, general' },
+                { id: 'iron_guard', name: 'Iron Guard', category: 'block', element: 'Crystal', speedMod: 0, specialCharge: 1, energyMult: 0.65, bonusDesc: '+Block, high mitigation' },
+                { id: 'focus_chi', name: 'Focus Chi', category: 'defense', element: 'Arcane', speedMod: 0, specialCharge: 4, energyMult: 0.9, bonusDesc: '+Special charge' },
+                { id: 'swift_dash', name: 'Swift Dash', category: 'attack', element: 'Electric', speedMod: 3, specialCharge: 1, energyMult: 1.0, bonusDesc: '+Speed, higher hit chance' }
+            ];
+        }
+
+        function pickRandomMove(avatarId) {
+            const moves = getAvatarMoves(avatarId);
+            if (!moves.length) return { id: 'generic', name: 'Attack', desc: 'Basic strike' };
+            return moves[Math.floor(Math.random() * moves.length)];
+        }
+
+        function determineOutcome(move, isSpecial = false) {
+            // Weighted random outcome per move. Specials are riskier (more miss potential) but higher reward on hit.
+            const roll = Math.random();
+            let outcome;
+            if (isSpecial) {
+                if (roll < 0.55) outcome = 'hit';
+                else if (roll < 0.80) outcome = 'miss';
+                else outcome = 'block';
+            } else {
+                if (roll < 0.62) outcome = 'hit';
+                else if (roll < 0.82) outcome = 'miss';
+                else outcome = 'block';
+            }
+            // Damage modifier
+            let dmgMod = 1.0;
+            if (outcome === 'hit') dmgMod = isSpecial ? 1.45 : 1.0;
+            else if (outcome === 'miss') dmgMod = 0;
+            else if (outcome === 'block') dmgMod = isSpecial ? 0.25 : 0.4;
+            return { outcome, dmgMod };
+        }
+
+        function getClipPath(avatarId, moveId, outcome) {
+            // Predictable naming for the generated agency clips.
+            const slug = avatarId; // fusion-panda, red-panda, lich-queen
+            return `assets/arena/avatars/${slug}/${moveId}_${outcome}.mp4`;
+        }
+
+        // ========== LICH QUEEN AGENCY CLIP HELPER (Lich Queen Agency assistant) ==========
+        // Dedicated helper for the 12 verified clips in assets/arena/avatars/lich-queen/.
+        // Returns structured data for playback: video + poster (jpgs present unlike fusion-panda) + VFX metadata.
+        // Use this (or extend general getClipPath) when implementing specific clip playback in battle log replay.
+        // Verified: all 12 clips = 544x544 h264 24fps ~6.04s duration (see tool verification).
+        //
+        // NOTES FOR DARK/RITUAL VFX IN PLAYBACK (integration guidance):
+        // - Theme: deep purple (#4c1d95 to #a78bfa), sickly green (#166534 accents), bone/obsidian blacks.
+        // - Common overlays: swirling ritual circles (thin glowing lines), floating necrotic runes (faint glyphs that pulse and fade), drifting ash particles.
+        // - Per-outcome:
+        //   * hit: necrotic energy crackle + impact burst (green-purple splatter + bone shards fly out on hit target). Brief slow-mo on contact frame ~2.8s.
+        //   * miss: veil fade + wisp dissipates into shadows. Add semi-transparent mirror-veil distortion on foe side + echo fade.
+        //   * block: shadow-shield (concentric dark rings + ethereal bone barrier). Reduced particle density, heavy vignette + low rumble.
+        // - Special for moves:
+        //   * necrotic_bolt: homing green skull-trail or energy tether visible in clip + add extra particle overlay on player hand.
+        //   * soul_siphon: tether beam (use existing battle-beam but recolor to #4ade80->#a78bfa). Drain HP particles from foe to player avatar (reverse of normal). Green glow on Lich Queen during siphon.
+        //   * shadow_bind: root/vines of shadow (clip shows bind, enhance with persistent root decals on foe card for DoT turns).
+        //   * veil_ruin: screen-wide ritual rupture (add screen shake + radial dark burst + temporary full-screen vignette on play). Highest intensity; use for special moves.
+        // - Playback tips: preload poster as bg while video buffers. Autoplay muted or low vol. On end: hold last frame or crossfade to static jpg + trigger floating dmg / log line. Layer CSS filters (hue-rotate for ritual, contrast boost). Darken arena bg slightly during Lich Queen turns. Sync with __appendBattleLogLine and __spawnBattleFloatingDmg. For replay from attackLog: iterate and call getLichQueenClip(log.moveId, log.outcome) then render <video poster=... src=...> in a dedicated clip-viewer div inside battle-stage.
+        // - Fallback: if !video or error, use reference_base.jpg or outcome jpg with CSS animated overlay (pulse runes).
+        function getLichQueenClip(moveId, outcome) {
+            const base = `assets/arena/avatars/lich-queen/${moveId}_${outcome}`;
+            const validMoves = ['necrotic_bolt', 'soul_siphon', 'shadow_bind', 'veil_ruin'];
+            const validOutcomes = ['hit', 'miss', 'block'];
+            if (!validMoves.includes(moveId) || !validOutcomes.includes(outcome)) {
+                console.warn('[LichQueenClip] Unknown move/outcome:', moveId, outcome);
+            }
+            return {
+                video: `${base}.mp4`,
+                poster: `${base}.jpg`,
+                moveId: moveId,
+                outcome: outcome,
+                duration: 6.041667, // consistent across all verified clips
+                vfx: {
+                    theme: 'dark-ritual',
+                    primaryColor: '#a78bfa', // matches avatar color
+                    accent: outcome === 'hit' ? '#22ffaa' : (outcome === 'miss' ? '#7c3aed' : '#4ade80'),
+                    particles: outcome === 'hit' ? 'necrotic-bolt-burst' : (outcome === 'miss' ? 'veil-dissipate' : 'shadow-shield'),
+                    overlay: 'ritual-runes',
+                    soundHint: 'low-drone + crackle + siphon-whoosh for soul_siphon'
+                }
+            };
+        }
+
+        // SAMPLE BATTLE LOGS (Lich Queen Agency - for testing playback + replay integration)
+        // Use with recordAttackLog style or full battle.attackLog arrays. These demonstrate necrotic_bolt etc + outcomes.
+        // To simulate replay: for each entry, const clip = getLichQueenClip(entry.moveId, entry.outcome); then play clip.video with VFX from clip.vfx
+        const SAMPLE_LICH_QUEEN_BATTLE_LOG_1 = [ // Victory via strong ritual opener
+            { turn: 1, actor: "Lich Queen", moveId: "necrotic_bolt", moveName: "Necrotic Bolt", outcome: "hit", damage: 31, isPlayer: true },
+            { turn: 2, actor: "Void Howler", moveId: "generic", moveName: "VOID CRUSH", outcome: "hit", damage: 14, isPlayer: false },
+            { turn: 3, actor: "Lich Queen", moveId: "soul_siphon", moveName: "Soul Siphon", outcome: "hit", damage: 42, isPlayer: true },
+            { turn: 4, actor: "Lich Queen", moveId: "veil_ruin", moveName: "Veil of Ruin", outcome: "hit", damage: 67, isPlayer: true }
+            // Final HP <=0 -> victory. Use showInArenaCinematic after.
+        ];
+
+        const SAMPLE_LICH_QUEEN_BATTLE_LOG_2 = [ // Risky special sequence, mixed outcomes, close defeat avoided
+            { turn: 1, actor: "Lich Queen", moveId: "shadow_bind", moveName: "Shadow Bind", outcome: "block", damage: 9, isPlayer: true }, // partial block damage
+            { turn: 2, actor: "Lich Queen", moveId: "necrotic_bolt", moveName: "Necrotic Bolt", outcome: "miss", damage: 0, isPlayer: true },
+            { turn: 3, actor: "Lich Queen", moveId: "veil_ruin", moveName: "Veil of Ruin", outcome: "hit", damage: 55, isPlayer: true },
+            { turn: 4, actor: "Chroma Lynx", moveId: "generic", moveName: "DARK PULSE", outcome: "hit", damage: 22, isPlayer: false },
+            { turn: 5, actor: "Lich Queen", moveId: "soul_siphon", moveName: "Soul Siphon", outcome: "hit", damage: 38, isPlayer: true }
+            // Ends in player victory despite early whiff. Good for testing miss VFX + recovery.
+        ];
+
+        // Fusion Panda Agency clip helper (dedicated subagent output)
+        function getFusionPandaClip(moveId, outcome) {
+            const clips = {
+                'fusion_beam_hit': 'assets/arena/avatars/fusion-panda/fusion_beam_hit.mp4',
+                'fusion_beam_miss': 'assets/arena/avatars/fusion-panda/fusion_beam_miss.mp4',
+                'fusion_beam_block': 'assets/arena/avatars/fusion-panda/fusion_beam_block.mp4',
+                'rift_slam_hit': 'assets/arena/avatars/fusion-panda/rift_slam_hit.mp4',
+                'rift_slam_miss': 'assets/arena/avatars/fusion-panda/rift_slam_miss.mp4',
+                'rift_slam_block': 'assets/arena/avatars/fusion-panda/rift_slam_block.mp4',
+                'catalyst_surge_hit': 'assets/arena/avatars/fusion-panda/catalyst_surge_hit.mp4',
+                'catalyst_surge_miss': 'assets/arena/avatars/fusion-panda/catalyst_surge_miss.mp4',
+                'catalyst_surge_block': 'assets/arena/avatars/fusion-panda/catalyst_surge_block.mp4',
+                'synergy_pulse_hit': 'assets/arena/avatars/fusion-panda/synergy_pulse_hit.mp4',
+                'synergy_pulse_miss': 'assets/arena/avatars/fusion-panda/synergy_pulse_miss.mp4',
+                'synergy_pulse_block': 'assets/arena/avatars/fusion-panda/synergy_pulse_block.mp4'
+            };
+            const key = `${moveId}_${outcome}`;
+            return clips[key] || `assets/arena/avatars/fusion-panda/${moveId}_${outcome}.mp4`;
+        }
+
+        // Red Panda Agency clip helper (dedicated subagent output)
+        function getRedPandaClip(moveId, outcome) {
+            const validMoves = ['ember_claw', 'flame_tail', 'primal_pounce', 'wildfire_barrage'];
+            const validOutcomes = ['hit', 'miss', 'block'];
+            if (!validMoves.includes(moveId)) moveId = 'ember_claw';
+            if (!validOutcomes.includes(outcome)) outcome = 'hit';
+            return `assets/arena/avatars/red-panda/${moveId}_${outcome}.mp4`;
+        }
+
+        // Unified dispatcher for any player avatar's agency clips
+        function getBattleClip(avatarId, moveId, outcome) {
+            if (avatarId === 'fusion-panda') return getFusionPandaClip(moveId, outcome);
+            if (avatarId === 'red-panda') return getRedPandaClip(moveId, outcome);
+            if (avatarId === 'lich-queen') {
+                const clip = getLichQueenClip(moveId, outcome);
+                return clip.video || clip;
+            }
+            return getClipPath(avatarId, moveId, outcome);
+        }
+
+        // ===== ARENA ATTACK LOG PLAYBACK (strings agency clips together to exactly match the log) =====
+        // Accurate demonstration of battle flow using the generated per-move hit/miss/block videos.
+        let __playbackQueue = [];
+        let __playbackIndex = 0;
+        let __playbackVideoEl = null;
+        let __playbackLogEl = null;
+        let __playbackAvatar = null;
+
+        function playAttackLogPlayback(attackLog, avatarId = null) {
+            if (!attackLog || !attackLog.length) {
+                showToast('No attack log to replay.', 'info');
+                return;
+            }
+            const activeAvatar = avatarId || (gameState && gameState.selectedAvatarId) || 'fusion-panda';
+            __playbackAvatar = activeAvatar;
+
+            // Find or create playback UI (simple modal for clarity)
+            let modal = document.getElementById('battle-playback-modal');
+            if (!modal) {
+                modal = document.createElement('div');
+                modal.id = 'battle-playback-modal';
+                modal.className = 'fixed inset-0 bg-black/95 z-[200] flex items-center justify-center p-4';
+                modal.innerHTML = `
+                    <div class="max-w-4xl w-full cyber-card rounded-3xl overflow-hidden border border-red-500/50">
+                        <div class="px-6 py-4 border-b border-white/10 flex items-center justify-between bg-[#0f1117]">
+                            <div>
+                                <div class="text-xs tracking-[2px] text-red-400">AGENCY REPLAY</div>
+                                <div class="text-2xl font-black">Accurate Battle Playback</div>
+                            </div>
+                            <button onclick="closeBattlePlayback()" class="text-2xl leading-none px-3 py-1 hover:text-red-400">&times;</button>
+                        </div>
+                        <div class="p-6 bg-black">
+                            <div class="aspect-video bg-black rounded-2xl overflow-hidden border border-white/10 relative" id="playback-video-container">
+                                <video id="playback-video" class="w-full h-full object-contain" playsinline></video>
+                                <div id="playback-overlay" class="absolute inset-0 flex items-center justify-center pointer-events-none">
+                                    <div class="text-center text-white/60 text-sm">Loading agency clip...</div>
+                                </div>
+                            </div>
+                            <div class="mt-4 text-xs text-gray-400" id="playback-status"></div>
+                            <div class="mt-3 text-[10px] font-mono bg-[#11151f] p-3 rounded-xl max-h-32 overflow-auto" id="playback-log"></div>
+                        </div>
+                        <div class="px-6 py-4 border-t border-white/10 flex gap-2 bg-[#0f1117]">
+                            <button onclick="playNextInLog()" class="px-4 py-2 rounded-xl bg-red-500/20 hover:bg-red-500/30 text-sm font-bold">NEXT CLIP</button>
+                            <button onclick="closeBattlePlayback()" class="px-4 py-2 rounded-xl border border-white/20 text-sm">CLOSE</button>
+                        </div>
+                    </div>
+                `;
+                document.body.appendChild(modal);
+            }
+
+            __playbackQueue = attackLog.filter(e => e.isPlayer !== false); // focus player moves for demo; can include enemy if clips exist
+            __playbackIndex = 0;
+            __playbackVideoEl = document.getElementById('playback-video');
+            __playbackLogEl = document.getElementById('playback-log');
+            const container = document.getElementById('playback-video-container');
+            const status = document.getElementById('playback-status');
+
+            if (!__playbackVideoEl || !container || !status) return;
+
+            __playbackLogEl.innerHTML = '';
+            status.textContent = `Replaying ${__playbackQueue.length} player actions for ${activeAvatar} using agency clips.`;
+
+            // Prepare first clip
+            __playbackVideoEl.onended = playNextInLog;
+            __playbackVideoEl.onerror = () => {
+                status.textContent = 'Clip failed to load — using next.';
+                setTimeout(playNextInLog, 400);
+            };
+
+            modal.classList.remove('hidden');
+            modal.style.display = 'flex';
+
+            playNextInLog(); // start
+        }
+
+        function playNextInLog() {
+            const video = __playbackVideoEl;
+            const logEl = __playbackLogEl;
+            if (!video || !logEl || __playbackIndex >= __playbackQueue.length) {
+                const status = document.getElementById('playback-status');
+                if (status) status.textContent = 'Playback complete. All moves matched the attack log exactly.';
+                return;
+            }
+
+            const entry = __playbackQueue[__playbackIndex];
+            const activeA = __playbackAvatar || (gameState && gameState.selectedAvatarId) || 'fusion-panda';
+            const clipSrc = getBattleClip( activeA , entry.moveId, entry.outcome );
+
+            // Highlight in log
+            const line = document.createElement('div');
+            line.className = 'mb-0.5 text-emerald-300';
+            line.innerHTML = `Turn ${entry.turn || (__playbackIndex+1)} • <span class="font-bold">${entry.moveName || entry.moveId}</span> → <span class="${entry.outcome==='hit'?'text-emerald-400':entry.outcome==='miss'?'text-amber-400':'text-sky-400'}">${entry.outcome.toUpperCase()}</span> ${entry.damage ? `(${entry.damage} DMG)` : ''}`;
+            logEl.appendChild(line);
+            logEl.scrollTop = logEl.scrollHeight;
+
+            video.src = clipSrc;
+            video.play().catch(() => {
+                // Fallback message
+                const status = document.getElementById('playback-status');
+                if (status) status.textContent = `Playing: ${entry.moveName} (${entry.outcome}) — (video may need user interaction)`;
+            });
+
+            __playbackIndex++;
+        }
+
+        function closeBattlePlayback() {
+            const modal = document.getElementById('battle-playback-modal');
+            if (modal) {
+                const video = document.getElementById('playback-video');
+                if (video) { video.pause(); video.src = ''; }
+                modal.style.display = 'none';
+            }
+            __playbackQueue = [];
+            __playbackIndex = 0;
+        }
+
+        // Expose for console / quick demo
+        window.playAttackLogPlayback = playAttackLogPlayback;
+
+        function recordAttackLog(battle, actor, move, outcome, damage, isPlayer) {
+            if (!battle.attackLog) battle.attackLog = [];
+            battle.attackLog.push({
+                turn: battle.attackLog.length + 1,
+                actor,
+                moveId: move.id,
+                moveName: move.name,
+                outcome,
+                damage: Math.max(0, Math.floor(damage)),
+                isPlayer: !!isPlayer
+            });
+        }
+
+        // ===== NEW: RESOLVE / EXECUTE WITH LIVE AGENCY VIDEO FOR PLAYER TURN =====
+        // Resolves a specific move (or random) + outcome + dmg. Used by choice flow and simulate.
+        function resolveBattleAction(avatarId, moveId, isSpecial = false) {
+            const b = window.__activeBattle;
+            const moves = getAvatarMoves(avatarId);
+            let move = moveId ? moves.find(m => m.id === moveId) : null;
+            if (!move) move = pickRandomMove(avatarId);
+
+            // Full system: if selectedTactic present (from choice UI), use resolvePlayerTurn for RPS/element/speed/category/specialMeter/special spend
+            const tactic = (b && b.selectedTactic) ? b.selectedTactic : null;
+            if (b && tactic) {
+                const isBlk = (move && move.id === 'block') || isSpecial === 'block';
+                const res = resolvePlayerTurn(b, move, tactic, isBlk);
+                // return shape compatible with callers (move, outcome, dmg, ...)
+                return {
+                    move,
+                    outcome: res.outcome,
+                    dmgMod: 1.0,
+                    dmg: res.damage,
+                    isSpecial: !!isSpecial || res.specialTriggered,
+                    attackName: res.moveName || move.name,
+                    elemMult: res.elemMult,
+                    tacticName: res.tacticName,
+                    specialTriggered: res.specialTriggered
+                };
+            }
+
+            // Fallback legacy path (no tactic selected)
+            const { outcome, dmgMod } = determineOutcome(move, isSpecial);
+            const baseDmg = isSpecial
+                ? Math.floor(Math.random() * 14) + (b ? b.playerBaseDamage + 12 : 18)
+                : Math.floor(Math.random() * 10) + (b ? b.playerBaseDamage : 16);
+            let dmg = Math.max(0, Math.floor(baseDmg * dmgMod));
+            // light element fallback using getElementMultiplier if battle has elems
+            if (b) {
+                const em = getElementMultiplier(b.playerElement, b.enemyElement);
+                dmg = Math.floor(dmg * em);
+            }
+            return {
+                move,
+                outcome,
+                dmgMod,
+                dmg,
+                isSpecial: !!isSpecial,
+                attackName: move.name || move.id
+            };
+        }
+
+        // Apply the damage/result AFTER video (or immediately on fallback). Shows floating dmg, log (incl outcome), checks victory.
+        function applyPlayerResult(resolved) {
+            const b = window.__activeBattle;
+            if (!b || b.ended) return false;
+            const eCard = document.getElementById("battle-fighter-enemy");
+            const pCard = document.getElementById("battle-fighter-player");
+            const eFlash = document.getElementById("battle-flash-enemy");
+            if (!eCard) return false;
+
+            b.enemyCur = Math.max(0, b.enemyCur - resolved.dmg);
+            __syncBattleHpBars();
+
+            if (eCard) eCard.classList.add("battle-anim-shake");
+            if (eFlash) eFlash.classList.add("battle-anim-flash--on", "battle-anim-flash--red");
+            __spawnBattleFloatingDmg(eCard, resolved.dmg, resolved.isSpecial);
+
+            const outcomeClass = resolved.outcome === 'hit' ? 'text-emerald-400' : (resolved.outcome === 'miss' ? 'text-amber-400' : 'text-sky-400');
+            __appendBattleLogLine(
+                resolved.isSpecial ? "text-fuchsia-300" : "text-emerald-300",
+                `${__escapeBattleText(b.playerName)} used <span class="font-bold">${__escapeBattleText(resolved.attackName)}</span> <span class="text-white/60">→</span> <span class="font-mono ${outcomeClass}">${resolved.outcome.toUpperCase()}</span> <span class="font-mono">${resolved.dmg} DMG</span>`,
+            );
+
+            // Brief outcome badge overlay (cinematic result on video end)
+            if (pCard) {
+                const badge = document.createElement('div');
+                badge.className = `battle-outcome-badge ${resolved.outcome==='hit' ? 'bg-emerald-500/90 text-white' : resolved.outcome==='miss' ? 'bg-amber-500/90 text-black' : 'bg-sky-400/90 text-black'}`;
+                badge.textContent = resolved.outcome.toUpperCase();
+                pCard.appendChild(badge);
+                setTimeout(() => badge.remove(), 950);
+            }
+
+            // cleanup anims shortly
+            setTimeout(() => {
+                if (eCard) eCard.classList.remove("battle-anim-shake");
+                if (eFlash) eFlash.classList.remove("battle-anim-flash--on", "battle-anim-flash--red");
+                const beam = document.getElementById("battle-beam");
+                if (beam) beam.classList.remove("battle-beam--to-enemy", "battle-beam--special");
+                if (pCard) pCard.classList.remove("battle-anim-attack-left");
+            }, 420);
+
+            if (b.enemyCur <= 0) {
+                b.ended = true;
+                b.enemyCur = 0;
+                __syncBattleHpBars();
+                if (eCard) {
+                    eCard.classList.add("battle-fighter--defeated");
+                    eCard.setAttribute("aria-hidden", "true");
+                }
+                const stage = document.getElementById("battle-stage");
+                if (stage) stage.classList.add("battle-stage--victory");
+                __appendBattleLogLine(
+                    "text-amber-300 font-bold border-t border-amber-500/20 pt-2 mt-1",
+                    `🏆 VICTORY! ${__escapeBattleText(b.enemyName)} defeated! ${b.enemySubtitle ? '— ' + __escapeBattleText(b.enemySubtitle) : ''} +650 XP`,
+                );
+                showToast("Battle won! +650 XP earned", "success");
+                bumpLifetimeEarnedXp(650);
+                gameState.xp += 650;
+                if (gameState.xp >= 10000) {
+                    gameState.level++;
+                    gameState.xp = gameState.xp % 10000;
+                    setTimeout(showLevelUp, 1200);
+                }
+                saveGameState();
+                updateDashboard();
+
+                setTimeout(() => {
+                    if (typeof window.showInArenaCinematic === 'function') {
+                        window.showInArenaCinematic(b);
+                    } else if (typeof window.showVictoryCinematic === 'function') {
+                        window.showVictoryCinematic(b);
+                    }
+                }, 650);
+                return true; // ended
+            }
+            return false;
+        }
+
+        // Enemy turn logic — ENHANCED for awesome "being attacked" moments.
+        // Uses existing beams/shakes/floating-dmg + strong block shield visuals when player chose block/tactic defense.
+        // Full RPS elem (via enemyRes) + mitigation bonuses from player's tactic choice applied inside resolveEnemyTurn.
+        // Logs everything including enemy elem RPS + mitigation.
+        function doEnemyTurn() {
+            const b = window.__activeBattle;
+            if (!b || b.ended) return;
+            const pCard = document.getElementById("battle-fighter-player");
+            const eCard = document.getElementById("battle-fighter-enemy");
+            const pFlash = document.getElementById("battle-flash-player");
+            const beam = document.getElementById("battle-beam");
+            if (!pCard || !eCard) return;
+
+            const roundEl = document.getElementById("battle-round");
+
+            // Use full resolver (passes last player tactic for mitigation counters + RPS fairness)
+            const playerTac = b.selectedTactic || (b.lastPlayerTactic) || null;
+            const enemyRes = resolveEnemyTurn(b, playerTac);
+
+            const enemyAttack = enemyRes.moveName || 'ENEMY STRIKE';
+            let enemyDmg = enemyRes.damage || 0;
+
+            const wasBlocking = !!b.playerIsBlocking || (playerTac && (playerTac.category === 'block' || playerTac.category === 'defense'));
+            const strongMit = wasBlocking && enemyRes.mitApplied && enemyRes.mitApplied < 0.85;
+
+            eCard.classList.add("battle-anim-attack-right");
+            __resetBeam(beam);
+            if (beam) {
+                // Color beam by enemy element for awesome variety (reuse existing battle-beam styles)
+                const eEl = (enemyRes.enemyElement || b.enemyElement || 'Dark').toLowerCase();
+                let beamColor = "linear-gradient(90deg, #f43f5e, #a855f7, #10b981)"; // default red-purple
+                if (eEl.includes('dark')) beamColor = "linear-gradient(90deg, #6366f1, #4c1d95, #a78bfa)";
+                else if (eEl.includes('electric')) beamColor = "linear-gradient(90deg, #eab308, #f59e0b, #67e8f9)";
+                else if (eEl.includes('crystal')) beamColor = "linear-gradient(90deg, #67e8f9, #0ea5e9, #64748b)";
+                else if (eEl.includes('arcane')) beamColor = "linear-gradient(90deg, #c026ff, #7c3aed, #a78bfa)";
+                else if (eEl.includes('fusion')) beamColor = "linear-gradient(90deg, #22d3ee, #10b981, #f43f5e)";
+                beam.style.background = beamColor;
+                beam.classList.add("battle-beam--to-player");
+                if (strongMit) beam.style.opacity = '0.6'; // subdued on strong block
+            }
+
+            // Use setTimeout chain (keeps simple)
+            setTimeout(() => {
+                if (b.ended) return;
+                // HP mutated inside resolver; sync
+                __syncBattleHpBars();
+
+                // AWESOME RECEIVING: stronger/more dramatic shake on player when attacked
+                if (pCard) {
+                    pCard.classList.add("battle-anim-shake");
+                    if (strongMit) {
+                        // lighter visual feedback on successful defense
+                        pCard.style.filter = 'saturate(0.7) brightness(1.05)';
+                    }
+                }
+                if (pFlash) pFlash.classList.add("battle-anim-flash--on", "battle-anim-flash--emerald");
+
+                // Floating dmg: use existing, but slightly larger / colored hint on block mitigation
+                __spawnBattleFloatingDmg(pCard, enemyDmg, false);
+                if (enemyDmg > 0 && wasBlocking && pCard) {
+                    const fd = pCard.querySelector('.battle-dmg:last-child');
+                    if (fd) fd.style.color = '#67e8f9';
+                }
+
+                let logText = `${__escapeBattleText(b.enemyName)}: <span class="font-bold">${enemyAttack}</span> <span class="text-white/60">→</span> <span class="font-mono text-white">${enemyDmg} DMG</span>`;
+                if (enemyRes && enemyRes.elemMult && enemyRes.elemMult !== 1.05) logText += ` <span class="text-[10px] text-amber-300">(${enemyRes.elemMult.toFixed(2)}x ${enemyRes.enemyElement || ''} RPS)</span>`;
+                if (wasBlocking) logText += ' <span class="text-sky-400 text-[10px]">(MITIGATED by your ' + (playerTac ? playerTac.name : 'BLOCK') + ')</span>';
+                if (enemyRes && enemyRes.tacticName) logText += ` <span class="text-[10px] text-gray-500">[${enemyRes.tacticName}]</span>`;
+                __appendBattleLogLine("text-rose-300", logText);
+
+                // BLOCK SHIELD VISUAL — enhanced + prominent when player chose block/tactic defense. Stays during the hit shake for "awesome being attacked" defense moment
+                let shieldEl = null;
+                if (wasBlocking && pCard) {
+                    shieldEl = pCard.querySelector('.battle-block-shield');
+                    if (!shieldEl) {
+                        shieldEl = document.createElement('div');
+                        shieldEl.className = 'battle-block-shield' + (strongMit ? ' battle-block-shield--strong' : '');
+                        pCard.appendChild(shieldEl);
+                    } else if (strongMit) {
+                        shieldEl.classList.add('battle-block-shield--strong');
+                    }
+                }
+                // NOTE (no enemy agency clips): For a simple future "defend" clip on enemy side, one could play a generic brace or {enemyId}_block.mp4 before the beam impact. Currently we enhance *receiving* (player side) via CSS animations + beams + shields for polish and "being attacked" awesomeness.
+
+                setTimeout(() => {
+                    if (eCard) eCard.classList.remove("battle-anim-attack-right");
+                    if (pCard) {
+                        pCard.classList.remove("battle-anim-shake");
+                        pCard.style.filter = '';
+                    }
+                    if (pFlash) pFlash.classList.remove("battle-anim-flash--on", "battle-anim-flash--emerald");
+                    if (beam) {
+                        beam.classList.remove("battle-beam--to-player");
+                        beam.style.opacity = '';
+                    }
+                    if (shieldEl) shieldEl.remove();
+                    b.playerIsBlocking = false;
+
+                    if (b.playerCur <= 0) {
+                        b.ended = true;
+                        b.playerCur = 0;
+                        __syncBattleHpBars();
+                        if (pCard) {
+                            pCard.classList.add("battle-fighter--defeated");
+                            pCard.setAttribute("aria-hidden", "true");
+                        }
+                        const stage = document.getElementById("battle-stage");
+                        if (stage) stage.classList.add("battle-stage--defeat");
+                        __appendBattleLogLine(
+                            "text-rose-300 font-bold border-t border-rose-500/20 pt-2 mt-1",
+                            `💀 DEFEAT! ${__escapeBattleText(b.playerName)} was overpowered by ${__escapeBattleText(b.enemyName)}! ${b.enemySubtitle ? '— ' + __escapeBattleText(b.enemySubtitle) : ''}`,
+                        );
+                        setTimeout(() => {
+                            if (typeof window.showInArenaFailureCinematic === 'function') {
+                                window.showInArenaFailureCinematic(b);
+                            } else if (typeof window.showFailureCinematic === 'function') {
+                                window.showFailureCinematic(b);
+                            }
+                        }, 600);
+                        return;
+                    }
+
+                    // Next round re-enable (legacy + new flow)
+                    b.round = (b.round || 1) + 1;
+                    if (roundEl) roundEl.textContent = String(b.round);
+                    const actionBtns = document.querySelectorAll('#battle-actions .battle-move-btn');
+                    actionBtns.forEach(btn => { btn.disabled = false; });
+                    if (typeof setBattleControlsEnabled === 'function') {
+                        try { setBattleControlsEnabled(true); } catch(e){}
+                    }
+                    if (typeof clearBattleSelections === 'function' && window.__activeBattle && !window.__activeBattle.selectedMove) {
+                        try { clearBattleSelections(); } catch(e){}
+                    }
+                }, 520);  // slightly extended for awesome impact feel
+            }, 160);
+        }
+
+        // Play the agency video clip live in #player-action-video for the player's executed move.
+        // On ended: apply result + proceed to enemy turn. Graceful fallback if no clip or play fails.
+        function playPlayerAgencyVideo(avatarId, resolved) {
+            const b = window.__activeBattle;
+            if (!b || b.ended) return;
+
+            const pCard = document.getElementById("battle-fighter-player");
+            const emojiEl = document.getElementById("battle-emoji-player");
+            const videoEl = document.getElementById("player-action-video");
+            const refImg = document.getElementById('player-avatar-ref');
+            const beam = document.getElementById("battle-beam");
+
+            if (!videoEl || !emojiEl || !pCard) {
+                // Fallback: no video support — use classic immediate result + enemy
+                const endedEarly = applyPlayerResult(resolved);
+                if (!endedEarly) setTimeout(doEnemyTurn, 520);
+                return;
+            }
+
+            // Prep cinematic: optional beam (visual cue), lunge hint (subtle while clip plays)
+            pCard.classList.add("battle-anim-attack-left");
+            __resetBeam(beam);
+            if (beam) {
+                beam.style.background = resolved.isSpecial
+                    ? "linear-gradient(90deg, #a855f7, #e879f9, #f43f5e)"
+                    : "linear-gradient(90deg, #10b981, #2dd4bf, #a855f7)";
+                if (resolved.isSpecial) beam.classList.add("battle-beam--special");
+                beam.classList.add("battle-beam--to-enemy");
+            }
+
+            // Contextually show video, hide emoji + static avatar ref image (update fighter to video)
+            emojiEl.style.display = "none";
+            if (refImg) refImg.style.display = 'none';
+            videoEl.style.display = "block";
+            videoEl.classList.add("playing");
+
+            const clipSrc = getBattleClip(avatarId, resolved.move.id, resolved.outcome);
+            videoEl.src = clipSrc;
+
+            // Poster for avatars that have matching jpg (lich-queen, red-panda)
+            if (avatarId === 'lich-queen' || avatarId === 'red-panda') {
+                try {
+                    const basePoster = clipSrc.replace(/\.mp4$/, '.jpg');
+                    videoEl.poster = basePoster;
+                } catch(e){}
+            }
+            videoEl.playbackRate = 1.2; // faster cinematic pace as requested
+
+            let fellBack = false;
+            const cleanupVideo = () => {
+                videoEl.pause();
+                videoEl.src = '';
+                videoEl.style.display = 'none';
+                videoEl.classList.remove("playing");
+                // restore contextual: prefer avatar image (ref) if loaded, else emoji
+                const hasRef = !!(refImg && refImg.getAttribute('src'));
+                if (hasRef && refImg) { refImg.style.display = ''; if (emojiEl) emojiEl.style.display = 'none'; }
+                else { if (emojiEl) emojiEl.style.display = ''; if (refImg) refImg.style.display = 'none'; }
+            };
+
+            const onVideoEnd = () => {
+                if (fellBack) return;
+                videoEl.removeEventListener('ended', onVideoEnd);
+                videoEl.onerror = null;
+                cleanupVideo();
+                const victory = applyPlayerResult(resolved);
+                if (!victory) {
+                    // brief pause then enemy turn (plays along)
+                    setTimeout(doEnemyTurn, 380);
+                }
+            };
+
+            const doFallback = (reason) => {
+                if (fellBack) return;
+                fellBack = true;
+                console.warn('[Battle] Agency video fallback:', reason, 'for', avatarId, resolved.move.id, resolved.outcome);
+                cleanupVideo();
+                const rImg = document.getElementById('player-avatar-ref');
+                const eEl = document.getElementById("battle-emoji-player");
+                const hasR = !!(rImg && rImg.getAttribute('src'));
+                if (hasR && rImg) { rImg.style.display = ''; if (eEl) eEl.style.display = 'none'; }
+                else { if (eEl) eEl.style.display = ''; if (rImg) rImg.style.display = 'none'; }
+                const victory = applyPlayerResult(resolved);
+                if (!victory) setTimeout(doEnemyTurn, 220);
+            };
+
+            videoEl.addEventListener('ended', onVideoEnd, { once: true });
+            videoEl.onerror = () => doFallback('onerror (clip missing or load fail)');
+
+            videoEl.play().catch((e) => doFallback('play() rejected: ' + (e && e.message || e)));
+        }
+
+        // Execute a chosen player move (from choice buttons): resolve then play video live, results on ended.
+        function playerExecuteMove(moveId, isSpecial = false) {
+            const b = window.__activeBattle;
+            const logEl = document.getElementById("battle-log");
+            if (!logEl || !b || b.ended) return;
+            const actionBtns = document.querySelectorAll('#battle-actions .battle-move-btn');
+            actionBtns.forEach(btn => { btn.disabled = true; });
+
+            const activeAvatarId = (gameState && gameState.selectedAvatarId) || b.championAvatarId || 'fusion-panda';
+            const resolved = resolveBattleAction(activeAvatarId, moveId, isSpecial);
+
+            // Record immediately (for logs/replay even if video aborts)
+            recordAttackLog(b, b.playerName, resolved.move, resolved.outcome, resolved.dmg, true);
+
+            // Trigger live video play (on ended will show result + enemy)
+            playPlayerAgencyVideo(activeAvatarId, resolved);
+        }
+
+        // Execute BLOCK choice (defend stance). Shows shield overlay, no agency clip (pure defense), proceeds to enemy turn.
+        function playerExecuteBlock(element) {
+            const b = window.__activeBattle;
+            if (!b || b.ended) return;
+            const actionBtns = document.querySelectorAll('#battle-actions .battle-move-btn');
+            actionBtns.forEach(btn => { btn.disabled = true; });
+
+            b.playerIsBlocking = true;
+
+            const pCard = document.getElementById("battle-fighter-player");
+            if (pCard) {
+                let shield = pCard.querySelector('.battle-block-shield');
+                if (!shield) {
+                    shield = document.createElement('div');
+                    // Use strong visual for dedicated BLOCK choice
+                    shield.className = 'battle-block-shield battle-block-shield--strong';
+                    pCard.appendChild(shield);
+                }
+                // Auto fade the initial shield after a moment (re-added/enhanced + dramatic in enemy turn when hit while blocking)
+                setTimeout(() => { if (shield && shield.parentNode) shield.parentNode.removeChild(shield); }, 1250);
+            }
+
+            __appendBattleLogLine("text-sky-300", `${__escapeBattleText(b.playerName)} chooses to BLOCK — bracing with defensive stance.`);
+
+            // Short wind-up then enemy attacks (with mitigation + shield)
+            setTimeout(() => {
+                if (!b.ended) doEnemyTurn();
+            }, 380);
+        }
+
+        // ===== NEW FULLY TURN-BASED EXECUTE + CHOICE WIRING (redesign per spec) =====
+        // Uses gameState.selectedAvatarId -> full avatar (moves + tacticDeck)
+        // Initializes in __create + start with specialMeter:0 , playerCurHp, enemyCurHp, currentTurn:1, selected*:null , isPlayerTurn:true , playerName from avatar.
+        // Choice buttons: e.g. battle.selectedMove = move; battle.selectedTactic = tactic; (highlights)
+        // executePlayerTurn() called by EXECUTE TURN: handles block special, resolve (using other agent mechanics + RPS + speed + energyMult + special bonus), play video (player-action-video), detailed log, specialMeter += tactic.specialCharge, auto resolveEnemy (with __battleWait), HP, win/loss, reset selections, inc turn.
+        // Block: high mitigation + defensive clip (or fallback), treat as low/no dmg move, outcome block.
+        // Special meter bonus if special move chosen + meter high.
+        // Replay works on full enriched attackLog.
+
+        function updateBattleSpecialMeterDisplay() {
+            const b = window.__activeBattle;
+            const el = document.getElementById('battle-special-meter');
+            if (el && b) el.textContent = (b.specialMeter || 0);
+            // Also sync the new UI bar/val if present (dual meter support)
+            const valEl = document.getElementById('special-meter-val');
+            const barEl = document.getElementById('special-meter-bar');
+            if (b && valEl && barEl) {
+                const max = b.maxSpecialMeter || 10;
+                const cur = Math.max(0, Math.min(max, b.specialMeter || 0));
+                valEl.textContent = `${cur}/${max}`;
+                const pct = Math.round((cur / max) * 100);
+                barEl.style.width = pct + '%';
+                // AWESOME: special energized flash when meter fills (or hits high threshold)
+                const prev = parseFloat(barEl.dataset.lastPct || '0');
+                if (cur >= max || (cur >= Math.floor(max * 0.9) && cur > (prev / 100 * max))) {
+                    barEl.classList.add('energized');
+                    const meterWrap = barEl.parentElement;
+                    if (meterWrap) {
+                        meterWrap.classList.add('special-meter-energized');
+                        // brief badge
+                        let badge = meterWrap.querySelector('.special-energized-badge');
+                        if (!badge) {
+                            badge = document.createElement('div');
+                            badge.className = 'special-energized-badge';
+                            badge.textContent = 'ENERGIZED!';
+                            meterWrap.appendChild(badge);
+                        }
+                        setTimeout(() => {
+                            if (barEl) barEl.classList.remove('energized');
+                            if (meterWrap) meterWrap.classList.remove('special-meter-energized');
+                            if (badge && badge.parentNode) badge.parentNode.removeChild(badge);
+                        }, 1650);
+                    }
+                }
+                barEl.dataset.lastPct = pct;
+            }
+        }
+
+        // ===== LEGACY OLD IMPLEMENTATIONS (now delegated to the incredible new versions in the post-startDemoBattle section) =====
+        // These shims prevent redeclaration errors and keep any stray calls working. All real logic + UI is in the beautiful new fns (updateExecuteBtn, select* , executePlayerTurn using the exact template grids).
+        function clearBattleSelections() { if (typeof resetBattleSelections === 'function') resetBattleSelections(true); else { const b=window.__activeBattle; if(b){b.selectedAction=b.selectedMove=b.selectedTactic=null;} } }
+        function updateExecuteEnabledState() { if (typeof updateExecuteBtn === 'function') updateExecuteBtn(); }
+        function selectBattleMove(moveIdOrObj) { if (typeof window.selectBattleMove === 'function') return window.selectBattleMove(moveIdOrObj); /* fallback */ const b=window.__activeBattle; if(!b)return; const moves=(b.moves&&b.moves.length)?b.moves:getAvatarMoves(b.championAvatarId||'fusion-panda'); b.selectedMove = (typeof moveIdOrObj==='string' ? moves.find(m=>m.id===moveIdOrObj) : moveIdOrObj) || moveIdOrObj; if(typeof updateBattleSelectionsUI==='function')updateBattleSelectionsUI(); }
+        function selectBattleTactic(tacticIdOrObj) { if (typeof window.selectBattleTactic === 'function') return window.selectBattleTactic(tacticIdOrObj); const b=window.__activeBattle; if(!b)return; b.selectedTactic=(typeof tacticIdOrObj==='string'?(b.tacticDeck||[]).find(t=>t.id===tacticIdOrObj):tacticIdOrObj)||tacticIdOrObj; if(typeof updateBattleSelectionsUI==='function')updateBattleSelectionsUI(); }
+        function setBattleControlsEnabled(enabled) { if (typeof disableBattleUIForResolution === 'function') disableBattleUIForResolution(!enabled); }
+        function resetBattleSelections(alsoClearAction) { if (typeof window.resetBattleSelections === 'function') window.resetBattleSelections(!!alsoClearAction); }
+        async function executePlayerTurn() { if (typeof window.executePlayerTurn === 'function') return window.executePlayerTurn(); /* fallback toast */ showToast('Battle controls ready — use the EXECUTE button in arena.', 'info'); }
+
+        // (Legacy resolvePlayerTurnWithTactic / playPlayerAction... / old helpers remain below for any internal calls; modern execute uses the primary resolvePlayerTurn + playPlayerActionVideoForTurn.)
+
+        // Resolve incorporating tactic mechanics (RPS from other agent, speed, energyMult, special, block)
+        function resolvePlayerTurnWithTactic(battle, avatarId, move, tactic) {
+            const base = resolveBattleAction(avatarId, move.id, move.type === 'special');
+            let outcome = base.outcome;
+            let dmg = base.dmg;
+            let specialGain = tactic.specialCharge || 0;
+            let rpsNote = '';
+            let specialNote = '';
+
+            const rivalElem = getRivalElement(battle.enemyId);
+            const rpsMult = getRpsMultiplier(tactic.element || 'Fusion', rivalElem);
+            if (rpsMult > 1.05) rpsNote = 'RPS advantage';
+            else if (rpsMult < 0.95) rpsNote = 'RPS disadvantage';
+
+            if (tactic.category === 'block' || tactic.category === 'defense') {
+                // Block: no damage move, outcome always "block" or high chance, defensive clip
+                outcome = 'block';
+                dmg = Math.max(0, Math.floor(dmg * 0.18));
+                specialGain = Math.max(specialGain, 2);
+            } else {
+                // Apply tactic speedMod bias, energyMult, RPS
+                let adjustedDmg = Math.floor(dmg * (tactic.energyMult || 1) * rpsMult);
+                // speed affects outcome odds slightly (re-roll bias)
+                if ((tactic.speedMod || 0) > 0 && outcome === 'miss' && Math.random() < 0.4) {
+                    outcome = 'hit';
+                    adjustedDmg = Math.floor(adjustedDmg * 0.7);
+                }
+                if ((tactic.speedMod || 0) < 0 && outcome === 'hit' && Math.random() < 0.25) {
+                    outcome = 'block';
+                }
+                dmg = Math.max(0, adjustedDmg);
+
+                // Special meter bonus if special move + meter high
+                if (move.type === 'special' && (battle.specialMeter || 0) >= 5) {
+                    dmg = Math.floor(dmg * 1.28);
+                    specialNote = '+SPECIAL METER BONUS';
+                }
+            }
+
+            return {
+                move,
+                outcome,
+                damage: dmg,
+                specialGain,
+                rpsNote,
+                specialNote,
+                isBlockAction: (tactic.category === 'block' || tactic.category === 'defense')
+            };
+        }
+
+        // Play video for the player action (block uses *_block clip via outcome). Uses existing player video elem.
+        async function playPlayerActionVideoForTurn(avatarId, moveId, outcome, tactic) {
+            const videoEl = document.getElementById('player-action-video');
+            const emojiEl = document.getElementById('battle-emoji-player');
+            const overlay = document.getElementById('battle-resolving-overlay');
+            const pCard = document.getElementById('battle-fighter-player');
+
+            if (!videoEl) {
+                await __battleWait(1400);
+                return;
+            }
+
+            // Determine clip move for video: for block use a suitable move's *_block clip (defensive agency feel, keeps using existing arena clips)
+            let vidMoveId = moveId;
+            let vidOutcome = outcome;
+            if (!vidMoveId || vidMoveId === 'block' || outcome === 'block') {
+                vidOutcome = 'block';
+                const b = window.__activeBattle;
+                const moves = (b && (b.moves || getAvatarMoves(b.championAvatarId))) || [];
+                // Prefer a melee or first for visual "impact block"
+                const pref = moves.find(m => m.type === 'melee') || moves.find(m => m.id && m.id.includes('slam')) || moves[0];
+                vidMoveId = (pref && pref.id) || 'rift_slam';
+            }
+
+            const clipSrc = getBattleClip(avatarId, vidMoveId, vidOutcome);
+
+            if (overlay) overlay.classList.remove('hidden');
+            if (emojiEl) emojiEl.style.display = 'none';
+            if (pCard) pCard.classList.add('battle-anim-attack-left'); // subtle while playing
+
+            videoEl.style.display = 'block';
+            videoEl.src = clipSrc;
+            if (avatarId === 'lich-queen' || avatarId === 'red-panda') {
+                try { videoEl.poster = clipSrc.replace(/\.mp4$/, '.jpg'); } catch(e){}
+            }
+            videoEl.playbackRate = 1.15;
+
+            try {
+                await videoEl.play();
+                await new Promise(r => {
+                    const done = () => { videoEl.removeEventListener('ended', done); r(); };
+                    videoEl.addEventListener('ended', done, {once: true});
+                    setTimeout(r, 6200); // safety max
+                });
+            } catch(e) {
+                await __battleWait(1400);
+            }
+
+            videoEl.pause();
+            videoEl.style.display = 'none';
+            if (pCard) pCard.classList.remove('battle-anim-attack-left');
+            if (emojiEl) emojiEl.style.display = '';
+            if (overlay) overlay.classList.add('hidden');
+
+            await __battleWait(120);
+        }
+
+        // Auto enemy after player (uses existing doEnemyTurn base but integrates mitigation from selectedTactic, and __battleWait)
+        async function resolveEnemyTurnWithMitigation(battle, lastTactic) {
+            // set block flag for the existing enemy logic if defensive tactic
+            if (lastTactic && (lastTactic.category === 'block' || lastTactic.category === 'defense')) {
+                battle.playerIsBlocking = true;
+            }
+            // delegate to *enhanced* doEnemyTurn (full RPS from enemy tactic sim using rival element + player choice bonuses for enemy dmg mitigation + awesome receiving anims + block shield)
+            await __battleWait(120);
+            doEnemyTurn();
+            // the internal setTimeouts in doEnemyTurn drive the rest; give headroom for beam/shake/shield/floating dmg + logs
+            await __battleWait(920);
+        }
+
+        // Initialize / wire the choice buttons in #battle-actions for the new flow.
+        // Called from startDemoBattle after render.
+        function initBattleChoicesAndControls() {
+            const container = document.getElementById('battle-actions');
+            const b = window.__activeBattle;
+            if (!container || !b) return;
+
+            const avatar = b.playerAvatar || getBattleAvatar(b);
+            const moves = (avatar && avatar.moves) || getAvatarMoves(avatar.id);
+            const tactics = (avatar && avatar.tacticDeck) || getAvatarTacticDeck(avatar);
+
+            container.innerHTML = `
+                <div class="text-xs uppercase tracking-widest text-emerald-400/80 mb-1">CHOOSE MOVE</div>
+                <div id="battle-move-choices" class="grid grid-cols-2 sm:grid-cols-4 gap-2 mb-3"></div>
+
+                <div class="text-xs uppercase tracking-widest text-amber-400/80 mb-1">CHOOSE TACTIC <span class="normal-case text-[10px] text-gray-500">(use Block for high mitigation)</span></div>
+                <div id="battle-tactic-choices" class="grid grid-cols-2 sm:grid-cols-4 gap-2 mb-4"></div>
+
+                <div class="flex flex-wrap items-center justify-center gap-3">
+                    <button id="battle-execute-btn" disabled
+                        class="px-8 py-3 text-sm bg-emerald-600 hover:bg-emerald-500 disabled:bg-gray-700 disabled:text-gray-400 transition-colors rounded-2xl font-black flex items-center gap-x-2 min-w-[12rem] justify-center">
+                        <span>EXECUTE TURN</span> <i class="fas fa-play" aria-hidden="true"></i>
+                    </button>
+                    <button type="button" onclick="if (window.__activeBattle && window.__activeBattle.attackLog && window.__activeBattle.attackLog.length) { const av = (gameState && gameState.selectedAvatarId) || window.__activeBattle.championAvatarId || 'fusion-panda'; playAttackLogPlayback(window.__activeBattle.attackLog, av); } else { showToast('Fight a battle first!', 'info'); }"
+                        class="px-4 py-2.5 text-xs border border-cyan-400/70 text-cyan-300 hover:bg-cyan-500/10 rounded-2xl font-bold flex items-center gap-x-1.5">
+                        <span>REPLAY FULL LOG</span> <i class="fas fa-film"></i>
+                    </button>
+                </div>
+            `;
+
+            const mCont = document.getElementById('battle-move-choices');
+            if (mCont) {
+                mCont.innerHTML = '';
+                (moves || []).forEach(move => {
+                    const btn = document.createElement('button');
+                    btn.className = 'text-left p-2.5 rounded-2xl border border-gray-600 hover:border-emerald-400 bg-[#11151f] transition-all text-xs';
+                    btn.dataset.moveId = move.id;
+                    btn.innerHTML = `<div class="font-bold text-emerald-200">${__escapeBattleText(move.name)}</div><div class="text-[9px] text-gray-400 line-clamp-2">${__escapeBattleText(move.desc || '')}</div><div class="text-[8px] mt-0.5 opacity-70">${(move.type||'').toUpperCase()}</div>`;
+                    btn.onclick = () => selectBattleMove(move);
+                    mCont.appendChild(btn);
+                });
+            }
+
+            const tCont = document.getElementById('battle-tactic-choices');
+            if (tCont && tactics && tactics.length) {
+                tCont.innerHTML = '';
+                tactics.forEach(tac => {
+                    const isBlk = tac.category === 'block';
+                    const btn = document.createElement('button');
+                    btn.className = `text-left p-2 rounded-2xl border ${isBlk ? 'border-sky-400/70 hover:border-sky-400' : 'border-gray-600 hover:border-amber-400'} bg-[#11151f] transition-all text-xs`;
+                    btn.dataset.tacticId = tac.id;
+                    btn.innerHTML = `<div class="font-bold ${isBlk ? 'text-sky-300' : 'text-amber-200'}">${__escapeBattleText(tac.name)}${isBlk ? ' <span class="text-[8px] align-super px-1 bg-sky-500/30 rounded">BLOCK</span>' : ''}</div><div class="text-[9px] text-gray-400">${__escapeBattleText(tac.bonusDesc || tac.element)}</div>`;
+                    btn.onclick = () => selectBattleTactic(tac);
+                    tCont.appendChild(btn);
+                });
+            }
+
+            const execBtn = document.getElementById('battle-execute-btn');
+            if (execBtn) {
+                execBtn.onclick = () => { executePlayerTurn(); };
+            }
+
+            // initial state
+            clearBattleSelections();
+            updateBattleSpecialMeterDisplay();
+            updateExecuteEnabledState();
+        }
+
+        function renderAvatarDirector() {
+            const container = document.getElementById('avatar-director');
+            if (!container) return;
+            const av = getCurrentAvatar();
+            const lvl = getAvatarLevel(av.id);
+            const stage = getEquippedStage(av.id);
+            const path = getAvatarOutfitPath(av.id);
+            const bonus = getAvatarBonus(av.id);
+            const bonusText = `+${Math.round(bonus.powerMult * 100)}% power${bonus.critExtra > 0.01 ? ' • +' + Math.round(bonus.critExtra*100) + '% crit' : ''}${bonus.ritualExtra > 0.01 ? ' • ritual boost' : ''}`;
+
+            container.innerHTML = `
+                <img src="${path}" alt="${av.name}">
+                <div class="flex-1 min-w-0">
+                    <div class="flex items-center gap-x-2">
+                        <span class="font-bold" style="color:${av.color}">${av.name}</span>
+                        <span class="text-[10px] px-1.5 py-px rounded bg-white/5 text-gray-400">LVL ${lvl}</span>
+                        <span class="text-[10px] px-1.5 py-px rounded" style="background:${av.color}20; color:${av.color}">${getStageLabel(av.id, stage)}</span>
+                    </div>
+                    <div class="text-xs text-gray-400 mt-0.5 truncate">${av.title} • overseeing fusions</div>
+                    <div class="director-bonus mt-0.5">${bonusText}</div>
+                </div>
+                <div class="text-right">
+                    <div class="text-[10px] text-violet-400">MANAGE</div>
+                    <i class="fas fa-chevron-right text-violet-400"></i>
+                </div>
+            `;
+
+            // Also update the mini in upgrades section if present
+            const mini = document.getElementById('upgrades-avatar-mini');
+            if (mini) {
+                mini.innerHTML = `<span style="color:${av.color}">${av.name}</span> • LVL <span class="font-mono">${lvl}</span> • ${getStageLabel(av.id, stage)} <span class="text-emerald-400 font-mono">+${Math.round(bonus.powerMult * 100)}%</span>`;
+            }
+        }
+
+        function renderProfile() {
+            // Hero
+            const hero = document.getElementById('active-avatar-hero');
+            if (hero) {
+                const av = getCurrentAvatar();
+                const lvl = getAvatarLevel(av.id);
+                const stage = getEquippedStage(av.id);
+                const path = getAvatarOutfitPath(av.id);
+                const bonus = getAvatarBonus(av.id);
+                const nextThreshold = Object.values(av.levelThresholds).find(t => t > lvl) || (lvl + 5);
+
+                hero.innerHTML = `
+                    <div class="flex flex-col md:flex-row gap-5 items-start">
+                        <div class="flex-shrink-0">
+                            <img src="${path}" alt="${av.name}" class="avatar-portrait large rounded-2xl border border-white/10" style="max-width: 260px; width:100%">
+                            <div class="mt-2 flex gap-1.5">
+                                ${Object.keys(av.outfitStages).map(st => {
+                                    const isActive = st === stage;
+                                    const unlocked = lvl >= (av.levelThresholds[st] || 1);
+                                    return `<img src="assets/avatars/${av.outfitStages[st]}" class="outfit-thumb ${isActive ? 'active' : ''} ${!unlocked ? 'opacity-40' : ''}" onclick="previewOutfit('${av.id}', '${st}')" title="${getStageLabel(av.id, st)}${!unlocked ? ' (locked)' : ''}">`;
+                                }).join('')}
+                            </div>
+                        </div>
+                        <div class="flex-1 pt-1">
+                            <div class="flex items-center gap-x-3 flex-wrap">
+                                <span class="text-3xl font-black" style="color:${av.color}">${av.name}</span>
+                                <span class="px-3 py-1 text-xs rounded-full font-bold" style="background:${av.color}15; color:${av.color}">${av.title}</span>
+                                <span class="ml-auto text-xs px-2 py-1 bg-white/5 rounded">LEVEL <span class="font-mono text-lg align-middle">${lvl}</span></span>
+                            </div>
+                            <div class="mt-1 text-sm text-gray-400">${getStageLabel(av.id, stage)} — ${av.element} specialist</div>
+
+                            <div class="mt-3 text-sm leading-snug text-gray-200">${av.bio}</div>
+
+                            <div class="mt-3 text-xs">
+                                <span class="font-semibold text-gray-300">CURRENT BONUSES</span><br>
+                                ${av.bonuses.map(b => `• ${b}`).join('<br>')}
+                                <div class="mt-1 text-emerald-400 font-mono">Active power multiplier: +${Math.round(bonus.powerMult*100)}%</div>
+                            </div>
+
+                            <div class="mt-4 flex flex-wrap gap-2">
+                                <button onclick="developAvatar('${av.id}')" class="px-5 py-2 rounded-2xl bg-gradient-to-r from-violet-400 to-fuchsia-400 text-black text-sm font-bold flex items-center gap-x-2 hover:brightness-105 active:scale-[0.985]">
+                                    <i class="fas fa-arrow-up"></i>
+                                    <span>DEVELOP (LVL ${lvl} → ${lvl+1})</span>
+                                </button>
+                                <button onclick="navigateTo('upgrades')" class="px-4 py-2 rounded-2xl border border-white/20 text-xs hover:bg-white/5">OPEN UPGRADES</button>
+                            </div>
+                            <div class="text-[10px] text-gray-500 mt-2">Next outfit milestone at level ${nextThreshold}</div>
+                        </div>
+                    </div>
+                `;
+            }
+
+            // Grid of 3 choice cards
+            const grid = document.getElementById('avatar-grid');
+            if (!grid) return;
+            grid.innerHTML = '';
+
+            PLAYER_AVATARS.forEach(av => {
+                const lvl = getAvatarLevel(av.id);
+                const isActive = (gameState.selectedAvatarId === av.id);
+                const stage = getEquippedStage(av.id);
+                const path = getAvatarOutfitPath(av.id);
+
+                const card = document.createElement('div');
+                card.className = `avatar-card cyber-card rounded-3xl p-4 border ${isActive ? 'active border-emerald-400' : 'border-gray-700'} cursor-pointer flex flex-col`;
+                card.innerHTML = `
+                    <div class="relative">
+                        <img src="${path}" alt="${av.name}" class="avatar-portrait rounded-2xl mb-3">
+                        ${isActive ? `<div class="absolute top-2 right-2 px-2 py-0.5 text-[9px] font-bold bg-emerald-400 text-black rounded">ACTIVE</div>` : ''}
+                    </div>
+                    <div class="font-bold text-lg" style="color:${av.color}">${av.name}</div>
+                    <div class="text-xs -mt-0.5 mb-2" style="color:${av.color}80">${av.title}</div>
+                    <div class="flex items-center gap-x-2 text-xs mb-2">
+                        <span class="px-2 py-px bg-white/5 rounded">LVL ${lvl}</span>
+                        <span class="px-2 py-px rounded" style="background:${av.color}20; color:${av.color}">${getStageLabel(av.id, stage)}</span>
+                    </div>
+                    <div class="text-xs text-gray-400 line-clamp-3 flex-1">${av.bio.substring(0, 140)}...</div>
+                    <div class="mt-3 flex gap-2">
+                        <button onclick="event.stopImmediatePropagation(); selectAvatar('${av.id}');" class="flex-1 text-xs py-1.5 rounded-xl border ${isActive ? 'border-emerald-400 text-emerald-400' : 'border-gray-600 hover:border-gray-400'} font-medium">SELECT</button>
+                        <button onclick="event.stopImmediatePropagation(); developAvatar('${av.id}');" class="flex-1 text-xs py-1.5 rounded-xl bg-white/5 hover:bg-white/10 font-medium">DEVELOP</button>
+                    </div>
+                `;
+                card.onclick = () => selectAvatar(av.id);
+                grid.appendChild(card);
+            });
+        }
+
+        function previewOutfit(avatarId, stage) {
+            // Temporarily swap hero image for preview (does not persist)
+            const hero = document.getElementById('active-avatar-hero');
+            if (!hero) return;
+            const av = PLAYER_AVATARS.find(a => a.id === avatarId);
+            if (!av) return;
+            const img = hero.querySelector('img.avatar-portrait');
+            if (img) {
+                img.src = `assets/avatars/${av.outfitStages[stage]}`;
+                img.style.outline = '2px dashed #64748b';
+                setTimeout(() => { if (img) img.style.outline = ''; }, 1400);
+            }
+            // also toast
+            showToast(`Preview: ${getStageLabel(avatarId, stage)}`, 'info');
+        }
+
+        function selectAvatar(avatarId) {
+            if (!PLAYER_AVATARS.some(a => a.id === avatarId)) return;
+            gameState.selectedAvatarId = avatarId;
+            saveGameState();
+            renderProfile();
+            renderAvatarDirector();
+            updateDashboard();
+            showToast(`Now developing with ${getCurrentAvatar().name}`, 'success');
+        }
+
+        function developAvatar(avatarId) {
+            if (!gameState.avatarLevels) gameState.avatarLevels = { ...DEFAULT_AVATAR_LEVELS };
+            const current = getAvatarLevel(avatarId);
+            gameState.avatarLevels[avatarId] = current + 1;
+            saveGameState();
+
+            const av = PLAYER_AVATARS.find(a => a.id === avatarId);
+            const newStage = getEquippedStage(avatarId);
+            const label = getStageLabel(avatarId, newStage);
+
+            renderProfile();
+            renderAvatarDirector();
+            updateDashboard();
+
+            showToast(`${av.name} developed to LVL ${current + 1}! ${newStage !== getEquippedStage(avatarId) ? '' : 'New outfit equipped: ' + label}`, 'success');
         }
 
         function performFusion() {
@@ -1059,7 +2406,20 @@
             }
             
             // Apply synergy
-            const finalPower = Math.floor(basePower + bonus + (synergyBonus * 0.8));
+            let finalPower = Math.floor(basePower + bonus + (synergyBonus * 0.8));
+
+            // === PLAYER AVATAR BONUS (integrated into fusion card / lab system) ===
+            const avatarBonus = getAvatarBonus(gameState.selectedAvatarId || 'fusion-panda');
+            finalPower = Math.floor(finalPower * (1 + avatarBonus.powerMult));
+
+            // Panda fusion card bonuses (RPS evolved) also leverage the result power
+            const pA = pandaA.bonus || getDefaultBonus(pandaA.type);
+            const pB = pandaB.bonus || getDefaultBonus(pandaB.type);
+            const bonusAvg = (pA.attack + pA.defense + pB.attack + pB.defense) / 40;
+            finalPower = Math.floor(finalPower * (0.92 + bonusAvg * 0.16));
+            if (avatarBonus.critExtra > 0 && Math.random() < avatarBonus.critExtra) {
+                // avatar granted extra crit
+            }
             
             // === RARITY & CRITICAL SYSTEM ===
             let rarity = 'epic';
@@ -1087,6 +2447,13 @@
                 isCritical = true;
                 rarity = (rarity === 'rare') ? 'epic' : (rarity === 'epic' ? 'legendary' : 'mythic');
             }
+
+            // Lich Queen ritual bias (integrated upgrade to card / fusion system)
+            const ab = getAvatarBonus(gameState.selectedAvatarId || 'fusion-panda');
+            if ((gameState.selectedAvatarId === 'lich-queen') && mode === 'ritual' && Math.random() < (0.22 + ab.ritualExtra)) {
+                if (rarity === 'epic') rarity = 'legendary';
+                else if (rarity === 'legendary') rarity = 'mythic';
+            }
             
             // === EMOJI & TYPE ===
             let emoji = '🐼';
@@ -1113,8 +2480,15 @@
                 desc: `Advanced ${mode} fusion of ${pandaA.name} and ${pandaB.name}. ${synergyName ? 'Powerful ' + synergyName + ' synergy detected!' : ''} ${isCritical ? 'CRITICAL FUSION!' : ''}`,
                 acquired: new Date().toISOString().split('T')[0],
                 isCritical: isCritical,
-                fusionMode: mode
+                fusionMode: mode,
+                mentorAvatar: gameState.selectedAvatarId || 'fusion-panda'
             };
+
+            // === EVOLVE BONUSES via elemental RPS (winning element leverages attrs for merge evolution)
+            // simple add/sub or exponential based on interaction "distance"
+            const bA = pandaA.bonus || getDefaultBonus(pandaA.type);
+            const bB = pandaB.bonus || getDefaultBonus(pandaB.type);
+            newPanda.bonus = computeFusionBonus(bA, bB, newType);
             
             // Add to collection
             const exists = userPandas.some(p => p.name === newPanda.name);
@@ -1127,6 +2501,87 @@
             window.lastFusionWasCritical = isCritical;
             
             return newPanda;
+        }
+
+        // ========== FUSION LAB CARD BONUSES + ELEMENTAL RPS EVOLUTION ==========
+        // Bonuses rendered on every fusable card (base + user pandas in lab/collection)
+        // On fusion: simple add/sub or exponential based on elemental RPS interaction (>3 elements, "distance" for expo)
+        // Winning element leverages the attributes for the merged card's evolution
+        const ELEMENT_RPS = {
+            'Fire':      { beats: ['Ice', 'Dark'], mult: 1.25, expo: 1.15 },
+            'Ice':       { beats: ['Electric', 'Crystal'], mult: 1.25, expo: 1.12 },
+            'Electric':  { beats: ['Crystal', 'Arcane'], mult: 1.22, expo: 1.18 },
+            'Dark':      { beats: ['Light', 'Arcane'], mult: 1.28, expo: 1.1 },
+            'Light':     { beats: ['Dark', 'Fire'], mult: 1.22, expo: 1.14 },
+            'Arcane':    { beats: ['Light', 'Ice'], mult: 1.25, expo: 1.16 },
+            'Crystal':   { beats: ['Electric', 'Dark'], mult: 1.2, expo: 1.2 },
+            'Fusion':    { beats: ['Balanced'], mult: 1.1, expo: 1.25 }, // versatile, high expo potential
+            'Balanced':  { beats: [], mult: 1.0, expo: 1.0 },
+            'Hybrid':    { beats: [], mult: 1.05, expo: 1.05 },
+            'Steam':     { beats: ['Fire'], mult: 1.15, expo: 1.1 },
+            'Eclipse':   { beats: ['Light'], mult: 1.18, expo: 1.12 },
+            'Plasma':    { beats: ['Crystal'], mult: 1.2, expo: 1.15 },
+            'Inferno Mystic': { beats: ['Arcane'], mult: 1.22, expo: 1.13 }
+        };
+
+        function getElementInteraction(e1, e2) {
+            if (!e1 || !e2) return { winner: e1 || e2 || 'Balanced', mult: 1.0, expo: 1.0 };
+            if (e1 === e2) return { winner: e1, mult: 1.05, expo: 1.02 };
+            const i1 = ELEMENT_RPS[e1] || {};
+            const i2 = ELEMENT_RPS[e2] || {};
+            if (i1.beats && i1.beats.includes(e2)) return { winner: e1, mult: i1.mult || 1.25, expo: i1.expo || 1.15 };
+            if (i2.beats && i2.beats.includes(e1)) return { winner: e2, mult: i2.mult || 1.25, expo: i2.expo || 1.15 };
+            // "Distance" for non-direct: slight advantage + expo room
+            return { winner: e1, mult: 1.08, expo: 1.08 };
+        }
+
+        function getDefaultBonus(type) {
+            const base = { attack: 10, defense: 10, speed: 8, special: 6, energy: 1.0, element: type || 'Balanced' };
+            if (type === 'Fire') return { ...base, attack: 20, defense: 7, speed: 11, special: 7, energy: 1.15, element: 'Fire' };
+            if (type === 'Ice') return { ...base, attack: 11, defense: 15, speed: 6, special: 10, energy: 1.05, element: 'Ice' };
+            if (type === 'Dark') return { ...base, attack: 14, defense: 9, speed: 13, special: 12, energy: 0.95, element: 'Dark' };
+            if (type === 'Electric') return { ...base, attack: 13, defense: 8, speed: 16, special: 8, energy: 1.1, element: 'Electric' };
+            if (type === 'Light') return { ...base, attack: 16, defense: 12, speed: 10, special: 14, energy: 1.2, element: 'Light' };
+            if (type === 'Arcane') return { ...base, attack: 15, defense: 11, speed: 9, special: 15, energy: 1.08, element: 'Arcane' };
+            if (type === 'Crystal') return { ...base, attack: 12, defense: 17, speed: 5, special: 9, energy: 0.9, element: 'Crystal' };
+            return base;
+        }
+
+        function computeFusionBonus(b1, b2, resultElement) {
+            const inter = getElementInteraction(b1.element || 'Balanced', b2.element || 'Balanced');
+            const winElem = inter.winner;
+            const m = inter.mult;
+            const expo = inter.expo;
+
+            // Leverage winning element for evolution of merging cards
+            // Simple add for base, exponential on favored attrs or based on winElem "distance"/type
+            let newB = {
+                attack: Math.floor( (b1.attack || 10) + (b2.attack || 10) * (winElem === 'Fire' || winElem === 'Light' ? m : 1) ),
+                defense: Math.floor( (b1.defense || 10) + (b2.defense || 10) * (winElem === 'Ice' || winElem === 'Crystal' ? m : 1) ),
+                speed: Math.floor( (b1.speed || 8) + (b2.speed || 8) * (winElem === 'Electric' ? m : 1) ),
+                special: Math.floor( (b1.special || 6) + (b2.special || 6) * (winElem === 'Arcane' || winElem === 'Dark' ? m : 1) ),
+                energy: Math.max(0.6, Math.min(1.8, ((b1.energy || 1) + (b2.energy || 1)) / 2 * (winElem === 'Fusion' ? expo : 1) )),
+                element: resultElement || winElem
+            };
+
+            // Exponential action for "distance" (non-direct beats) or specific winning elem
+            if (winElem === 'Fusion' || (b1.element !== winElem && b2.element !== winElem)) {
+                // expo boost on all for versatile winners or distant matchups
+                newB.attack = Math.floor(newB.attack * expo);
+                newB.defense = Math.floor(newB.defense * expo);
+                newB.speed = Math.floor(newB.speed * expo);
+                newB.special = Math.floor(newB.special * expo);
+                newB.energy = Math.max(0.6, Math.min(1.8, newB.energy * expo));
+            }
+
+            // Simple add/sub for some cases, or based on mode synergy (already in power)
+            // If same element, pure add with small bonus
+            if (b1.element === b2.element) {
+                newB.attack += 2;
+                newB.defense += 2;
+            }
+
+            return newB;
         }
 
         function showFusionResult(newPanda) {
@@ -1164,6 +2619,15 @@
                 }, 4200);
             } else {
                 emojiEl.style.filter = '';
+            }
+
+            // Show evolved bonuses on fusion result (RPS leveraged from parents)
+            if (newPanda.bonus) {
+                const b = newPanda.bonus;
+                const bonusEl = document.getElementById('fusion-result-bonus');
+                if (bonusEl) {
+                    bonusEl.innerHTML = `+${bonus}% <span class="text-[10px] block text-gray-400">EVOLVED: ⚔️${b.attack} 🛡️${b.defense} ⚡${b.speed} ✨${b.special} 🔋${b.energy.toFixed(1)}x (${b.element})</span>`;
+                }
             }
             
             // Confetti explosion (more intense on critical/ritual)
@@ -1464,6 +2928,9 @@
         function __syncBattleHpBars() {
             const b = window.__activeBattle;
             if (!b) return;
+            // keep aliases in sync per init spec
+            if (typeof b.playerCurHp === 'number') b.playerCurHp = b.playerCur;
+            if (typeof b.enemyCurHp === 'number') b.enemyCurHp = b.enemyCur;
             const pBar = document.getElementById("battle-hp-player-bar");
             const pText = document.getElementById("battle-hp-player-text");
             const eBar = document.getElementById("battle-hp-enemy-bar");
@@ -1474,6 +2941,8 @@
             if (eBar) eBar.style.width = ePct + "%";
             if (pText) pText.textContent = `${Math.max(0, b.playerCur)} / ${b.playerMax} HP`;
             if (eText) eText.textContent = `${Math.max(0, b.enemyCur)} / ${b.enemyMax} HP`;
+            // also refresh special meter display if present
+            updateBattleSpecialMeterDisplay();
         }
 
         function __appendBattleLogLine(className, html) {
@@ -1492,6 +2961,317 @@
             return div.innerHTML;
         }
 
+        // ========== BATTLE AVATAR INTEGRATION HELPERS (cohesive with PLAYER_AVATARS + tacticDeck + RPS for rivals) ==========
+        function getBattleAvatar(battleOrId) {
+            let id = null;
+            if (typeof battleOrId === 'string') {
+                id = battleOrId;
+            } else if (battleOrId && typeof battleOrId === 'object') {
+                id = battleOrId.championAvatarId || battleOrId.playerAvatarId ||
+                     (battleOrId.championAvatar && battleOrId.championAvatar.id) ||
+                     (battleOrId.championAvatarId);
+            }
+            if (!id) id = (gameState && gameState.selectedAvatarId) || 'fusion-panda';
+            return PLAYER_AVATARS.find(a => a.id === id) || PLAYER_AVATARS[0];
+        }
+        function getAvatarTacticDeck(avatarOrBattle) {
+            const av = getBattleAvatar(avatarOrBattle);
+            return (av && av.tacticDeck) || [];
+        }
+        function getAvatarSpecialThreshold(avatarOrBattle) {
+            const av = getBattleAvatar(avatarOrBattle);
+            return (av && typeof av.specialThreshold === 'number') ? av.specialThreshold : 10;
+        }
+        function getRpsMultiplier(playerElement, enemyElement) {
+            // Delegated to full elementAdvantage impl (0.7-1.5 range) for consistency with task spec
+            return getElementMultiplier(playerElement, enemyElement);
+        }
+        function getRivalElement(rivalId) {
+            if (!rivalId || typeof BATTLE_RIVALS === 'undefined') return 'Neutral';
+            const r = BATTLE_RIVALS.find(x => x.id === rivalId);
+            return (r && r.element) || 'Neutral';
+        }
+
+        // Runtime battle state snapshot helper. Focus is runtime (in-memory __activeBattle + attackLog for replays).
+        // Suggestion for "save": call this on battle end and stash to gameState.lastBattleSnapshot then saveGameState();
+        // or window.__battleHistory.unshift(capture...); persist via localStorage extension if wanted for logs across reloads.
+        function captureBattleState() {
+            const b = window.__activeBattle;
+            if (!b) return null;
+            const av = b.championAvatar || getBattleAvatar(b);
+            return {
+                avatarId: (av && av.id) || b.championAvatarId,
+                avatarName: av ? av.name : null,
+                enemy: b.enemyName,
+                enemyElement: b.enemyElement,
+                round: b.round,
+                playerHp: b.playerCur,
+                enemyHp: b.enemyCur,
+                specialMeter: b.specialMeter,
+                logLength: (b.attackLog || []).length,
+                ended: !!b.ended,
+                victory: b.enemyCur <= 0 && !b.playerCur <= 0,
+                ts: Date.now()
+            };
+        }
+
+        function normalizeElement(el) {
+            if (!el) return 'Neutral';
+            let s = String(el).split('/')[0].trim().toLowerCase();
+            const map = { fusion: 'Fusion', fire: 'Fire', ice: 'Ice', electric: 'Electric', dark: 'Dark', arcane: 'Arcane', crystal: 'Crystal', light: 'Light' };
+            if (map[s]) return map[s];
+            return s.charAt(0).toUpperCase() + s.slice(1);
+        }
+
+        // elementAdvantage / getElementMultiplier per task spec: returns 0.7-1.5 multiplier for RPS feel
+        // Balanced with some cycles + Fusion versatility + counters. Fun depth without extremes.
+        function getElementMultiplier(playerElem, enemyElem) {
+            const p = normalizeElement(playerElem);
+            const e = normalizeElement(enemyElem);
+            if (p === e || p === 'Neutral' || e === 'Neutral') return 1.05;
+
+            // Advantage matrix (player elem -> enemy elem : mult). Clamped results 0.7-1.5
+            const matrix = {
+                'Fire':      { 'Ice': 1.45, 'Crystal': 1.35, 'Dark': 1.18, 'Light': 0.82 },
+                'Ice':       { 'Electric': 1.42, 'Fire': 0.78, 'Arcane': 1.22 },
+                'Electric':  { 'Crystal': 1.38, 'Ice': 0.85, 'Fusion': 0.9, 'Dark': 1.25 },
+                'Dark':      { 'Light': 1.48, 'Arcane': 1.28, 'Fusion': 0.82, 'Crystal': 1.15 },
+                'Arcane':    { 'Dark': 1.32, 'Crystal': 1.22, 'Light': 0.78, 'Fire': 1.12 },
+                'Crystal':   { 'Electric': 0.72, 'Dark': 1.18, 'Fire': 0.8, 'Light': 1.15 },
+                'Light':     { 'Dark': 1.48, 'Arcane': 1.2, 'Fusion': 0.85 },
+                'Fusion':    { 'Fire': 1.22, 'Ice': 1.2, 'Electric': 1.18, 'Dark': 1.25, 'Light': 1.15, 'Crystal': 1.12, 'Arcane': 1.1 }
+            };
+            const row = matrix[p] || {};
+            let mult = row[e];
+            if (typeof mult !== 'number') mult = 1.0;
+            // slight variance for fun but keep deterministic range
+            return Math.max(0.7, Math.min(1.5, mult));
+        }
+
+        // Core: applies category (attack/defense/block match + counters), elemental (RPS), speed (hit/init), energyMult (output/taken), returns bonuses
+        function applyTacticBonuses(tactic, enemyTactic, isAttacking, baseDamage, baseHitChance = 0.76, isDefending = false) {
+            let dmgMult = 1.0;
+            let hitChance = baseHitChance;
+            let mitMult = 1.0; // <1 reduces incoming dmg
+            let charge = 0;
+            let energy = 1.0;
+            if (!tactic) return { dmgMult: 1.0, hitChance, mitMult: 1.0, charge: 2, energy: 1.0, note: '' };
+
+            charge = tactic.specialCharge || 2;
+            energy = tactic.energyMult || 1.0;
+            const cat = tactic.category || 'attack';
+            const speed = tactic.speedMod || 0;
+
+            // Speed affects hit chance / initiative feel
+            hitChance = Math.max(0.38, Math.min(0.96, baseHitChance + (speed * 0.065)));
+
+            // Category match bonus
+            let catNote = '';
+            if (isAttacking && cat === 'attack') {
+                dmgMult *= 1.16;
+                catNote = 'ATK+';
+            } else if (isDefending && (cat === 'block' || cat === 'defense')) {
+                mitMult *= 0.82;
+                catNote = 'DEF+';
+            }
+
+            // RPS category counters (attack > defense, block > attack, defense > block)
+            if (enemyTactic) {
+                const ecat = enemyTactic.category || 'attack';
+                if (cat === 'block' && ecat === 'attack') {
+                    mitMult *= 0.62; // strong counter block
+                    catNote += ' BLK-COUNTER';
+                } else if (cat === 'attack' && ecat === 'defense') {
+                    dmgMult *= 1.22;
+                    catNote += ' ATK-COUNTER';
+                } else if (cat === 'defense' && ecat === 'block') {
+                    hitChance = Math.min(0.95, hitChance + 0.12);
+                    catNote += ' DEF-COUNTER';
+                }
+            }
+
+            // Pure energy: for attack boost output (or mitigation context)
+            if (isAttacking) {
+                dmgMult *= energy;
+            } else if (isDefending) {
+                mitMult *= energy;
+            }
+
+            let finalDmg = Math.max(1, Math.floor(baseDamage * dmgMult));
+            return { dmgMult, hitChance, mitMult, charge, energy, note: catNote, finalDmg };
+        }
+
+        // Main resolver for player choice of move (or block) + tactic. Updates battle, returns rich result for log/video/outcome.
+        function resolvePlayerTurn(battle, selectedMove, selectedTactic, isBlock = false) {
+            if (!battle || battle.ended) return { outcome: 'none', damage: 0 };
+            const avatarElem = battle.playerElement || 'Fusion';
+            const tacticElem = selectedTactic ? selectedTactic.element : avatarElem;
+            const enemyElem = battle.enemyElement || 'Dark';
+
+            const elemMult = getElementMultiplier(tacticElem, enemyElem);
+
+            // Energize meter every player turn (per spec)
+            const charge = selectedTactic ? (selectedTactic.specialCharge || 2) : 2;
+            battle.specialMeter = Math.min(battle.maxSpecialMeter || 12, (battle.specialMeter || 0) + charge);
+
+            let baseDmg = 0;
+            let moveName = 'BLOCK';
+            let moveId = 'block';
+            let isSpecialMove = false;
+            if (!isBlock && selectedMove) {
+                baseDmg = battle.playerBaseDamage || 18;
+                moveName = selectedMove.name;
+                moveId = selectedMove.id;
+                if (selectedMove.type === 'special') {
+                    baseDmg = Math.floor(baseDmg * 1.32);
+                    isSpecialMove = true;
+                }
+            }
+
+            // Apply tactic bonuses (no enemyTactic for player-first; enemy counters can be in other flow)
+            const tRes = applyTacticBonuses(selectedTactic, null, !isBlock, baseDmg, 0.76, isBlock);
+
+            let dmg = tRes.finalDmg || Math.floor(baseDmg * tRes.dmgMult);
+            let hitChance = tRes.hitChance;
+
+            // Special meter threshold spend (gated; use practical 8 to match UI/action + resolve bonuses)
+            const threshold = 8;
+            let specialTriggered = false;
+            if (isSpecialMove && (battle.specialMeter || 0) >= threshold) {
+                dmg = Math.floor(dmg * 1.32);
+                battle.specialMeter = Math.max(0, (battle.specialMeter || 0) - threshold);
+                specialTriggered = true;
+            }
+
+            // Final elem
+            dmg = Math.floor(dmg * elemMult);
+
+            // Outcome: block or roll hit using speed-adjusted chance
+            let outcome = 'hit';
+            let actualDmg = dmg;
+            if (isBlock) {
+                outcome = 'block';
+                actualDmg = 0; // block itself doesn't dmg enemy; mitigation vs enemy later
+            } else {
+                if (Math.random() > hitChance) {
+                    outcome = 'miss';
+                    actualDmg = 0;
+                } else {
+                    actualDmg = Math.max(1, Math.floor(actualDmg * (0.88 + Math.random() * 0.24)));
+                }
+            }
+
+            // Record + enrich
+            const moveObj = isBlock ? { id: 'block', name: 'Block' } : (selectedMove || { id: moveId, name: moveName });
+            recordAttackLog(battle, battle.playerName || 'You', moveObj, outcome, actualDmg, true);
+            const last = battle.attackLog && battle.attackLog[battle.attackLog.length - 1];
+            if (last) {
+                last.elemMult = elemMult;
+                last.tactic = selectedTactic ? selectedTactic.name : null;
+                last.speedMod = selectedTactic ? selectedTactic.speedMod : 0;
+                last.specialMeter = battle.specialMeter;
+                last.specialTriggered = specialTriggered;
+                last.category = selectedTactic ? selectedTactic.category : null;
+            }
+
+            if (actualDmg > 0) {
+                battle.enemyCur = Math.max(0, battle.enemyCur - actualDmg);
+            }
+
+            return {
+                outcome, damage: actualDmg, elemMult, tacticName: selectedTactic ? selectedTactic.name : '',
+                hitChance, specialTriggered, isBlock, moveName, moveId, note: tRes.note || ''
+            };
+        }
+
+        // Enemy simple AI: random move + FIXED RIVAL ELEMENT (for RPS) + small tactic simulation for fairness (biased by rival elem + difficulty).
+        // Uses playerTacticForMitigation (from last player choice) to apply energyMult / category counters / block bonuses correctly to enemy dmg.
+        function resolveEnemyTurn(battle, playerTacticForMitigation = null) {
+            if (!battle || battle.ended) return { outcome: 'none', damage: 0 };
+
+            const enemyElem = battle.enemyElement || 'Dark';
+            const playerElem = battle.playerElement || 'Fusion';
+            const diff = (battle.enemyDifficulty || '').toLowerCase();
+
+            // Enhanced small enemy 'tactic' simulation (for fairness / RPS depth)
+            // Uses rival's native element for authentic RPS vs player tactic/element. Categories randomized but difficulty-weighted.
+            const catRoll = Math.random();
+            let eCat = 'attack';
+            let eSpeed = 1;
+            let eEnergy = 1.06;
+            if (diff.includes('hard')) { // hard rivals lean aggressive or tricky
+                eCat = (catRoll < 0.55) ? 'attack' : (catRoll < 0.78 ? 'defense' : 'block');
+                eSpeed = (eCat === 'attack') ? 2 : (eCat === 'block' ? -1 : 1);
+            } else {
+                eCat = (catRoll < 0.5) ? 'attack' : (catRoll < 0.78 ? 'defense' : 'block');
+                eSpeed = (eCat === 'attack') ? 1 : (eCat === 'block' ? 0 : 2);
+            }
+            const enemyTactic = {
+                id: 'e_' + eCat,
+                category: eCat,
+                element: enemyElem,   // KEY: rival's assigned element drives RPS against player's tactic/element
+                speedMod: eSpeed,
+                specialCharge: (eCat === 'defense' ? 3 : (eCat === 'block' ? 1 : 2)),
+                energyMult: (eCat === 'attack' ? 1.09 : (eCat === 'block' ? 0.76 : 0.98))
+            };
+
+            // Random enemy attack flavor (for log/video compat)
+            const enemyNames = ['Crush', 'Roar', 'Pulse', 'Tether', 'Slam', 'Bite'];
+            const eName = enemyNames[Math.floor(Math.random() * enemyNames.length)];
+            const enemyMove = { id: 'enemy-' + eName.toLowerCase(), name: eName };
+
+            let baseDmg = battle.enemyBaseDamage || 11;
+            const tRes = applyTacticBonuses(enemyTactic, playerTacticForMitigation, true, baseDmg, 0.71, false);
+
+            let dmg = tRes.finalDmg || Math.floor(baseDmg * tRes.dmgMult);
+            const elemMult = getElementMultiplier(enemyTactic.element, playerElem);  // RPS: enemy elem vs player
+            dmg = Math.floor(dmg * elemMult);
+
+            // Player mitigation from last chosen tactic (block/defense) — fully uses bonuses from player choice
+            let mitApplied = 1.0;
+            let mitNote = '';
+            if (playerTacticForMitigation && (playerTacticForMitigation.category === 'block' || playerTacticForMitigation.category === 'defense')) {
+                const mitRes = applyTacticBonuses(playerTacticForMitigation, enemyTactic, false, dmg, 1, true);
+                dmg = Math.floor(dmg * mitRes.mitMult);
+                mitApplied = mitRes.mitMult;
+                mitNote = mitRes.note || '';
+            }
+
+            // Roll enemy hit (using its speed)
+            let outcome = 'hit';
+            let actualDmg = Math.max(0, Math.floor(dmg * (0.9 + Math.random() * 0.2)));
+            if (Math.random() > tRes.hitChance) {
+                outcome = 'miss';
+                actualDmg = 0;
+            }
+
+            recordAttackLog(battle, battle.enemyName, enemyMove, outcome, actualDmg, false);
+            const last = battle.attackLog[battle.attackLog.length - 1];
+            if (last) {
+                last.elemMult = elemMult;
+                last.tactic = enemyTactic.category + ' (AI ' + enemyElem + ')';
+                last.mitApplied = mitApplied;
+                last.mitNote = mitNote;
+            }
+
+            if (actualDmg > 0) {
+                battle.playerCur = Math.max(0, battle.playerCur - actualDmg);
+            }
+
+            return { outcome, damage: actualDmg, elemMult, tacticName: enemyTactic.category, mitApplied, enemyElement: enemyElem };
+        }
+
+        // Helper for enemy AI in choice paths
+        function pickRandomEnemyTacticForRps(battle) {
+            const e = battle.enemyElement || 'Dark';
+            const pool = [
+                { category: 'attack', element: e, speedMod: 1, specialCharge: 2, energyMult: 1.08 },
+                { category: 'block', element: 'Crystal', speedMod: 0, specialCharge: 1, energyMult: 0.78 },
+                { category: 'defense', element: 'Electric', speedMod: 2, specialCharge: 3, energyMult: 1.0 }
+            ];
+            return pool[Math.floor(Math.random() * pool.length)];
+        }
+
         // === GROK-TALK BATTLE ARENA RIVALS ROSTER (themed opponents from new assets) ===
         // Inspired by the Fusion Panda cutscene prototype. Named rivals with art, lore snippets, and difficulty.
         // Each has dedicated victory (panda defeats foe) + failure (foe defeats panda) 10s cinematics.
@@ -1503,6 +3283,7 @@
                 desc: 'Relentless pack-hunter robot wolf. Exposes its core after the first barrage.',
                 mechanic: 'Aggressive opener. Drops defense after initial lunges.',
                 difficulty: 'INTRO',
+                element: 'Dark',  // RPS: strong vs Light, weak to some Arcane/Fusion
                 art: 'assets/arena/opponent-void-howler.jpg',
                 video: 'assets/arena/fusion-panda-victory-void-howler.mp4',
                 keyart: 'assets/arena/opponent-void-howler.jpg',
@@ -1515,6 +3296,7 @@
                 desc: 'Lithe prismatic lynx that bends light and logits. Creates afterimage decoys.',
                 mechanic: 'High mobility + split attacks. Punishes panic fusion.',
                 difficulty: 'MEDIUM',
+                element: 'Electric',  // RPS advantage vs Crystal/Ice
                 art: 'assets/arena/opponent-chroma-lynx.jpg',
                 video: 'assets/arena/fusion-panda-victory-chroma-lynx.mp4',
                 keyart: 'assets/arena/opponent-chroma-lynx.jpg',
@@ -1527,6 +3309,7 @@
                 desc: 'Towering construct of deprecated weights and dead training runs.',
                 mechanic: 'Heavy tank. Precision joint shots bypass armor.',
                 difficulty: 'HARD',
+                element: 'Crystal',
                 art: 'assets/arena/opponent-prompt-colossus.jpg',
                 video: 'assets/arena/fusion-panda-victory-prompt-colossus.mp4',
                 keyart: 'assets/arena/opponent-prompt-colossus.jpg',
@@ -1539,6 +3322,7 @@
                 desc: 'A blur of white fur and bad RNG. Constantly forces risky rolls.',
                 mechanic: 'Evasive + backlash. Your big moves can backfire.',
                 difficulty: 'HARD',
+                element: 'Arcane',  // RPS: beats Dark, punished by Light/Electric
                 art: 'assets/arena/opponent-entropy-hare.jpg',
                 video: 'assets/arena/fusion-panda-victory-entropy-hare.mp4',
                 keyart: 'assets/arena/opponent-entropy-hare.jpg',
@@ -1551,6 +3335,7 @@
                 desc: 'Shifting probability fox that spawns fractal decoys and warps RNG. Hard to pin down the real one.',
                 mechanic: 'Decoy swarms + misdirection. Punishes targeting the wrong clone.',
                 difficulty: 'MEDIUM',
+                element: 'Fusion',
                 art: 'assets/arena/opponent-fractal-fox.jpg',
                 video: 'assets/arena/fusion-panda-victory-fractal-fox.mp4',
                 keyart: 'assets/arena/opponent-fractal-fox.jpg',
@@ -1563,6 +3348,7 @@
                 desc: 'Massive armored ursine with nexus core that pulls foes in with data tethers and crushes.',
                 mechanic: 'Pull + slam. Resists burst; wears you down with repeated tethers.',
                 difficulty: 'HARD',
+                element: 'Ice',  // Diversified for RPS variety (counters Electric/Arcane, great vs Fusion/Fire player tactics)
                 art: 'assets/arena/opponent-nexus-bear.jpg',
                 video: 'assets/arena/fusion-panda-victory-nexus-bear.mp4',
                 keyart: 'assets/arena/opponent-nexus-bear.jpg',
@@ -1572,8 +3358,14 @@
 
         function __createBattleMatch(selectedChampion = null, specificRivalId = null) {
             const playerLevel = Math.max(0, Number(gameState.level) || 0);
+            const activeAvatarId = (gameState && gameState.selectedAvatarId) || 'fusion-panda';
+            const avatar = PLAYER_AVATARS.find(a => a.id === activeAvatarId) || PLAYER_AVATARS[0];
+            // Use avatar primarily for battle (not collection pandas). Derive power from avatar level + player level for scaling.
+            const avatarLvl = getAvatarLevel(activeAvatarId);
+            const battlePower = Math.max(12, 10 + (avatarLvl * 4) + (playerLevel * 2));
+            // fallback panda only for legacy power if absolutely needed (rare)
             const champion = selectedChampion || [...userPandas].sort((a, b) => (b.power || 0) - (a.power || 0))[0] || basePandas[0];
-            const championPower = Math.max(1, Number(champion.power) || 1);
+            const championPower = battlePower; // prioritize avatar-derived
             const enemyLevelFloor = Math.max(0, playerLevel - 1);
             const enemyLevelCeil = Math.max(enemyLevelFloor, playerLevel + (playerLevel < 3 ? 0 : 1));
             const enemyLevel = enemyLevelFloor + Math.floor(Math.random() * (enemyLevelCeil - enemyLevelFloor + 1));
@@ -1590,17 +3382,22 @@
                 rival = BATTLE_RIVALS[Math.floor(Math.random() * BATTLE_RIVALS.length)];
             }
 
+            // Full avatar = PLAYER_AVATARS.find loaded here; store full + use moves/tacticDeck/color/element/specialThreshold
             return {
                 playerCur: playerMax,
                 playerMax,
                 enemyCur: enemyMax,
                 enemyMax,
+                // aliases per spec
+                playerCurHp: playerMax,
+                enemyCurHp: enemyMax,
                 round: 1,
                 ended: false,
-                playerName: champion.name || "Classic Panda",
-                playerEmoji: champion.emoji || "🐼",
+                // playerName from avatar for display (not panda)
+                playerName: avatar.name,
+                playerEmoji: '🐼', // legacy only; primary display uses portrait from getAvatarOutfitPath
                 playerLevel,
-                playerPower: championPower,
+                playerPower: battlePower,
                 enemyId: rival.id,
                 enemyName: rival.name,
                 enemySubtitle: rival.subtitle,
@@ -1612,67 +3409,101 @@
                 enemyFailureVideo: rival.failureVideo || null,
                 enemyKeyart: rival.keyart || rival.art,
                 enemyLevel,
-                enemyPower: Math.max(6, Math.floor(championPower * (playerLevel < 3 ? 0.72 : 0.9))),
+                enemyPower: Math.max(6, Math.floor(battlePower * (playerLevel < 3 ? 0.72 : 0.9))),
+                enemyElement: rival.element || 'Neutral',
                 playerBaseDamage,
                 enemyBaseDamage,
+                // Full avatar object per task (moves, tacticDeck, color, specialThreshold etc)
+                championAvatar: avatar,
+                championAvatarId: activeAvatarId,
+                playerAvatar: avatar,
+                playerColor: avatar.color,
+                playerElement: avatar.element,
+                tacticDeck: avatar.tacticDeck || [],
+                moves: avatar.moves || [],
+                specialThreshold: getAvatarSpecialThreshold(avatar),
+                // Battle state per spec
+                specialMeter: 0,
+                currentTurn: 1,
+                selectedMove: null,
+                selectedTactic: null,
+                isPlayerTurn: true,
+                attackLog: [],
+                // compat for older fields
+                selectedAction: null,
+                maxSpecialMeter: avatar.specialThreshold || 10
             };
         }
 
         function renderBattleChampionSelect() {
             const arenaSection = document.getElementById("section-arena");
-            const champions = userPandas.length > 0 ? userPandas : [{ ...basePandas[0], id: "starter-preview" }];
-            const sortedChampions = champions
-                .map((p, index) => ({ panda: p, index }))
-                .sort((a, b) => (b.panda.power || 0) - (a.panda.power || 0));
+            // Primary: use the 3 PLAYER_AVATARS (Fusion, Red, Lich) with base portraits, not collection pandas.
+            // Selecting sets gameState.selectedAvatarId (cohesive with profile/avatars) and battle.championAvatar.
+            const avatars = PLAYER_AVATARS;
+            const currentId = (gameState && gameState.selectedAvatarId) || 'fusion-panda';
             arenaSection.innerHTML = `
                 <div class="max-w-5xl mx-auto">
                     <div class="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4 mb-6">
                         <div>
                             <div class="uppercase tracking-[3px] text-xs text-red-400">ARENA LOADOUT</div>
-                            <div class="text-4xl font-black">Choose Your Panda</div>
-                            <p class="text-sm text-gray-400 mt-2 max-w-xl">Pick a champion from your collection. HP, damage, and the opponent matchup scale from this panda and your current level.</p>
+                            <div class="text-4xl font-black">Choose Your Champion Avatar</div>
+                            <p class="text-sm text-gray-400 mt-2 max-w-xl">Pick from the 3 player avatars. Battle uses full avatar (moves + tacticDeck + color + element + specialThreshold). Portraits from assets/avatars/ .</p>
                         </div>
                         <button type="button" onclick="navigateTo('collection')" class="px-5 py-2 text-xs border border-gray-700 rounded-2xl hover:bg-[#1a1f2e] transition-colors">
                             VIEW COLLECTION
                         </button>
                     </div>
 
-                    <!-- NEXT BATTLE quick start (random champion + random rival) -->
+                    <!-- NEXT BATTLE quick start (uses currently selected avatar + random rival) -->
                     <div class="mb-6">
                         <button onclick="startQuickMatch()" 
                                 class="w-full sm:w-auto mx-auto flex items-center justify-center gap-x-3 px-8 py-3.5 rounded-3xl font-bold text-base border-2 border-red-400 bg-red-500/10 hover:bg-red-500/20 text-red-300 transition-all active:scale-[0.985]">
                             <i class="fas fa-bolt"></i>
-                            <span>NEXT BATTLE — Random Champion + Random Rival</span>
+                            <span>NEXT BATTLE — Current Avatar + Random Rival</span>
                             <i class="fas fa-swords"></i>
                         </button>
-                        <p class="text-center text-[10px] text-gray-500 mt-1">Quick themed battle with one of the signature Grok-powered rivals</p>
+                        <p class="text-center text-[10px] text-gray-500 mt-1">Quick themed battle. Current avatar (${(PLAYER_AVATARS.find(a=>a.id===currentId)||{}).name || 'Fusion Panda'}) drives agency clips, RPS tactics &amp; portrait.</p>
                     </div>
 
                     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4" id="battle-champion-grid">
-                        ${sortedChampions.map(({ panda, index }) => {
-                            const rarityColor = getRarityColor(panda.rarity || "common");
+                        ${avatars.map(av => {
+                            const isSel = (av.id === currentId);
+                            const imgSrc = (typeof getAvatarOutfitPath === 'function') ? getAvatarOutfitPath(av.id) : `assets/avatars/${av.outfitStages.adept || av.outfitStages.initiate || 'fusion-panda-base.jpg'}`;
                             return `
                                 <button type="button"
-                                        onclick="startDemoBattle(${index})"
-                                        class="cyber-card text-left rounded-3xl p-5 border border-gray-700 hover:border-red-400 transition-all group">
+                                        onclick="selectBattleChampion('${av.id}')"
+                                        class="cyber-card text-left rounded-3xl p-5 border transition-all group ${isSel ? 'border-red-400 ring-2 ring-red-400/40' : 'border-gray-700 hover:border-red-400'}">
                                     <div class="flex items-start gap-4">
-                                        <div class="text-6xl transition-transform group-hover:scale-110" aria-hidden="true">${panda.emoji || "🐼"}</div>
+                                        <img src="${imgSrc}" alt="${av.name}" class="w-16 h-16 md:w-20 md:h-20 rounded-2xl object-cover flex-shrink-0 border-2" style="border-color:${av.color};box-shadow:0 0 0 3px rgba(0,0,0,0.2)" />
                                         <div class="min-w-0 flex-1">
-                                            <div class="font-black text-xl truncate">${__escapeBattleText(panda.name || "Unknown Panda")}</div>
+                                            <div class="font-black text-xl truncate" style="color:${av.color}">${__escapeBattleText(av.name)}</div>
+                                            <div class="text-xs text-gray-400">${__escapeBattleText(av.title || '')} • ${__escapeBattleText(av.element || '')}</div>
                                             <div class="flex flex-wrap gap-2 mt-2 text-[10px] font-bold">
-                                                <span class="px-2.5 py-1 rounded-full" style="background:${rarityColor}25;color:${rarityColor}">${__escapeBattleText((panda.rarity || "common").toUpperCase())}</span>
-                                                <span class="px-2.5 py-1 rounded-full bg-emerald-400/10 text-emerald-300">${Number(panda.power) || 1} PWR</span>
+                                                <span class="px-2 py-0.5 rounded-full text-[9px]" style="background:${av.color}20;color:${av.color}">AVATAR</span>
+                                                <span class="px-2 py-0.5 rounded-full bg-emerald-400/10 text-emerald-300 text-[9px]">THRESH ${av.specialThreshold || 10}</span>
                                             </div>
-                                            <div class="text-xs text-gray-400 mt-3 line-clamp-2">${__escapeBattleText(panda.desc || "Ready for battle.")}</div>
-                                            <div class="mt-4 text-xs text-red-300 font-mono">SELECT CHAMPION →</div>
+                                            <div class="text-xs text-gray-400 mt-2 line-clamp-2">${__escapeBattleText((av.bio || '').slice(0,90))}${av.bio && av.bio.length>90?'…':''}</div>
+                                            <div class="mt-3 text-xs font-mono ${isSel ? 'text-red-300' : 'text-red-300/70'}">${isSel ? '★ CURRENT CHAMPION' : 'SELECT AS CHAMPION →'}</div>
                                         </div>
                                     </div>
                                 </button>
                             `;
                         }).join("")}
                     </div>
+                    <div class="mt-4 text-center">
+                        <button onclick="startDemoBattle()" class="px-6 py-2 text-sm rounded-2xl border border-gray-700 hover:bg-[#1a1f2e]">FIGHT WITH CURRENT AVATAR</button>
+                    </div>
                 </div>
             `;
+        }
+
+        function selectBattleChampion(avatarId) {
+            if (!avatarId || !PLAYER_AVATARS.some(a => a.id === avatarId)) return;
+            gameState.selectedAvatarId = avatarId;
+            saveGameState();
+            // Update UI highlight by re-render (or could toggle class but re-render is simple + cohesive)
+            // Then immediately start battle using this as champion (sets battle.championAvatar via create)
+            startDemoBattle(null);
         }
 
         function renderBattleRivals() {
@@ -1726,7 +3557,7 @@
                     </div>
                     
                     <h2 class="text-4xl font-black mb-3">Battle Arena</h2>
-                    <p class="text-xl text-gray-400 max-w-md mx-auto">Real-time demo battles with Grok-powered victory and defeat cinematics. Defeat rivals like the Void Howler (or get defeated) and claim (or lose) Fusion Panda glory.</p>
+                    <p class="text-xl text-gray-400 max-w-md mx-auto">Real-time demo battles powered by dedicated avatar agencies (Fusion Panda, Red Panda, Lich Queen). Each attack move produces hit/miss/block clips. Full attack logs can be replayed by stringing the exact agency-generated 6s videos together for accurate battle flow.</p>
                     
                     <div class="mt-10 inline-flex items-center gap-x-2 px-6 py-3 bg-[#1a1f2e] rounded-3xl text-sm border border-gray-700">
                         <div class="flex -space-x-2">
@@ -1755,35 +3586,41 @@
                         <i class="fas fa-users"></i>
                         <span>VIEW RIVALS ROSTER</span>
                     </button>
+
+                    <div class="mt-4">
+                        <button onclick="const av = (gameState && gameState.selectedAvatarId) || 'fusion-panda'; const sample = (av==='red-panda' ? (window.SAMPLE_REDPANDA || []) : (av==='lich-queen' ? SAMPLE_LICH_QUEEN_BATTLE_LOG_1 : (window.SAMPLE_FUSION || []))); if (!sample.length) { /* fallback use a simple one */ playAttackLogPlayback([{turn:1,moveId:'fusion_beam',moveName:'Fusion Beam',outcome:'hit',damage:18,isPlayer:true},{turn:2,moveId:'rift_slam',moveName:'Rift Slam',outcome:'hit',damage:22,isPlayer:true}], av); } else { playAttackLogPlayback(sample, av); }" class="text-xs px-3 py-1.5 rounded-xl border border-cyan-400/60 text-cyan-300 hover:bg-cyan-900/20">DEMO: Play sample agency replay for current avatar</button>
+                    </div>
                 </div>
             `;
         }
 
         function startQuickMatch() {
-            // Pick random champion from collection (or starter)
-            const available = userPandas.length > 0 ? userPandas : [{ ...basePandas[0], id: "starter-preview" }];
-            const champ = available[Math.floor(Math.random() * available.length)];
-            let champIndex = userPandas.indexOf(champ);
-            if (champIndex < 0) {
-                // starter preview case - use 0 which will fallback inside
-                champIndex = 0;
-            }
-
-            // Pick random rival
+            // Quick match uses current selected avatar (from PLAYER_AVATARS) primarily; no collection panda needed
             const rival = BATTLE_RIVALS[Math.floor(Math.random() * BATTLE_RIVALS.length)];
-
-            // Start directly with pre-chosen rival (themed like prototype NEW MATCH)
-            startDemoBattle(champIndex, rival.id);
+            startDemoBattle(null, rival.id);
         }
 
-        function startDemoBattle(championIndex = 0, specificRivalId = null) {
+        function startDemoBattle(championIndexOrNull = null, specificRivalId = null) {
             const arenaSection = document.getElementById("section-arena");
-            const selectedChampion = userPandas[championIndex] || userPandas[0] || basePandas[0];
-            const battle = __createBattleMatch(selectedChampion, specificRivalId);
+            // championIndex ignored; battle uses avatar from gameState.selectedAvatarId via __create + getBattleAvatar
+            const battle = __createBattleMatch(null, specificRivalId);
             window.__activeBattle = battle;
-            console.log('Started battle vs:', battle.enemyName, 'video will be:', battle.enemyVideo, 'failureVideo will be:', battle.enemyFailureVideo);
+            // Ensure full avatar loaded (already done in create, but set explicit)
+            if (!battle.championAvatar) {
+                battle.championAvatar = getBattleAvatar(battle);
+            }
+            battle.championAvatarId = battle.championAvatar.id;
+            console.log('Started battle vs:', battle.enemyName, 'video will be:', battle.enemyVideo, 'failureVideo will be:', battle.enemyFailureVideo, 'using avatar agency:', battle.championAvatarId, 'avatar:', battle.championAvatar.name);
             const safePlayerName = __escapeBattleText(battle.playerName);
             const safeEnemyName = __escapeBattleText(battle.enemyName);
+
+            // Prepare avatar data for dynamic choice UI (moves + tacticDeck) inside the template
+            const activeAvatarId = battle.championAvatarId || (gameState && gameState.selectedAvatarId) || 'fusion-panda';
+            const avatarForUI = PLAYER_AVATARS.find(a => a.id === activeAvatarId) || PLAYER_AVATARS[0];
+            const moveList = getAvatarMoves(activeAvatarId);
+            const tacticList = getAvatarTactics(activeAvatarId);
+            const avatarColor = battle.playerColor || avatarForUI.color || '#22d3ee';
+
             arenaSection.innerHTML = `
                 <div class="max-w-4xl mx-auto">
                     <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-6">
@@ -1798,14 +3635,22 @@
                     
                     <div id="battle-stage" class="battle-stage p-4 md:p-6 mb-6" role="img" aria-label="Battle arena, two fighters, animated attacks">
                     <div class="grid grid-cols-1 md:grid-cols-7 gap-3 md:gap-2 items-stretch min-h-[280px]">
-                        <div id="battle-fighter-player" class="battle-fighter md:col-span-3 cyber-card rounded-3xl p-4 md:p-6 text-center border border-emerald-500/50">
+                        <div id="battle-fighter-player" class="battle-fighter md:col-span-3 cyber-card rounded-3xl p-4 md:p-6 text-center border border-emerald-500/50 relative">
                             <div class="battle-anim-flash battle-anim-flash--emerald pointer-events-none" id="battle-flash-player" aria-hidden="true"></div>
                             <div class="text-xs mb-1 text-emerald-400">YOUR CHAMPION</div>
-                            <div class="text-6xl sm:text-8xl mb-2 min-h-[5rem] flex items-center justify-center" aria-hidden="true">
-                                <span class="battle-fighter__emoji" id="battle-emoji-player">${battle.playerEmoji}</span>
+                            <div class="relative mb-2 min-h-[5rem] flex items-center justify-center" aria-hidden="true" id="player-fighter-visual">
+                                <!-- Use base portrait from assets/avatars/ (via get) or agency reference; primary over emoji per spec. Video for action clips. -->
+                                ${ (function(){ 
+                                    const av = battle.championAvatar || PLAYER_AVATARS.find(a=>a.id=== (battle.championAvatarId||'fusion-panda')) || PLAYER_AVATARS[0];
+                                    const portrait = (typeof getAvatarOutfitPath==='function' ? getAvatarOutfitPath(av.id) : `assets/avatars/${av.outfitStages ? (av.outfitStages.adept||av.outfitStages.initiate) : 'fusion-panda-base.jpg'}`);
+                                    const col = battle.playerColor || av.color || '#22d3ee';
+                                    return `<img src="${portrait}" alt="${av.name}" class="max-h-28 md:max-h-32 w-auto rounded-2xl object-cover shadow-lg border-2" style="border-color:${col}; max-width:78%;" />`;
+                                })() }
+                                <span class="battle-fighter__emoji text-6xl sm:text-8xl hidden" id="battle-emoji-player">${battle.playerEmoji}</span>
+                                <video id="player-action-video" class="w-full h-auto max-h-40 rounded-xl absolute inset-0 hidden" muted playsinline></video>
                             </div>
-                            <div class="font-black text-lg md:text-2xl">${safePlayerName}</div>
-                            <div class="text-xs sm:text-sm text-emerald-400/90 mb-3">LVL ${battle.playerLevel} · ${battle.playerPower} PWR</div>
+                            <div class="font-black text-lg md:text-2xl" style="color:${battle.playerColor || '#22d3ee'}">${safePlayerName}</div>
+                            <div class="text-xs sm:text-sm text-emerald-400/90 mb-3">LVL ${battle.playerLevel} · ${battle.playerPower} PWR <span class="text-[9px] opacity-70">(${ (battle.championAvatar ? battle.championAvatar.element : '') })</span></div>
                             <div class="mt-1 h-2.5 bg-gray-800/90 rounded-full overflow-hidden">
                                 <div id="battle-hp-player-bar" class="h-2.5 bg-emerald-400 rounded-full transition-[width] duration-500 ease-out" style="width:100%"></div>
                             </div>
@@ -1826,12 +3671,14 @@
                         <div id="battle-fighter-enemy" class="battle-fighter md:col-span-3 cyber-card rounded-3xl p-4 md:p-6 text-center border border-red-500/50 overflow-hidden">
                             <div class="battle-anim-flash battle-anim-flash--red pointer-events-none" id="battle-flash-enemy" aria-hidden="true"></div>
                             <div class="text-xs mb-1 text-red-400">RIVAL</div>
-                            <div class="mb-2 min-h-[5rem] flex items-center justify-center relative" aria-hidden="true" style="background: radial-gradient(circle at 50% 40%, rgba(0,0,0,0.1), transparent);">
+                            <div id="enemy-fighter-visual" class="mb-2 min-h-[5rem] flex items-center justify-center relative" aria-hidden="true" style="background: radial-gradient(circle at 50% 40%, rgba(0,0,0,0.1), transparent);">
                                 ${battle.enemyArt ? `
                                     <img src="${battle.enemyArt}" alt="${safeEnemyName}" class="max-h-28 md:max-h-32 w-auto rounded-2xl object-cover shadow-lg border border-white/10" style="max-width: 70%;"/>
                                 ` : `
                                     <span class="battle-fighter__emoji text-6xl sm:text-8xl" id="battle-emoji-enemy">${battle.enemyEmoji}</span>
                                 `}
+                                <!-- Reserved space for <video> agency clips on enemy side (play via future play logic) -->
+                                <video id="enemy-action-video" class="hidden absolute inset-0 w-full h-full object-contain rounded-2xl" muted playsinline></video>
                             </div>
                             <div class="font-black text-lg md:text-2xl">${safeEnemyName}</div>
                             ${battle.enemySubtitle ? `<div class="text-[10px] text-red-300/80 -mt-0.5 mb-1">${__escapeBattleText(battle.enemySubtitle)}</div>` : ''}
@@ -1852,190 +3699,570 @@
                             <div class="font-mono text-emerald-500/90 text-[10px]">◇ ANIMATED</div>
                         </div>
                         <div class="space-y-1.5 text-xs font-mono bg-black/50 p-3 rounded-2xl max-h-36 overflow-y-auto" id="battle-log">
-                            <div class="text-gray-500">A level-matched foe enters range. Choose Attack or Special — moves play on the stage above.</div>
+                            <div class="text-gray-500">Select an ACTION + TACTIC CARD, then hit EXECUTE TURN. Results drive avatar agency video playback.</div>
                         </div>
                     </div>
                     
-                    <div class="flex flex-col sm:flex-row flex-wrap justify-center gap-2 sm:gap-3 mt-6">
-                        <button type="button" id="battle-attack-btn" onclick="void simulateBattleAttack(this, false)" class="w-full sm:w-auto min-w-[10rem] px-6 sm:px-8 py-3 text-sm bg-red-600 hover:bg-red-500 transition-colors rounded-2xl font-bold flex items-center justify-center gap-x-2">
-                            <span>ATTACK</span> <i class="fas fa-fist-raised" aria-hidden="true"></i>
-                        </button>
-                        <button type="button" id="battle-special-btn" onclick="void simulateBattleAttack(this, true)" class="w-full sm:w-auto min-w-[10rem] px-6 sm:px-8 py-3 text-sm border border-fuchsia-400 text-fuchsia-300 hover:bg-fuchsia-500/20 transition-all rounded-2xl font-bold flex items-center justify-center gap-x-2">
-                            <span>SPECIAL</span> <i class="fas fa-magic" aria-hidden="true"></i>
-                        </button>
+                    <!-- INCREDIBLE BATTLE CONTROLS: Beautiful functional grids for Action (3 big buttons), Move selector (4 cards w/ type+desc), Tactic deck (4 cards w/ badge+stats+desc), big EXECUTE (selection gated), Special meter, RESOLVING overlay during video, avatar accent color, neon selected glow, mobile grids, cyber-card integration, rich tooltips + hovers. -->
+                    <div id="battle-controls" class="mt-5 cyber-card rounded-3xl p-4 md:p-5 border border-white/10 relative" style="--accent:${avatarColor};">
+                        <!-- Special Meter bar (0-10) -->
+                        <div class="mb-4">
+                            <div class="flex items-center justify-between mb-1 px-0.5">
+                                <div class="uppercase tracking-[1.5px] text-[10px] font-mono flex items-center gap-1.5" style="color:#c026ff">
+                                    <i class="fas fa-bolt"></i> SPECIAL METER
+                                </div>
+                                <div id="special-meter-val" class="font-mono text-xs text-fuchsia-300 tabular-nums">0/10</div>
+                            </div>
+                            <div class="h-3 bg-[#11151f] rounded-full overflow-hidden border border-white/10">
+                                <div id="special-meter-bar" class="h-3 bg-gradient-to-r from-fuchsia-500 via-violet-500 to-pink-500 transition-[width] duration-300" style="width:0%"></div>
+                            </div>
+                            <div class="text-[9px] text-gray-500 mt-0.5 px-0.5">Tactics charge it. Special gated at 8+ meter (spends on use for bonus dmg + RPS depth).</div>
+                        </div>
+
+                        <!-- CHOOSE ACTION: 3 BIG buttons Attack/Block/Special (Special disabled until meter high) -->
+                        <div class="mb-4">
+                            <div class="uppercase tracking-[1.5px] text-xs font-mono mb-2 px-0.5" style="color:var(--accent)">CHOOSE ACTION</div>
+                            <div class="grid grid-cols-3 gap-2 sm:gap-3">
+                                <button id="action-attack" type="button" onclick="selectBattleAction('attack')" class="battle-action-btn text-emerald-300 border-emerald-500/30 hover:border-emerald-400 active:scale-[0.985] py-3 text-sm" title="Attack: Select one of your 4 signature moves to strike the rival.">
+                                    <i class="fas fa-fist-raised"></i> <span class="font-extrabold tracking-[0.5px]">ATTACK</span>
+                                </button>
+                                <button id="action-block" type="button" onclick="selectBattleAction('block')" class="battle-action-btn text-sky-300 border-sky-500/30 hover:border-sky-400 active:scale-[0.985] py-3 text-sm" title="Block: Raise defenses. High incoming mitigation this turn. No move pick needed.">
+                                    <i class="fas fa-shield-alt"></i> <span class="font-extrabold tracking-[0.5px]">BLOCK</span>
+                                </button>
+                                <button id="action-special" type="button" onclick="selectBattleAction('special')" class="battle-action-btn text-fuchsia-300 border-fuchsia-500/30 hover:border-fuchsia-400 active:scale-[0.985] py-3 text-sm" title="Special: Unleash powered version of a chosen move. Requires 8+ meter. Spends on EXECUTE for extra damage + full resolve bonuses.">
+                                    <i class="fas fa-magic"></i> <span class="font-extrabold tracking-[0.5px]">SPECIAL</span>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- MOVE SELECTOR: 4 cards from avatar.moves, clickable, shows type (melee/ranged/special), desc. Neon selected glow. Tooltips. -->
+                        <div id="move-selector-area" class="mb-4">
+                            <div class="uppercase tracking-[1.5px] text-xs font-mono text-cyan-400 mb-1.5 px-0.5">MOVE SELECTOR — 4 SIGNATURE MOVES</div>
+                            <div class="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                                ${moveList.map(m => `
+                                    <button id="move-${m.id}" type="button" onclick="selectBattleMove('${m.id}')" class="move-card cyber-card border-gray-700 text-left p-2.5 flex flex-col hover:border-cyan-400/60 active:scale-[0.985]" title="${__escapeBattleText(m.name)} (${m.type.toUpperCase()})\n${__escapeBattleText(m.desc)}">
+                                        <div class="flex items-start justify-between gap-2">
+                                            <div class="font-extrabold text-[13px] leading-tight tracking-[-0.1px] pr-1">${__escapeBattleText(m.name)}</div>
+                                            <span class="move-type ${m.type} flex-shrink-0">${m.type}</span>
+                                        </div>
+                                        <div class="text-[10px] text-gray-400 mt-1 leading-snug line-clamp-2 flex-1">${__escapeBattleText(m.desc)}</div>
+                                        <div class="text-[8px] text-gray-500 mt-1 opacity-70">Click to select</div>
+                                    </button>
+                                `).join('')}
+                            </div>
+                        </div>
+
+                        <!-- TACTIC DECK: 4 cards from tacticDeck, shows category badge, element, SPD, CHG, energyMult, bonusDesc. Incredible hovers, neon select, full tooltips. -->
+                        <div class="mb-4">
+                            <div class="uppercase tracking-[1.5px] text-xs font-mono text-amber-400 mb-1.5 px-0.5">TACTIC DECK — CHOOSE 1 CARD</div>
+                            <div class="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                                ${tacticList.map(t => `
+                                    <button id="tactic-${t.id}" type="button" onclick="selectBattleTactic('${t.id}')" class="tactic-card cyber-card border-gray-700 text-left p-2.5 flex flex-col hover:border-amber-400/70 active:scale-[0.985]" title="Category: ${t.category} • Element: ${t.element}\nSPD ${t.speedMod >= 0 ? '+' : ''}${t.speedMod} • +${t.specialCharge} CHG • ×${t.energyMult} energy\n${__escapeBattleText(t.bonusDesc)}">
+                                        <div class="flex items-center justify-between gap-1 mb-0.5">
+                                            <div class="font-extrabold text-[12.5px] leading-none">${__escapeBattleText(t.name)}</div>
+                                            <span class="cat-badge ${t.category} flex-shrink-0">${t.category}</span>
+                                        </div>
+                                        <div class="flex items-center gap-1 mb-1">
+                                            <span class="text-[9px] px-1.5 py-px rounded bg-white/5 text-gray-300">${__escapeBattleText(t.element)}</span>
+                                        </div>
+                                        <div class="text-[9.5px] font-mono text-gray-300 flex flex-wrap gap-x-2 gap-y-0.5">
+                                            <span>SPD${t.speedMod>=0?'+':''}${t.speedMod}</span>
+                                            <span>+${t.specialCharge}CHG</span>
+                                            <span>×${t.energyMult}</span>
+                                        </div>
+                                        <div class="text-[9px] leading-snug text-emerald-300/80 mt-1 pt-0.5 border-t border-white/10">${__escapeBattleText(t.bonusDesc)}</div>
+                                    </button>
+                                `).join('')}
+                            </div>
+                        </div>
+
+                        <!-- EXECUTE big button (enabled ONLY on valid selections: action+move or block + tactic). Avatar accent neon when ready. -->
+                        <div class="flex flex-col sm:flex-row items-stretch gap-2 mt-1">
+                            <button id="battle-execute-btn" type="button" onclick="executePlayerTurn()" disabled
+                                class="execute-turn-btn flex-1 bg-gray-800 border border-gray-700 text-gray-500 font-black uppercase tracking-[2.5px] flex items-center justify-center gap-x-2 py-3 disabled:opacity-60 rounded-2xl">
+                                <i class="fas fa-play-circle text-lg"></i>
+                                <span>EXECUTE TURN</span>
+                            </button>
+                            <button onclick="clearBattleSelections()" class="px-4 text-xs border border-white/20 hover:bg-white/5 rounded-2xl text-gray-400 flex-shrink-0 active:bg-white/10">CLEAR</button>
+                            <button type="button" onclick="if (window.__activeBattle && window.__activeBattle.attackLog && window.__activeBattle.attackLog.length) { const av = (gameState && gameState.selectedAvatarId) || window.__activeBattle.championAvatarId || 'fusion-panda'; playAttackLogPlayback(window.__activeBattle.attackLog, av); } else { showToast('Fight a battle first to generate an attack log!', 'info'); }" class="px-3.5 text-xs border border-cyan-400/70 text-cyan-300 rounded-2xl hover:bg-cyan-500/10 flex items-center gap-x-1 flex-shrink-0 active:bg-cyan-500/20">
+                                <i class="fas fa-film"></i> <span class="hidden sm:inline">REPLAY</span>
+                            </button>
+                        </div>
+
+                        <!-- RESOLVING... overlay: shown + disables all during video playback. Per-turn reset after full round. -->
+                        <div id="battle-resolving-overlay" class="hidden absolute inset-0 z-[30] bg-[#0a0c14]/95 backdrop-blur rounded-3xl flex items-center justify-center pointer-events-auto" style="border:1px solid rgba(255,255,255,0.06)">
+                            <div class="text-center px-4">
+                                <div class="uppercase tracking-[3.5px] text-amber-400 text-xs font-mono mb-1">AVATAR AGENCY</div>
+                                <div class="font-black text-white text-2xl sm:text-3xl tracking-[-1.2px]">RESOLVING...</div>
+                                <div class="mt-2 text-[10px] text-gray-400">Cinematic playing • Controls locked until round complete</div>
+                            </div>
+                        </div>
                     </div>
+
+                    <div class="text-[10px] text-center text-gray-500 mt-1.5">Action → Move (or Block) → Tactic → EXECUTE. Neon glow on selections. Uses your avatar's color. Fully mobile responsive grids.</div>
                 </div>
             `;
             __syncBattleHpBars();
+
+            // Ensure base state for new turn-based flow (uses battle from outer scope in startDemoBattle)
+            if (typeof battle !== 'undefined' && battle) {
+                battle.specialMeter = (typeof battle.specialMeter === 'number') ? battle.specialMeter : 0;
+                battle.selectedMove = battle.selectedMove || null;
+                battle.selectedTactic = battle.selectedTactic || null;
+                battle.selectedAction = battle.selectedAction || null;
+            }
+            // Wire beautiful new controls (no more legacy initBattleChoicesAndControls which targeted removed #battle-actions)
+            try {
+                updateSpecialMeterUI();
+                updateBattleSelectionsUI();
+                // Exec state + special gate already handled inside updateBattleSelectionsUI + selectBattleAction
+                const specialBtn = document.getElementById('action-special');
+                if (specialBtn && b) {
+                    const cost = 8; // consistent with spend threshold in resolve (specialThreshold ~10, practical gate 8)
+                    const meterOk = (b.specialMeter || 0) >= cost;
+                    if (!meterOk) {
+                        specialBtn.classList.add('opacity-40', 'cursor-not-allowed');
+                        specialBtn.title = `Special requires ${cost}+ Special Meter (tactics charge it)`;
+                    } else {
+                        specialBtn.classList.remove('opacity-40', 'cursor-not-allowed');
+                        specialBtn.title = 'Unleash powered special (spends meter on execute for bonus dmg)';
+                    }
+                }
+            } catch(e) { /* graceful */ }
         }
 
         async function simulateBattleAttack(element, isSpecial = false) {
+            // Legacy path (used by fallback buttons): now delegates to resolve + live agency video flow for consistency.
             const b = window.__activeBattle;
-            const log = document.getElementById("battle-log");
-            if (!log || !b || b.ended) return;
+            if (!b || b.ended) return;
+            if (element && element.disabled) return;
+
+            // Disable legacy buttons if present
+            const atkBtn = document.getElementById("battle-attack-btn");
+            const spBtn = document.getElementById("battle-special-btn");
+            if (atkBtn) atkBtn.disabled = true;
+            if (spBtn) spBtn.disabled = true;
+
+            const actionBtns = document.querySelectorAll('#battle-actions .battle-move-btn');
+            actionBtns.forEach(btn => { btn.disabled = true; });
+
+            const activeAvatarId = (gameState && gameState.selectedAvatarId) || b.championAvatarId || 'fusion-panda';
+            const resolved = resolveBattleAction(activeAvatarId, null, isSpecial); // random move (keeps old behavior)
+
+            recordAttackLog(b, b.playerName, resolved.move, resolved.outcome, resolved.dmg, true);
+
+            // Use the new video play path (cinematic, waits for ended before result + enemy)
+            playPlayerAgencyVideo(activeAvatarId, resolved);
+            // Note: old awaits removed; flow now driven by video 'ended' or fallback inside playPlayerAgencyVideo.
+        }
+
+        // ============================================================
+        // INCREDIBLE TURN-BASED BATTLE UI CONTROLS
+        // Beautiful grids (action 3-btn, 4 move cards, 4 tactic cards), neon glow selected (cyber + avatar accent), 
+        // EXECUTE only on full selections, Special disabled <5 meter, full tooltips, mobile grids,
+        // RESOLVING overlay + disable during video, per-turn reset after player+enemy round.
+        // Fully wired to the controls HTML in startDemoBattle.
+        // ============================================================
+
+        function updateSpecialMeterUI() {
+            const b = window.__activeBattle;
+            if (!b) return;
+            const valEl = document.getElementById('special-meter-val');
+            const barEl = document.getElementById('special-meter-bar');
+            const max = b.maxSpecialMeter || 10;
+            const meter = Math.max(0, Math.min(max, b.specialMeter || 0));
+            if (valEl) valEl.textContent = `${meter}/${max}`;
+            if (barEl) {
+                const pct = Math.round((meter / max) * 100);
+                barEl.style.width = pct + '%';
+            }
+        }
+
+        function refreshSpecialActionState() {
+            const b = window.__activeBattle;
+            const specialBtn = document.getElementById('action-special');
+            if (!b || !specialBtn) return;
+            const meterOk = (b.specialMeter || 0) >= 5;
+            specialBtn.disabled = !meterOk;
+            if (!meterOk) {
+                specialBtn.classList.add('opacity-40', 'cursor-not-allowed');
+                specialBtn.title = 'Special requires 5+ Special Meter';
+            } else {
+                specialBtn.classList.remove('opacity-40', 'cursor-not-allowed');
+                specialBtn.title = 'Unleash a powered special (costs meter)';
+            }
+        }
+
+        function updateBattleSelectionsUI() {
+            const b = window.__activeBattle;
+            if (!b) return;
+
+            // Clear all previous selection highlights (neon glow reset)
+            document.querySelectorAll('.battle-action-btn, .move-card, .tactic-card').forEach(el => {
+                el.classList.remove('selected-neon', 'ring-2', 'ring-[#00ff9d]', 'border-[#00ff9d]', 'shadow-[0_0_15px_rgba(0,255,157,0.35)]');
+                el.style.boxShadow = '';
+                el.style.borderColor = '';
+                el.classList.add('border-gray-700');
+            });
+
+            const accent = b.playerColor || '#22d3ee';
+
+            // Highlight chosen action (big 3 buttons)
+            if (b.selectedAction) {
+                const actBtn = document.getElementById(`action-${b.selectedAction}`);
+                if (actBtn) {
+                    actBtn.classList.add('selected-neon', 'ring-2', 'ring-[#00ff9d]', 'border-[#00ff9d]');
+                    actBtn.classList.remove('border-gray-700');
+                    // Avatar accent subtle glow on the chosen action
+                    actBtn.style.boxShadow = `0 0 0 1px #00ff9d, 0 0 14px ${accent}33`;
+                }
+            }
+
+            // Highlight chosen move card (incredible neon + accent)
+            if (b.selectedMove && b.selectedMove.id) {
+                const moveCard = document.getElementById(`move-${b.selectedMove.id}`);
+                if (moveCard) {
+                    moveCard.classList.add('selected-neon', 'ring-2', 'ring-[#00ff9d]', 'border-[#00ff9d]');
+                    moveCard.classList.remove('border-gray-700');
+                    moveCard.style.boxShadow = `0 0 0 1px #00ff9d, 0 0 18px ${accent}40`;
+                }
+            }
+
+            // Highlight chosen tactic card
+            if (b.selectedTactic && b.selectedTactic.id) {
+                const tacCard = document.getElementById(`tactic-${b.selectedTactic.id}`);
+                if (tacCard) {
+                    tacCard.classList.add('selected-neon', 'ring-2', 'ring-[#00ff9d]', 'border-[#00ff9d]');
+                    tacCard.classList.remove('border-gray-700');
+                    tacCard.style.boxShadow = `0 0 0 1px #00ff9d, 0 0 18px ${accent}40`;
+                }
+            }
+
+            updateExecuteBtn();
+            refreshSpecialActionState();
+        }
+
+        function updateExecuteBtn() {
+            const b = window.__activeBattle;
+            const btn = document.getElementById('battle-execute-btn');
+            if (!btn || !b) return;
+            const hasMoveOrBlock = !!b.selectedMove || b.selectedAction === 'block';
+            const ready = hasMoveOrBlock && !!b.selectedTactic && !b.ended;
+            btn.disabled = !ready;
+
+            const accent = b.playerColor || '#22d3ee';
+            if (ready) {
+                // INCREDIBLE ready state: neon cyan + avatar color gradient + strong glow
+                btn.style.background = `linear-gradient(to right, #00ff9d, ${accent})`;
+                btn.style.color = '#0a0a0f';
+                btn.style.borderColor = accent;
+                btn.style.boxShadow = `0 0 0 1px #00ff9d, 0 0 28px ${accent}66, 0 10px 20px -5px rgba(0,0,0,0.6)`;
+                btn.classList.add('neon-button');
+            } else {
+                btn.style.background = '';
+                btn.style.color = '';
+                btn.style.borderColor = '';
+                btn.style.boxShadow = '';
+                btn.classList.remove('neon-button');
+            }
+        }
+
+        function selectBattleAction(action) {
+            const b = window.__activeBattle;
+            if (!b || b.ended) return;
+            if (action === 'special' && (b.specialMeter || 0) < 8) {
+                showToast('Special Move requires at least 8 Special Meter (build via tactics)!', 'info');
+                return;
+            }
+
+            b.selectedAction = action;
+
+            if (action === 'block') {
+                // Virtual block "move" — no move selector needed
+                b.selectedMove = { id: 'block', name: 'Block', desc: 'Raise defenses this turn. Reduces incoming damage.', type: 'block' };
+            } else {
+                // For attack/special: clear stale block virtual move
+                if (b.selectedMove && b.selectedMove.id === 'block') b.selectedMove = null;
+            }
+
+            // Show/hide visual cue on move selector area (Block disables move cards)
+            const moveArea = document.getElementById('move-selector-area');
+            if (moveArea) {
+                if (action === 'block') {
+                    moveArea.style.opacity = '0.4';
+                    moveArea.style.pointerEvents = 'none';
+                } else {
+                    moveArea.style.opacity = '1';
+                    moveArea.style.pointerEvents = 'auto';
+                }
+            }
+
+            updateBattleSelectionsUI();
+            updateExecuteBtn();
+        }
+
+        function selectBattleMove(moveId) {
+            const b = window.__activeBattle;
+            if (!b || b.ended) return;
+            const moves = (b.moves && b.moves.length) ? b.moves : getAvatarMoves(b.championAvatarId || activeAvatarId || 'fusion-panda');
+            const move = moves.find(m => m.id === moveId);
+            if (!move) return;
+
+            b.selectedMove = move;
+
+            // Auto-infer/set action if missing or was block
+            if (!b.selectedAction || b.selectedAction === 'block') {
+                b.selectedAction = (move.type === 'special') ? 'special' : 'attack';
+            }
+
+            // If user picked a special-type move while action=attack, optionally promote (user can still change action)
+            if (move.type === 'special' && b.selectedAction === 'attack') {
+                b.selectedAction = 'special';
+            }
+
+            // If Block was active and move picked, lift the disabled move area
+            const moveArea = document.getElementById('move-selector-area');
+            if (moveArea) {
+                moveArea.style.opacity = '1';
+                moveArea.style.pointerEvents = 'auto';
+            }
+
+            updateBattleSelectionsUI();
+            updateExecuteBtn();
+        }
+
+        function selectBattleTactic(tacticId) {
+            const b = window.__activeBattle;
+            if (!b || b.ended) return;
+            const tactics = (b.tacticDeck && b.tacticDeck.length) ? b.tacticDeck : getAvatarTactics(b.championAvatarId || 'fusion-panda');
+            const tactic = tactics.find(t => t.id === tacticId);
+            if (!tactic) return;
+
+            b.selectedTactic = tactic;
+
+            updateBattleSelectionsUI();
+            updateExecuteBtn();
+        }
+
+        function resetBattleSelections(full = true) {
+            const b = window.__activeBattle;
+            if (!b) return;
+            b.selectedAction = null;
+            b.selectedMove = null;
+            b.selectedTactic = null;
+
+            // Clear all visual selected states + restore areas
+            document.querySelectorAll('.battle-action-btn, .move-card, .tactic-card').forEach(el => {
+                el.classList.remove('selected-neon', 'ring-2', 'ring-[#00ff9d]', 'border-[#00ff9d]', 'shadow-[0_0_15px_rgba(0,255,157,0.35)]');
+                el.style.boxShadow = '';
+                el.style.borderColor = '';
+                el.classList.add('border-gray-700');
+            });
+
+            const moveArea = document.getElementById('move-selector-area');
+            if (moveArea) {
+                moveArea.style.opacity = '1';
+                moveArea.style.pointerEvents = 'auto';
+            }
+
+            updateExecuteBtn();
+            refreshSpecialActionState();
+        }
+
+        // Used by execute + video flow: disable ALL choice UI + show incredible RESOLVING overlay
+        function disableBattleUIForResolution(disabled) {
+            const overlay = document.getElementById('battle-resolving-overlay');
+            const controls = document.getElementById('battle-controls');
+            const allInteractive = document.querySelectorAll('#battle-controls .battle-action-btn, #battle-controls .move-card, #battle-controls .tactic-card, #battle-execute-btn, #battle-controls button[onclick*="clearBattleSelections"]');
+
+            if (overlay) {
+                if (disabled) {
+                    overlay.classList.remove('hidden');
+                    overlay.style.display = 'flex';
+                } else {
+                    overlay.classList.add('hidden');
+                    overlay.style.display = '';
+                }
+            }
+            allInteractive.forEach(el => {
+                el.disabled = !!disabled;
+                if (disabled) {
+                    el.style.pointerEvents = 'none';
+                    el.style.opacity = (el.id === 'battle-execute-btn' ? '0.3' : '0.45');
+                } else {
+                    el.style.pointerEvents = '';
+                    el.style.opacity = '';
+                }
+            });
+            if (controls) controls.style.pointerEvents = disabled ? 'none' : '';
+        }
+
+        // Main wiring for the big EXECUTE TURN button. Full round: resolve + video (with overlay) + enemy + reset.
+        async function executePlayerTurn() {
+            const b = window.__activeBattle;
+            const logEl = document.getElementById("battle-log");
+            if (!b || b.ended || !logEl) return;
+
+            const hasChoice = (b.selectedMove && b.selectedMove.id) || b.selectedAction === 'block';
+            if (!hasChoice || !b.selectedTactic) {
+                showToast('Choose an ACTION (Attack/Block/Special) + a TACTIC CARD first!', 'info');
+                return;
+            }
+
+            const move = b.selectedMove || { id: 'block', name: 'Block', type: 'block' };
+            const tactic = b.selectedTactic;
+            const isSpecial = b.selectedAction === 'special';
+            const isBlock = b.selectedAction === 'block' || move.id === 'block' || move.type === 'block';
+            const activeAvatarId = b.championAvatarId || (gameState && gameState.selectedAvatarId) || 'fusion-panda';
+
+            // === DISABLE + SHOW RESOLVING OVERLAY (during video) ===
+            disableBattleUIForResolution(true);
+            const execBtn = document.getElementById('battle-execute-btn');
+            if (execBtn) execBtn.disabled = true;
+
+            // Canonical resolve (charges meter from tactic, spends if special qualified, applies elem/RPS/speed/energyMult/block mit, mutates HP, records to attackLog for replay)
+            const playerRes = resolvePlayerTurn(b, move, tactic, isBlock);
+
+            const outcome = playerRes.outcome || 'hit';
+            const dmg = playerRes.damage || 0;
+            const attackName = isBlock ? 'BLOCK' : (playerRes.moveName || move.name || 'Attack');
+
+            // === PLAY CINEMATIC VIDEO FOR PLAYER ACTION (the key "during video" phase) ===
+            try {
+                await playPlayerActionVideoForTurn(activeAvatarId, move.id || 'block', outcome, tactic);
+            } catch (e) {
+                await new Promise(r => setTimeout(r, 900));
+            }
+
+            // Visuals + on-screen log (resolver already handled damage + recordAttackLog)
             const pCard = document.getElementById("battle-fighter-player");
             const eCard = document.getElementById("battle-fighter-enemy");
             const pFlash = document.getElementById("battle-flash-player");
             const eFlash = document.getElementById("battle-flash-enemy");
             const beam = document.getElementById("battle-beam");
-            const atkBtn = document.getElementById("battle-attack-btn");
-            const spBtn = document.getElementById("battle-special-btn");
-            if (!pCard || !eCard) return;
-            if (element && element.disabled) return;
-            if (atkBtn) atkBtn.disabled = true;
-            if (spBtn) spBtn.disabled = true;
-            const attacks = isSpecial
-                ? ["CRITICAL FUSION BEAM", "DIMENSION RIFT", "PANDAS UNITE"]
-                : ["BAMBOO SLAM", "PAW STRIKE", "ROAR OF FURY"];
-            const attackName = attacks[Math.floor(Math.random() * attacks.length)];
-            const dmg = isSpecial
-                ? Math.floor(Math.random() * 14) + b.playerBaseDamage + 12
-                : Math.floor(Math.random() * 10) + b.playerBaseDamage;
-            pCard.classList.add("battle-anim-attack-left");
-            __resetBeam(beam);
+
+            if (pCard) pCard.classList.add("battle-anim-attack-left");
             if (beam) {
+                __resetBeam(beam);
                 if (isSpecial) {
+                    beam.style.background = "linear-gradient(90deg, #a855f7, #e879f9, #f43f5e)";
                     beam.classList.add("battle-beam--special");
-                    beam.style.background =
-                        "linear-gradient(90deg, #a855f7, #e879f9, #f43f5e)";
+                } else if (isBlock) {
+                    beam.style.background = "linear-gradient(90deg, #38bdf8, #64748b, #0ea5e9)";
                 } else {
-                    beam.style.background =
-                        "linear-gradient(90deg, #10b981, #2dd4bf, #a855f7)";
+                    beam.style.background = "linear-gradient(90deg, #10b981, #2dd4bf, #a855f7)";
                 }
                 beam.classList.add("battle-beam--to-enemy");
             }
-            await __battleWait(120);
-            b.enemyCur = Math.max(0, b.enemyCur - dmg);
+            await __battleWait(90);
+
             __syncBattleHpBars();
-            eCard.classList.add("battle-anim-shake");
-            if (eFlash) eFlash.classList.add("battle-anim-flash--on", "battle-anim-flash--red");
-            __spawnBattleFloatingDmg(eCard, dmg, isSpecial);
-            __appendBattleLogLine(
-                isSpecial ? "text-fuchsia-300" : "text-emerald-300",
-                `${__escapeBattleText(b.playerName)} used <span class="font-bold">${attackName}</span> <span class="text-white/60">→</span> <span class="font-mono">${dmg} DMG</span>`,
-            );
-            await __battleWait(450);
-            pCard.classList.remove("battle-anim-attack-left");
-            eCard.classList.remove("battle-anim-shake");
-            if (eFlash) eFlash.classList.remove("battle-anim-flash--on", "battle-anim-flash--red");
-            if (beam) {
-                beam.classList.remove("battle-beam--to-enemy", "battle-beam--special");
+            if (eCard) {
+                eCard.classList.add("battle-anim-shake");
+                if (eFlash) eFlash.classList.add("battle-anim-flash--on", "battle-anim-flash--red");
+                __spawnBattleFloatingDmg(eCard, dmg, isSpecial);
             }
+
+            let logClass = isSpecial ? "text-fuchsia-300" : (isBlock ? "text-sky-300" : "text-emerald-300");
+            let logHtml = `${__escapeBattleText(b.playerName)} used <span class="font-bold">${__escapeBattleText(attackName)}</span> <span class="text-white/60">→</span> <span class="font-mono">${dmg} DMG</span>`;
+            if (playerRes && playerRes.elemMult && Math.abs(playerRes.elemMult - 1.05) > 0.02) logHtml += ` <span class="text-[10px] text-amber-300">(${playerRes.elemMult.toFixed(2)}x)</span>`;
+            if (tactic) logHtml += ` <span class="text-[10px] text-gray-500">[${__escapeBattleText(tactic.name)}]</span>`;
+            if (playerRes && playerRes.specialTriggered) logHtml += ' <span class="text-fuchsia-400 text-[10px]">★SPECIAL</span>';
+            __appendBattleLogLine(logClass, logHtml);
+
+            await __battleWait(420);
+            if (pCard) pCard.classList.remove("battle-anim-attack-left");
+            if (eCard) eCard.classList.remove("battle-anim-shake");
+            if (eFlash) eFlash.classList.remove("battle-anim-flash--on", "battle-anim-flash--red");
+            if (beam) beam.classList.remove("battle-beam--to-enemy", "battle-beam--special");
+
+            // Victory?
             if (b.enemyCur <= 0) {
                 b.ended = true;
                 b.enemyCur = 0;
                 __syncBattleHpBars();
-                eCard.classList.add("battle-fighter--defeated");
-                eCard.setAttribute("aria-hidden", "true");
+                if (eCard) { eCard.classList.add("battle-fighter--defeated"); eCard.setAttribute("aria-hidden", "true"); }
                 document.getElementById("battle-stage")?.classList.add("battle-stage--victory");
-                __appendBattleLogLine(
-                    "text-amber-300 font-bold border-t border-amber-500/20 pt-2 mt-1",
-                    `🏆 VICTORY! ${__escapeBattleText(b.enemyName)} defeated! ${b.enemySubtitle ? '— ' + __escapeBattleText(b.enemySubtitle) : ''} +650 XP`,
-                );
+                __appendBattleLogLine("text-amber-300 font-bold border-t border-amber-500/20 pt-2 mt-1", `🏆 VICTORY! ${__escapeBattleText(b.enemyName)} defeated! +650 XP`);
                 showToast("Battle won! +650 XP earned", "success");
                 bumpLifetimeEarnedXp(650);
                 gameState.xp += 650;
-                if (gameState.xp >= 10000) {
-                    gameState.level++;
-                    gameState.xp = gameState.xp % 10000;
-                    setTimeout(showLevelUp, 1200);
-                }
-                saveGameState();
-                updateDashboard();
-
-                console.log('Victory cinematic for:', b.enemyName, 'using video:', b.enemyVideo);
-
-                // Grok-powered cinematic victory — now integrated into the main battle stage (in-arena viewer)
-                // with dynamic rival poster + quick actions. Modal still available via "Fullscreen" button.
-                const logEl = document.getElementById('battle-log');
-                if (logEl && typeof window.showInArenaCinematic === 'function') {
-                    const replayBtn = document.createElement('button');
-                    replayBtn.className = 'mt-2 text-xs px-3 py-1 rounded-xl border border-amber-400/60 text-amber-300 hover:bg-amber-500/10';
-                    replayBtn.innerHTML = '<i class="fas fa-play mr-1"></i> REPLAY CINEMATIC';
-                    replayBtn.onclick = () => window.showInArenaCinematic(b);
-                    logEl.appendChild(replayBtn);
-                }
-
-                setTimeout(() => {
-                    if (typeof window.showInArenaCinematic === 'function') {
-                        window.showInArenaCinematic(b);
-                    } else if (typeof window.showVictoryCinematic === 'function') {
-                        window.showVictoryCinematic(b); // fallback
-                    }
-                }, 700);
+                if (gameState.xp >= 10000) { gameState.level++; gameState.xp %= 10000; setTimeout(showLevelUp, 1200); }
+                saveGameState(); updateDashboard();
+                disableBattleUIForResolution(false); // leave overlay off on end
+                setTimeout(() => { if (typeof window.showInArenaCinematic === 'function') window.showInArenaCinematic(b); }, 650);
                 return;
             }
-            await __battleWait(380);
+
+            await __battleWait(280);
+
+            // === ENEMY TURN (full round) ===
             const roundEl = document.getElementById("battle-round");
-            const enemyAttacks = ["VOID CRUSH", "HELLFIRE ROAR", "DARK PULSE"];
-            const enemyAttack = enemyAttacks[Math.floor(Math.random() * enemyAttacks.length)];
-            const enemyDmg = Math.floor(Math.random() * 8) + b.enemyBaseDamage;
-            eCard.classList.add("battle-anim-attack-right");
-            __resetBeam(beam);
+            const enemyRes = resolveEnemyTurn(b, tactic);
+            const enemyDmg = enemyRes ? enemyRes.damage : 0;
+            const enemyAttack = (enemyRes && enemyRes.moveName) || 'ENEMY STRIKE';
+
+            if (eCard) eCard.classList.add("battle-anim-attack-right");
             if (beam) {
+                __resetBeam(beam);
                 beam.style.background = "linear-gradient(90deg, #f43f5e, #a855f7, #10b981)";
                 beam.classList.add("battle-beam--to-player");
             }
-            await __battleWait(120);
-            b.playerCur = Math.max(0, b.playerCur - enemyDmg);
+            await __battleWait(80);
+
             __syncBattleHpBars();
-            pCard.classList.add("battle-anim-shake");
-            if (pFlash) pFlash.classList.add("battle-anim-flash--on", "battle-anim-flash--emerald");
-            __spawnBattleFloatingDmg(pCard, enemyDmg, false);
-            __appendBattleLogLine(
-                "text-rose-300",
-                `${__escapeBattleText(b.enemyName)}: <span class="font-bold">${enemyAttack}</span> <span class="text-white/60">→</span> <span class="font-mono text-white">${enemyDmg} DMG</span>`,
-            );
-            await __battleWait(450);
-            eCard.classList.remove("battle-anim-attack-right");
-            pCard.classList.remove("battle-anim-shake");
-            if (pFlash) pFlash.classList.remove("battle-anim-flash--on", "battle-anim-flash--emerald");
-            if (beam) {
-                beam.classList.remove("battle-beam--to-player");
+            if (pCard) {
+                pCard.classList.add("battle-anim-shake");
+                if (pFlash) pFlash.classList.add("battle-anim-flash--on", "battle-anim-flash--emerald");
+                __spawnBattleFloatingDmg(pCard, enemyDmg, false);
             }
+            let eLog = `${__escapeBattleText(b.enemyName)}: <span class="font-bold">${__escapeBattleText(enemyAttack)}</span> <span class="text-white/60">→</span> <span class="font-mono text-white">${enemyDmg} DMG</span>`;
+            if (enemyRes && enemyRes.elemMult && Math.abs(enemyRes.elemMult - 1.05) > 0.02) eLog += ` <span class="text-[10px] text-amber-300">(${enemyRes.elemMult.toFixed(2)}x)</span>`;
+            __appendBattleLogLine("text-rose-300", eLog);
+
+            await __battleWait(420);
+            if (eCard) eCard.classList.remove("battle-anim-attack-right");
+            if (pCard) pCard.classList.remove("battle-anim-shake");
+            if (pFlash) pFlash.classList.remove("battle-anim-flash--on", "battle-anim-flash--emerald");
+            if (beam) beam.classList.remove("battle-beam--to-player");
+
+            // Defeat?
             if (b.playerCur <= 0) {
                 b.ended = true;
                 b.playerCur = 0;
                 __syncBattleHpBars();
-                if (pCard) {
-                    pCard.classList.add("battle-fighter--defeated");
-                    pCard.setAttribute("aria-hidden", "true");
-                }
+                if (pCard) { pCard.classList.add("battle-fighter--defeated"); pCard.setAttribute("aria-hidden", "true"); }
                 document.getElementById("battle-stage")?.classList.add("battle-stage--defeat");
-                __appendBattleLogLine(
-                    "text-rose-300 font-bold border-t border-rose-500/20 pt-2 mt-1",
-                    `💀 DEFEAT! ${__escapeBattleText(b.playerName)} was overpowered by ${__escapeBattleText(b.enemyName)}! ${b.enemySubtitle ? '— ' + __escapeBattleText(b.enemySubtitle) : ''}`,
-                );
-                console.log('Defeat by foe from battle:', b.enemyName, 'using failure video:', b.enemyFailureVideo);
-
-                // Grok-powered cinematic defeat (failure path) — in-arena viewer + replay
-                const logEl = document.getElementById('battle-log');
-                if (logEl && typeof window.showInArenaFailureCinematic === 'function') {
-                    const replayBtn = document.createElement('button');
-                    replayBtn.className = 'mt-2 text-xs px-3 py-1 rounded-xl border border-rose-400/60 text-rose-300 hover:bg-rose-500/10';
-                    replayBtn.innerHTML = '<i class="fas fa-play mr-1"></i> REPLAY DEFEAT CINEMATIC';
-                    replayBtn.onclick = () => window.showInArenaFailureCinematic(b);
-                    logEl.appendChild(replayBtn);
-                }
-
-                setTimeout(() => {
-                    if (typeof window.showInArenaFailureCinematic === 'function') {
-                        window.showInArenaFailureCinematic(b);
-                    } else if (typeof window.showFailureCinematic === 'function') {
-                        window.showFailureCinematic(b); // fallback
-                    }
-                }, 700);
+                __appendBattleLogLine("text-rose-300 font-bold border-t border-rose-500/20 pt-2 mt-1", `💀 DEFEAT! ${__escapeBattleText(b.playerName)} was overpowered by ${__escapeBattleText(b.enemyName)}.`);
+                disableBattleUIForResolution(false);
+                setTimeout(() => { if (typeof window.showInArenaFailureCinematic === 'function') window.showInArenaFailureCinematic(b); }, 650);
                 return;
             }
-            b.round += 1;
-            if (roundEl) {
-                roundEl.textContent = String(b.round);
-            }
-            if (!b.ended) {
-                if (atkBtn) atkBtn.disabled = false;
-                if (spBtn) spBtn.disabled = false;
-            }
+
+            // === PER TURN RESET AFTER FULL ROUND ===
+            b.round = (b.round || 1) + 1;
+            if (roundEl) roundEl.textContent = String(b.round);
+
+            resetBattleSelections(true);
+            updateSpecialMeterUI();
+            updateBattleSelectionsUI();
+            updateExecuteBtn();
+            refreshSpecialActionState();
+
+            // Re-enable everything (overlay hidden)
+            disableBattleUIForResolution(false);
         }
+
+        // Compat shims for any lingering older calls (clear / enable)
+        function clearBattleSelections() { resetBattleSelections(true); }
+        function setBattleControlsEnabled(enabled) { disableBattleUIForResolution(!enabled); }
+
+        // Legacy small update fn kept for any old references
+        function updateExecuteEnabledState() { updateExecuteBtn(); }
+
+        // ============================================================
+        // End incredible battle choice controls
+        // ============================================================
 
         // Grok-talk Battle Arena cinematic victory player
         // Uses the high-quality Fusion Panda victory cutscene + concept art generated for the arena.
@@ -2772,6 +4999,12 @@
             if (section === "codex") {
                 switchCodexTab("bestiary");
             }
+            if (section === 'profile') {
+                renderProfile();
+            }
+            if (section === 'fusion-lab') {
+                renderAvatarDirector();
+            }
         }
 
         function showToast(message, type = "success") {
@@ -3020,6 +5253,11 @@
             setTimeout(() => {
                 setFusionMode('basic');
             }, 300);
+
+            // Player avatar system init (director in lab + ready for profile)
+            setTimeout(() => {
+                renderAvatarDirector();
+            }, 420);
             
             // Easter egg hint in console
             console.log('%c[FusionPanda Master] Konami code enabled! Try ↑↑↓↓←→←→BA', 'color:#64748b');
@@ -3049,6 +5287,7 @@
         window.FusionPanda = {
             addPanda: (name) => {
                 const newP = {...basePandas[0], name: name || "Debug Panda", id: 'debug-' + Date.now(), rarity: 'legendary', power: 55};
+                newP.bonus = getDefaultBonus(newP.type || 'Balanced');
                 userPandas.push(newP);
                 renderCollection();
                 console.log('%c[Panda added]', 'color:#00ff9d', newP);
@@ -3056,5 +5295,8 @@
             levelUp: () => {
                 gameState.level++;
                 showLevelUp();
-            }
+            },
+            getCurrentAvatar: () => getCurrentAvatar(),
+            develop: (id) => developAvatar(id || getCurrentAvatar().id),
+            avatars: PLAYER_AVATARS
         };

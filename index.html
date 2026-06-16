@@ -93,6 +93,11 @@
                     <span>Upgrades</span>
                 </div>
                 
+                <div onclick="navigateTo('profile')" class="nav-link flex items-center gap-x-3 px-4 py-3 text-sm font-medium cursor-pointer mb-1" id="nav-profile">
+                    <i class="fas fa-user-astronaut w-5 text-violet-400"></i>
+                    <span>Profile</span>
+                </div>
+                
                 <div onclick="navigateTo('arena')" class="nav-link flex items-center gap-x-3 px-4 py-3 text-sm font-medium cursor-pointer" id="nav-arena">
                     <i class="fas fa-swords w-5 text-red-400"></i>
                     <span>Battle Arena <span class="text-[10px] ml-1 px-1.5 py-px bg-red-500/20 text-red-400 rounded">BETA</span></span>
@@ -240,6 +245,32 @@
                 </div>
             </div>
 
+            <!-- PROFILE / AVATARS SECTION -->
+            <div id="section-profile" class="section hidden">
+                <div class="mb-6">
+                    <h1 class="section-header">Player Profiles</h1>
+                    <p class="text-gray-400 text-sm max-w-2xl">Select which legend will guide your fusions. Develop them through the Master Protocol to unlock new outfits and potent lab bonuses. Your active avatar appears in the Fusion Lab and shapes every outcome.</p>
+                </div>
+
+                <!-- Active Hero -->
+                <div id="active-avatar-hero" class="cyber-card rounded-3xl p-6 border border-violet-400/40 mb-6">
+                    <!-- JS populated: large portrait, name, title, level, current outfit label, develop btn, short bio -->
+                </div>
+
+                <div class="mb-3 px-1 flex items-center justify-between">
+                    <div class="text-sm font-semibold tracking-wide text-gray-300">CHOOSE YOUR PROTAGONIST</div>
+                    <div class="text-[10px] text-gray-500">Click cards to switch • Develop to evolve outfits &amp; power</div>
+                </div>
+
+                <div id="avatar-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                    <!-- Populated dynamically by renderProfile() -->
+                </div>
+
+                <div class="mt-6 cyber-card rounded-3xl p-4 border border-gray-700 text-xs text-gray-400">
+                    <strong class="text-gray-300">How development works:</strong> Leveling your avatar (via the Upgrades page or Profile DEVELOP buttons) automatically equips stronger outfits for different portions of the game (Lab, Arena, Profile) and increases the fusion bonuses they grant.
+                </div>
+            </div>
+
             <!-- FUSION LAB SECTION -->
             <div id="section-fusion-lab" class="section hidden">
                 <div class="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between mb-6">
@@ -251,6 +282,11 @@
                         <i class="fas fa-info-circle text-emerald-400"></i>
                         <span>Success rate: <span class="font-mono text-emerald-400">94%</span></span>
                     </div>
+                </div>
+
+                <!-- Active Avatar Director (integrated into Fusion Lab) -->
+                <div id="avatar-director" onclick="navigateTo('profile')" class="avatar-director cursor-pointer mb-4 hover:border-violet-400/60" title="Manage your active player avatar, outfits, and bonuses">
+                    <!-- Populated by renderAvatarDirector() in app.js -->
                 </div>
 
                 <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
@@ -568,6 +604,19 @@
                         </div>
                     </div>
                 </div>
+
+                <!-- Avatar Development (integrated into the existing upgrade / card system) -->
+                <div class="mt-6 cyber-card rounded-3xl p-6 border border-violet-400/30">
+                    <div class="flex items-center justify-between mb-3">
+                        <div>
+                            <div class="font-semibold text-sm">AVATAR DEVELOPMENT</div>
+                            <div class="text-xs text-gray-400">Level your chosen protagonist for new outfits and stronger fusion bonuses</div>
+                        </div>
+                        <button onclick="developAvatar(getCurrentAvatar().id)" 
+                                class="text-xs px-4 py-2 rounded-2xl bg-violet-400/10 hover:bg-violet-400/20 text-violet-300 font-bold">DEVELOP ACTIVE</button>
+                    </div>
+                    <div id="upgrades-avatar-mini" class="text-xs text-gray-400">Active avatar details load here when you visit Profile or switch.</div>
+                </div>
             </div>
 
             <!-- BATTLE ARENA SECTION -->
@@ -615,7 +664,7 @@
 
     <!-- Mobile Navigation -->
     <nav class="lg:hidden fixed bottom-0 inset-x-0 z-50 border-t border-gray-800 bg-[#0f1117]/95 backdrop-blur-lg px-1 pt-1 pb-[max(0.5rem,env(safe-area-inset-bottom))]" aria-label="Mobile app sections">
-        <div class="grid grid-cols-6 gap-0.5 max-w-xl mx-auto">
+        <div class="grid grid-cols-7 gap-0.5 max-w-xl mx-auto">
             <div onclick="navigateTo('dashboard')" class="nav-link active flex flex-col items-center justify-center gap-y-0.5 py-1.5 sm:py-2 rounded-xl sm:rounded-2xl text-[9px] sm:text-[10px] font-medium cursor-pointer min-w-0" id="nav-mobile-dashboard" aria-current="page">
                 <i class="fas fa-tachometer-alt text-emerald-400 text-sm sm:text-base"></i>
                 <span class="truncate max-w-full px-0.5">Home</span>
@@ -639,6 +688,11 @@
             <div onclick="navigateTo('upgrades')" class="nav-link flex flex-col items-center justify-center gap-y-0.5 py-1.5 sm:py-2 rounded-xl sm:rounded-2xl text-[9px] sm:text-[10px] font-medium cursor-pointer min-w-0" id="nav-mobile-upgrades">
                 <i class="fas fa-rocket text-amber-400 text-sm sm:text-base"></i>
                 <span class="truncate max-w-full px-0.5">Up</span>
+            </div>
+
+            <div onclick="navigateTo('profile')" class="nav-link flex flex-col items-center justify-center gap-y-0.5 py-1.5 sm:py-2 rounded-xl sm:rounded-2xl text-[9px] sm:text-[10px] font-medium cursor-pointer min-w-0" id="nav-mobile-profile">
+                <i class="fas fa-user-astronaut text-violet-400 text-sm sm:text-base"></i>
+                <span class="truncate max-w-full px-0.5">Profile</span>
             </div>
 
             <div onclick="navigateTo('arena')" class="nav-link flex flex-col items-center justify-center gap-y-0.5 py-1.5 sm:py-2 rounded-xl sm:rounded-2xl text-[9px] sm:text-[10px] font-medium cursor-pointer min-w-0" id="nav-mobile-arena">
