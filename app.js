@@ -33,24 +33,45 @@
             collectionCount: 1,
             totalPower: 12,
             collection: [],
-            recentFusions: []
+            recentFusions: [],
+            ep: 500,
+            upgrades: {
+                efficiency: 0,
+                stability: 0,
+                training: 0
+            },
+            boosters: {
+                blazing: false,
+                cryo: false,
+                lightning: false
+            }
         };
 
-        // Base Pandas Data
+        // Base Pandas Data (Expanded with new production content)
         const basePandas = [
-            { id: 1, name: "Classic Panda", emoji: "🐼", type: "Balanced", power: 12, rarity: "common", color: "#64748b", desc: "The original bamboo-loving legend. Reliable and steady in every fusion." },
-            { id: 2, name: "Inferno Panda", emoji: "🔥🐼", type: "Fire", power: 18, rarity: "rare", color: "#f97316", desc: "Born in volcanic craters. Brings explosive energy to any fusion." },
-            { id: 3, name: "Frostbite Panda", emoji: "❄️🐼", type: "Ice", power: 15, rarity: "rare", color: "#67e8f9", desc: "From the eternal glaciers of the north. Slows enemies with icy aura." },
-            { id: 4, name: "Shadow Panda", emoji: "🌑🐼", type: "Dark", power: 22, rarity: "epic", color: "#6366f1", desc: "Master of stealth and illusion. Vanishes in plain sight." },
-            { id: 5, name: "Thunder Panda", emoji: "⚡🐼", type: "Electric", power: 19, rarity: "rare", color: "#eab308", desc: "Channeling the power of storms. Fast and shocking." },
-            { id: 6, name: "Golden Fortune", emoji: "✨🐼", type: "Light", power: 27, rarity: "legendary", color: "#fbbf24", desc: "Extremely rare. Brings incredible luck and prosperity." },
-            { id: 7, name: "Mystic Panda", emoji: "🔮🐼", type: "Arcane", power: 24, rarity: "epic", color: "#c026ff", desc: "Wielder of ancient panda magic. Unpredictable and wise." },
-            { id: 8, name: "Crystal Panda", emoji: "💎🐼", type: "Crystal", power: 16, rarity: "rare", color: "#67e8f9", desc: "Crystalline armor protects it from harm. Beautiful but deadly." }
+            { id: 1, name: "Classic Panda", emoji: "🐼", type: "Balanced", power: 12, rarity: "common", color: "#64748b", desc: "The original bamboo-loving legend. Reliable and steady in every fusion.", image: "assets/pandas/classic_panda.jpg" },
+            { id: 2, name: "Inferno Panda", emoji: "🔥🐼", type: "Fire", power: 18, rarity: "rare", color: "#f97316", desc: "Born in volcanic craters. Brings explosive energy to any fusion.", image: "assets/pandas/inferno_panda.jpg" },
+            { id: 3, name: "Frostbite Panda", emoji: "❄️🐼", type: "Ice", power: 15, rarity: "rare", color: "#67e8f9", desc: "From the eternal glaciers of the north. Slows enemies with icy aura.", image: "assets/pandas/frostbite_panda.jpg" },
+            { id: 4, name: "Shadow Panda", emoji: "🌑🐼", type: "Dark", power: 22, rarity: "epic", color: "#6366f1", desc: "Master of stealth and illusion. Vanishes in plain sight.", image: "assets/pandas/shadow_panda.jpg" },
+            { id: 5, name: "Thunder Panda", emoji: "⚡🐼", type: "Electric", power: 19, rarity: "rare", color: "#eab308", desc: "Channeling the power of storms. Fast and shocking.", image: "assets/pandas/thunder_panda.jpg" },
+            { id: 6, name: "Golden Fortune", emoji: "✨🐼", type: "Light", power: 27, rarity: "legendary", color: "#fbbf24", desc: "Extremely rare. Brings incredible luck and prosperity.", image: "assets/pandas/golden_fortune.jpg" },
+            { id: 7, name: "Mystic Panda", emoji: "🔮🐼", type: "Arcane", power: 24, rarity: "epic", color: "#c026ff", desc: "Wielder of ancient panda magic. Unpredictable and wise.", image: "assets/pandas/mystic_panda.jpg" },
+            { id: 8, name: "Crystal Panda", emoji: "💎🐼", type: "Crystal", power: 16, rarity: "rare", color: "#67e8f9", desc: "Crystalline armor protects it from harm. Beautiful but deadly.", image: "assets/pandas/crystal_panda.jpg" },
+            { id: 9, name: "Red Panda", emoji: "🔴🐼", type: "Balanced", power: 25, rarity: "epic", color: "#ef4444", desc: "A charming, chestnut-colored climber with a ringed tail and playful spirit. Unlocks special elemental resonance.", image: "assets/pandas/red_panda.jpg" }
+
+            // New production content integration (from expanded roster)
+            { id: 9, name: "Ember Cub", emoji: "🔥🐼", type: "Fire", power: 85, rarity: "common", color: "#f97316", desc: "Newly discovered fire-type starter." },
+            { id: 10, name: "Inferno Guardian", emoji: "🔥🛡️", type: "Fire", power: 145, rarity: "rare", color: "#f97316", desc: "Elite fire guardian from the new roster." },
+            { id: 11, name: "Blazing Phoenix Panda", emoji: "🔥🦅", type: "Fire", power: 210, rarity: "epic", color: "#f97316", desc: "Mythic-level fire evolution." },
+            { id: 12, name: "Cyclone Striker", emoji: "🌪️🐼", type: "Wind", power: 138, rarity: "rare", color: "#22c55e", desc: "New wind-type from expanded content." },
+            { id: 13, name: "Storm Dragon Panda", emoji: "🐉💨", type: "Wind", power: 205, rarity: "epic", color: "#22c55e", desc: "High-tier wind evolution." },
+            { id: 14, name: "Quantum Overlord Panda", emoji: "🌌🐼", type: "Lightning", power: 450, rarity: "mythic", color: "#a855f7", desc: "Mythic pinnacle — extremely rare." },
+            { id: 15, name: "Eternal Flame Sovereign", emoji: "🔥👑", type: "Fire", power: 440, rarity: "mythic", color: "#f97316", desc: "The ultimate fire evolution." },
         ];
 
         // User's unlocked pandas (new users start with one fair starter)
         let userPandas = [
-            { ...basePandas[0], id: 'u1', acquired: new Date().toISOString().split('T')[0] }
+            { ...basePandas[0], id: 'u1', level: 1, acquired: new Date().toISOString().split('T')[0] }
         ];
 
         // Current selected for fusion
@@ -59,6 +80,7 @@
         let currentFusionMode = 'basic'; // basic | advanced | ritual
 
         function saveGameState() {
+            recalculateTotalPower();
             localStorage.setItem('fusionPandaMaster', JSON.stringify({
                 ...gameState,
                 collection: userPandas,
@@ -95,6 +117,33 @@
                     gameState.fireChallengeFusions = approxFire;
                     gameState.saveSchemaVersion = 2;
                 }
+                if (!gameState.upgrades) {
+                    gameState.upgrades = { efficiency: 0, stability: 0, training: 0 };
+                } else {
+                    if (gameState.upgrades.efficiency === undefined) gameState.upgrades.efficiency = 0;
+                    if (gameState.upgrades.stability === undefined) gameState.upgrades.stability = 0;
+                    if (gameState.upgrades.training === undefined) gameState.upgrades.training = 0;
+                }
+                if (!gameState.boosters) {
+                    gameState.boosters = { blazing: false, cryo: false, lightning: false };
+                }
+                if (typeof gameState.ep !== "number" || gameState.ep < 0) {
+                    gameState.ep = 500;
+                }
+                // Migrate collection, set level default, restore static paths, and generate fusion art
+                userPandas.forEach(p => {
+                    if (p.level === undefined) p.level = 1;
+                    
+                    const baseMatch = basePandas.find(bp => bp.name === p.name);
+                    if (baseMatch) {
+                        p.image = baseMatch.image;
+                    } else {
+                        if (!p.image || p.image === 'null') {
+                            p.image = generateProceduralPandaImage(p.emoji, p.type, p.color || getRarityColor(p.rarity), p.rarity);
+                        }
+                    }
+                });
+                recalculateTotalPower();
             } else {
                 gameState.recentFusions = [];
                 saveGameState();
@@ -162,6 +211,11 @@
             document.getElementById('dash-collection').innerText = userPandas.length;
             document.getElementById('dash-power').innerText = (gameState.totalPower / 1000).toFixed(1) + 'k';
             
+            const epEl = document.getElementById('dash-ep');
+            if (epEl) epEl.innerText = gameState.ep.toLocaleString();
+            const balanceEl = document.getElementById('upgrades-ep-balance');
+            if (balanceEl) balanceEl.innerText = gameState.ep.toLocaleString();
+            
             // XP bar
             const xpPercent = Math.min((gameState.xp / 10000) * 100, 100);
             document.getElementById('dash-xp-bar').style.width = xpPercent + '%';
@@ -203,7 +257,7 @@
                 const el = document.createElement('div');
                 el.className = `flex items-center gap-x-4 p-3 hover:bg-[#1a1f2e] rounded-2xl transition-colors cursor-pointer`;
                 el.innerHTML = `
-                    <div class="text-4xl flex-shrink-0">${fusion.emoji}</div>
+                    <img src="${fusion.image || 'assets/pandas/fusion_celestial.jpg'}" alt="${fusion.name}" class="w-10 h-10 rounded-xl object-cover flex-shrink-0 border border-white/10 shadow-sm">
                     <div class="flex-1 min-w-0">
                         <div class="font-semibold">${fusion.name}</div>
                         <div class="text-xs text-gray-400 flex items-center gap-x-2">
@@ -222,16 +276,19 @@
 
         function renderBasePandas() {
             const container = document.getElementById('base-pandas-grid');
+            if (!container) return;
             container.innerHTML = '';
             
             basePandas.forEach(panda => {
                 const isUnlocked = userPandas.some(up => up.name === panda.name || (up.type === panda.type && up.rarity === panda.rarity));
                 
                 const card = document.createElement('div');
-                card.className = `panda-card cyber-card rounded-2xl p-3 border border-gray-700 cursor-pointer flex flex-col items-center text-center ${!isUnlocked ? 'opacity-60' : ''}`;
+                card.className = `panda-card cyber-card rounded-2xl p-3 border border-gray-700 cursor-pointer ${panda.rarity === "mythic" ? "ring-2 ring-purple-400/70 shadow-\[0_0_20px_rgba(168,85,247,0.3)\]" : ""} flex flex-col items-center text-center ${!isUnlocked ? 'opacity-60' : ''}`;
+                
+                const visualHtml = `<img src="${panda.image}" alt="${panda.name}" class="w-12 h-12 rounded-xl object-cover mb-2 border border-white/10 transition-transform">`;
                 
                 card.innerHTML = `
-                    <div class="text-5xl mb-2 transition-transform">${panda.emoji}</div>
+                    ${visualHtml}
                     <div class="font-bold text-sm">${panda.name}</div>
                     <div class="text-[10px] mt-0.5 px-2.5 py-px rounded-full" style="background: ${panda.color}30; color: ${panda.color}">
                         ${panda.type}
@@ -275,6 +332,7 @@
 
         function renderCollection(filteredPandas = null) {
             const container = document.getElementById('collection-grid');
+            if (!container) return;
             container.innerHTML = '';
             
             const pandasToShow = filteredPandas || userPandas;
@@ -286,15 +344,19 @@
             
             pandasToShow.forEach((panda, index) => {
                 const card = document.createElement('div');
-                card.className = `panda-card cyber-card rounded-3xl p-4 border border-gray-700 cursor-pointer group`;
+                card.className = `panda-card cyber-card rounded-3xl p-4 border border-gray-700 cursor-pointer ${panda.rarity === "mythic" ? "ring-2 ring-purple-400/70 shadow-\[0_0_20px_rgba(168,85,247,0.3)\]" : ""} group`;
                 
                 const rarityColor = getRarityColor(panda.rarity);
+                const visualHtml = `<img src="${panda.image}" alt="${panda.name}" class="w-16 h-16 rounded-2xl object-cover mb-3 border border-white/10 transition-all group-hover:scale-110">`;
                 
                 card.innerHTML = `
                     <div class="flex justify-between items-start">
-                        <div class="text-6xl mb-3 transition-all group-hover:scale-110">${panda.emoji}</div>
-                        <div class="px-2.5 py-0.5 text-xs font-bold rounded-full self-start" style="background: ${rarityColor}30; color: ${rarityColor}">
-                            ${panda.rarity.toUpperCase()}
+                        ${visualHtml}
+                        <div class="flex flex-col items-end gap-y-1">
+                            <div class="px-2.5 py-0.5 text-xs font-bold rounded-full" style="background: ${rarityColor}30; color: ${rarityColor}">
+                                ${rarityColor.toUpperCase()}
+                            </div>
+                            <div class="text-[10px] text-gray-400 font-bold">LVL ${panda.level || 1}</div>
                         </div>
                     </div>
                     
@@ -332,6 +394,144 @@
                 case 'mythic': return '#f43f5e';
                 default: return '#64748b';
             }
+        }
+
+        function getTrainingCost(rarity, currentLevel) {
+            let baseCost = 100;
+            switch (rarity) {
+                case 'common': baseCost = 100; break;
+                case 'rare': baseCost = 150; break;
+                case 'epic': baseCost = 250; break;
+                case 'legendary': baseCost = 400; break;
+                case 'mythic': baseCost = 600; break;
+            }
+            return Math.floor(baseCost * Math.pow(1.5, currentLevel - 1));
+        }
+
+        function getPowerGainPerLevel(rarity) {
+            switch (rarity) {
+                case 'common': return 3;
+                case 'rare': return 5;
+                case 'epic': return 8;
+                case 'legendary': return 12;
+                case 'mythic': return 18;
+                default: return 3;
+            }
+        }
+
+        function recalculateTotalPower() {
+            gameState.totalPower = userPandas.reduce((sum, p) => sum + (p.power || 0), 0);
+        }
+
+        function trainPanda(index) {
+            const panda = userPandas[index];
+            if (!panda) return;
+            
+            const currentLevel = panda.level || 1;
+            if (currentLevel >= 10) {
+                showToast("This panda has reached max level!", "error");
+                return;
+            }
+            
+            const cost = getTrainingCost(panda.rarity, currentLevel);
+            if (gameState.ep < cost) {
+                showToast("Insufficient EP to train this panda!", "error");
+                return;
+            }
+            
+            // Deduct EP and mutate stats
+            gameState.ep -= cost;
+            panda.level = currentLevel + 1;
+            const powerGain = getPowerGainPerLevel(panda.rarity);
+            panda.power += powerGain;
+            
+            // Update and save state
+            recalculateTotalPower();
+            saveGameState();
+            updateDashboard();
+            renderCollection();
+            
+            // Update details modal elements inline
+            const levelEl = document.getElementById('detail-panda-level');
+            const costEl = document.getElementById('detail-panda-cost');
+            const btnEl = document.getElementById('train-panda-btn');
+            const powerValEl = document.getElementById('detail-panda-power-val');
+            
+            if (levelEl) levelEl.innerText = `LVL ${panda.level} / 10`;
+            if (powerValEl) powerValEl.innerText = panda.power;
+            
+            if (costEl) {
+                costEl.innerText = panda.level >= 10 ? 'MAXED' : getTrainingCost(panda.rarity, panda.level) + ' EP';
+            }
+            
+            if (btnEl) {
+                if (panda.level >= 10) {
+                    btnEl.innerText = 'MAX LEVEL REACHED';
+                    btnEl.disabled = true;
+                    btnEl.className = 'w-full py-2.5 rounded-xl font-bold text-xs bg-gray-800 text-gray-500 cursor-not-allowed transition-all flex items-center justify-center gap-2';
+                } else {
+                    const nextCost = getTrainingCost(panda.rarity, panda.level);
+                    btnEl.innerHTML = `<i class="fas fa-dumbbell"></i> <span>TRAIN PANDA</span>`;
+                    btnEl.disabled = gameState.ep < nextCost;
+                    if (gameState.ep >= nextCost) {
+                        btnEl.className = 'w-full py-2.5 rounded-xl font-bold text-xs bg-amber-400 text-black hover:bg-amber-300 transition-all flex items-center justify-center gap-2';
+                    } else {
+                        btnEl.className = 'w-full py-2.5 rounded-xl font-bold text-xs bg-amber-400/10 text-amber-400 opacity-60 cursor-not-allowed transition-all flex items-center justify-center gap-2';
+                    }
+                }
+            }
+
+            // Holographic training animations and floating indicators
+            if (typeof document !== 'undefined' && typeof document.createElement === 'function') {
+                // Holographic card flash
+                const detailCard = document.getElementById('detail-panda-card');
+                if (detailCard) {
+                    detailCard.classList.remove('holographic-flash');
+                    void detailCard.offsetWidth; // trigger reflow
+                    detailCard.classList.add('holographic-flash');
+                    setTimeout(() => {
+                        if (detailCard) detailCard.classList.remove('holographic-flash');
+                    }, 800);
+                }
+
+                // Floating indicator: +PWR
+                if (powerValEl && powerValEl.parentElement) {
+                    const parent = powerValEl.parentElement;
+                    const originalPosition = parent.style.position;
+                    parent.style.position = 'relative';
+                    
+                    const floatPwr = document.createElement('div');
+                    floatPwr.className = 'float-up-stat text-amber-400 font-black text-2xl pointer-events-none';
+                    floatPwr.style.left = '50%';
+                    floatPwr.style.top = '40%';
+                    floatPwr.innerText = `+${powerGain} PWR`;
+                    parent.appendChild(floatPwr);
+                    
+                    setTimeout(() => {
+                        if (floatPwr) floatPwr.remove();
+                        if (parent && !parent.querySelector('.float-up-stat')) {
+                            parent.style.position = originalPosition;
+                        }
+                    }, 1200);
+                }
+
+                // Floating indicator: LVL UP!
+                const imgContainer = document.getElementById('detail-panda-image-container');
+                if (imgContainer) {
+                    const floatLvl = document.createElement('div');
+                    floatLvl.className = 'float-up-stat text-emerald-400 font-extrabold text-3xl tracking-widest pointer-events-none drop-shadow-[0_4px_12px_rgba(16,185,129,0.6)]';
+                    floatLvl.style.left = '50%';
+                    floatLvl.style.top = '50%';
+                    floatLvl.innerText = 'LVL UP!';
+                    imgContainer.appendChild(floatLvl);
+                    
+                    setTimeout(() => {
+                        if (floatLvl) floatLvl.remove();
+                    }, 1200);
+                }
+            }
+            
+            showToast(`${panda.name} trained to LVL ${panda.level}! (+${powerGain} PWR)`, "success");
         }
 
         function filterCollection() {
@@ -372,7 +572,7 @@
         ];
 
         const FUSION_TREE_RECIPES = [
-            { a: "Classic Panda", b: "Inferno Panda", result: "Steam Panda", mode: "basic", extra: "Fire + Balanced" },
+            { a: "Classic Panda", b: "Inferno Panda", result: "Red Panda", mode: "basic", extra: "Fire + Balanced" },
             { a: "Shadow Panda", b: "Mystic Panda", result: "Void Walker", mode: "basic", extra: "Dark + Arcane" },
             { a: "Golden Fortune", b: "Thunder Panda", result: "Solar Flare", mode: "ritual", extra: "Light + Electric" },
             { a: "Inferno Panda", b: "Mystic Panda", result: "Inferno Mystic", mode: "ritual", extra: "Fire + Arcane" },
@@ -463,7 +663,7 @@
                 const chip = document.createElement("button");
                 chip.type = "button";
                 chip.className = "flex-shrink-0 flex items-center gap-2 px-3 py-2 rounded-2xl border border-gray-700 bg-[#1a1f2e] hover:border-purple-400/50 text-left";
-                chip.innerHTML = "<span class=\"text-2xl\">" + p.emoji + "</span><span class=\"text-xs font-semibold max-w-[7rem] truncate\">" + p.name + "</span>";
+                chip.innerHTML = "<img src=\"" + p.image + "\" alt=\"" + p.name + "\" class=\"w-6 h-6 rounded-lg object-cover border border-white/10\"><span class=\"text-xs font-semibold max-w-[7rem] truncate\">" + p.name + "</span>";
                 el.appendChild(chip);
             });
         }
@@ -544,20 +744,28 @@
                 { id: 'leg12', name: "Celestial Harmony", emoji: "✨🌈", type: "Hybrid", power: 49, rarity: "legendary", color: "#fbbf24", desc: "The ultimate Light + Electric + Arcane fusion. It sings the song of creation and can calm even the most unstable Ritual fusions." }
             ];
             
-            const entriesToShow = filteredEntries || codexData;
+            const entriesToShow = (filteredEntries || codexData).map(entry => {
+                if (!entry.image) {
+                    entry.image = generateProceduralPandaImage(entry.emoji, entry.type, entry.color || getRarityColor(entry.rarity), entry.rarity);
+                }
+                return entry;
+            });
             document.getElementById('codex-count').innerText = entriesToShow.length;
             
             entriesToShow.forEach((entry, index) => {
                 const isUnlocked = userPandas.some(p => p.name === entry.name || (p.type === entry.type && p.rarity === entry.rarity));
                 
                 const card = document.createElement('div');
-                card.className = `panda-card cyber-card rounded-3xl p-5 border border-gray-700 cursor-pointer group ${!isUnlocked ? 'opacity-75 grayscale-[0.3]' : ''}`;
+                card.className = `panda-card cyber-card rounded-3xl p-5 border border-gray-700 cursor-pointer ${panda.rarity === "mythic" ? "ring-2 ring-purple-400/70 shadow-\[0_0_20px_rgba(168,85,247,0.3)\]" : ""} group ${!isUnlocked ? 'opacity-75 grayscale-[0.3]' : ''}`;
                 
                 const rarityColor = getRarityColor(entry.rarity);
+                const visualHtml = entry.image 
+                    ? `<img src="${entry.image}" alt="${entry.name}" class="w-16 h-16 rounded-2xl object-cover border border-white/10 transition-all group-hover:scale-110 shadow-md">`
+                    : `<div class="text-6xl transition-transform group-hover:scale-110">${entry.emoji}</div>`;
                 
                 card.innerHTML = `
                     <div class="flex justify-between items-start mb-3">
-                        <div class="text-6xl transition-transform group-hover:scale-110">${entry.emoji}</div>
+                        ${visualHtml}
                         <div class="px-3 py-1 text-xs font-bold rounded-full text-center" style="background: ${rarityColor}25; color: ${rarityColor}">
                             ${entry.rarity.toUpperCase()}
                         </div>
@@ -632,12 +840,12 @@
         function showCodexDetail(index, entry) {
             const modalHTML = `
                 <div onclick="this.remove()" class="fixed inset-0 bg-black/90 z-[130] flex items-center justify-center p-4">
-                    <div onclick="event.stopImmediatePropagation()" class="cyber-card w-full max-w-2xl rounded-3xl overflow-hidden border border-purple-400/50">
+                    <div onclick="event.stopImmediatePropagation()" class="cyber-card w-full max-w-2xl rounded-3xl overflow-hidden border" style="border-color: ${entry.color || getRarityColor(entry.rarity)}80">
                         <div class="px-8 pt-8 pb-6 relative bg-gradient-to-b from-[#0f1117] to-transparent">
                             <button onclick="event.target.closest('.fixed').remove()" class="absolute top-6 right-6 text-gray-400 hover:text-white text-2xl">×</button>
                             
                             <div class="flex justify-center mb-4">
-                                <div class="text-[140px]">${entry.emoji}</div>
+                                <img src="${entry.image}" alt="${entry.name}" class="w-32 h-32 rounded-3xl object-cover border border-white/10 shadow-2xl transition-transform">
                             </div>
                             
                             <div class="text-center">
@@ -685,14 +893,14 @@
             const panda = userPandas[index];
             const modalHTML = `
                 <div onclick="this.remove()" class="fixed inset-0 bg-black/80 z-[120] flex items-center justify-center p-4">
-                    <div onclick="event.stopImmediatePropagation()" class="cyber-card w-full max-w-lg rounded-3xl overflow-hidden border border-gray-700">
+                    <div id="detail-panda-card" style="--champion-color: ${panda.color || getRarityColor(panda.rarity)}" onclick="event.stopImmediatePropagation()" class="cyber-card w-full max-w-lg rounded-3xl overflow-hidden border border-gray-700">
                         <div class="px-8 pt-8 pb-6 relative">
                             <button onclick="event.target.closest('.fixed').remove()" class="absolute top-6 right-6 text-gray-400 hover:text-white">
                                 <i class="fas fa-times text-2xl"></i>
                             </button>
                             
-                            <div class="flex justify-center">
-                                <div class="text-[130px] transition-all">${panda.emoji}</div>
+                            <div id="detail-panda-image-container" class="flex justify-center relative">
+                                <img src="${panda.image}" alt="${panda.name}" class="w-32 h-32 rounded-3xl object-cover border border-white/10 transition-all">
                             </div>
                             
                             <div class="text-center mt-1">
@@ -708,12 +916,38 @@
                             <div class="mt-8 grid grid-cols-2 gap-4">
                                 <div class="bg-[#1a1f2e] rounded-2xl p-4 text-center">
                                     <div class="text-xs text-gray-400">ATTACK POWER</div>
-                                    <div class="text-5xl font-black text-emerald-400 mt-1">${panda.power}</div>
+                                    <div class="text-5xl font-black text-emerald-400 mt-1" id="detail-panda-power-val">${panda.power}</div>
                                 </div>
                                 <div class="bg-[#1a1f2e] rounded-2xl p-4 text-center">
                                     <div class="text-xs text-gray-400">SPECIAL</div>
                                     <div class="text-3xl mt-2 font-bold">${panda.type}</div>
                                     <div class="text-xs mt-1 text-gray-400">TRAIT</div>
+                                </div>
+                            </div>
+                            
+                            <!-- Training Section -->
+                            <div class="mt-6 border-t border-b border-gray-800 py-4">
+                                <div class="flex items-center justify-between">
+                                    <div>
+                                        <div class="text-xs text-gray-400">PANDA LEVEL</div>
+                                        <div class="text-lg font-bold text-white" id="detail-panda-level">LVL ${panda.level || 1} / 10</div>
+                                    </div>
+                                    <div class="text-right">
+                                        <div class="text-xs text-gray-400">TRAINING COST</div>
+                                        <div class="text-lg font-mono font-bold text-amber-400" id="detail-panda-cost">
+                                            ${(panda.level || 1) >= 10 ? 'MAXED' : getTrainingCost(panda.rarity, panda.level || 1) + ' EP'}
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="mt-3">
+                                    <button id="train-panda-btn" onclick="trainPanda(${index})" 
+                                            class="w-full py-2.5 rounded-xl font-bold text-xs transition-all flex items-center justify-center gap-2 
+                                            ${(panda.level || 1) >= 10 ? 'bg-gray-800 text-gray-500 cursor-not-allowed' : 
+                                              (gameState.ep >= getTrainingCost(panda.rarity, panda.level || 1) ? 'bg-amber-400 text-black hover:bg-amber-300' : 'bg-amber-400/10 text-amber-400 opacity-60 cursor-not-allowed')}"
+                                            ${(panda.level || 1) >= 10 || gameState.ep < getTrainingCost(panda.rarity, panda.level || 1) ? 'disabled' : ''}>
+                                        <i class="fas fa-dumbbell"></i>
+                                        <span>${(panda.level || 1) >= 10 ? 'MAX LEVEL REACHED' : 'TRAIN PANDA'}</span>
+                                    </button>
                                 </div>
                             </div>
                             
@@ -771,21 +1005,24 @@
         function openPandaSelector(slot) {
             const modal = document.getElementById('panda-selector-modal');
             const grid = document.getElementById('selector-grid');
+            if (!grid) return;
             grid.innerHTML = '';
             
             userPandas.forEach((panda, idx) => {
                 const card = document.createElement('div');
-                card.className = `panda-card cyber-card rounded-2xl p-4 border border-gray-700 cursor-pointer hover:border-emerald-400 flex flex-col`;
+                card.className = `panda-card cyber-card rounded-2xl p-4 border border-gray-700 cursor-pointer ${panda.rarity === "mythic" ? "ring-2 ring-purple-400/70 shadow-\[0_0_20px_rgba(168,85,247,0.3)\]" : ""} hover:border-emerald-400 flex flex-col`;
                 
                 const rarityColor = getRarityColor(panda.rarity);
+                const visualHtml = `<img src="${panda.image}" alt="${panda.name}" class="w-12 h-12 rounded-xl object-cover mb-2 border border-white/10">`;
                 
                 card.innerHTML = `
                     <div class="flex justify-between">
-                        <div class="text-5xl mb-2">${panda.emoji}</div>
-                        <div>
+                        ${visualHtml}
+                        <div class="flex flex-col items-end gap-y-1">
                             <div class="px-2 py-0.5 text-xs font-bold rounded-full text-center" style="background: ${rarityColor}30; color: ${rarityColor}">
                                 ${panda.rarity}
                             </div>
+                            <div class="text-[10px] text-gray-400 font-bold">LVL ${panda.level || 1}</div>
                         </div>
                     </div>
                     <div class="font-bold">${panda.name}</div>
@@ -805,14 +1042,18 @@
                 grid.appendChild(card);
             });
             
-            modal.classList.remove('hidden');
-            modal.classList.add('flex');
+            if (modal) {
+                modal.classList.remove('hidden');
+                modal.classList.add('flex');
+            }
         }
 
         function closePandaSelector() {
             const modal = document.getElementById('panda-selector-modal');
-            modal.classList.remove('flex');
-            modal.classList.add('hidden');
+            if (modal) {
+                modal.classList.remove('flex');
+                modal.classList.add('hidden');
+            }
         }
 
         function selectPandaForSlot(slot, panda) {
@@ -824,7 +1065,7 @@
             // Update slot UI
             slotEl.innerHTML = `
                 <div class="p-5 w-full flex flex-col items-center justify-center text-center">
-                    <div class="text-7xl mb-3 transition-all">${panda.emoji}</div>
+                    <img src="${panda.image}" alt="${panda.name}" class="w-20 h-20 rounded-2xl object-cover mb-3 border border-white/10 shadow-md">
                     <div class="font-black text-xl">${panda.name}</div>
                     <div class="flex items-center gap-x-2 mt-1">
                         <span class="px-3 py-px text-xs rounded-full" style="background: ${panda.color}25; color: ${panda.color}">${panda.type}</span>
@@ -840,10 +1081,12 @@
             
             slotEl.classList.add('active', 'border-solid');
             slotEl.style.borderColor = panda.color;
+            slotEl.style.boxShadow = `0 0 25px ${panda.color}40, inset 0 0 15px ${panda.color}20`;
             
             // Enable fuse button if both selected
             updateFuseButton();
             updateEnergyCost();
+            updateFusionFlowPaths();
         }
 
         function clearSlot(slot) {
@@ -862,9 +1105,95 @@
             
             slotEl.classList.remove('active');
             slotEl.style.borderColor = '';
+            slotEl.style.boxShadow = '';
             
             updateFuseButton();
             updateEnergyCost();
+            updateFusionFlowPaths();
+        }
+
+        function updateFusionFlowPaths() {
+            if (typeof document === 'undefined' || typeof document.createElementNS !== 'function') {
+                return;
+            }
+            const svg = document.getElementById('fusion-flow-svg');
+            if (!svg) return;
+            svg.innerHTML = '';
+            if (Array.isArray(svg.children)) {
+                svg.children.length = 0;
+            }
+            
+            const slotAlpha = document.getElementById('slot-alpha');
+            const slotBeta = document.getElementById('slot-beta');
+            const core = document.querySelector('#section-fusion-lab .animate-spin-slow')?.parentElement;
+            
+            if (!slotAlpha || !slotBeta || !core) return;
+            if (typeof slotAlpha.getBoundingClientRect !== 'function') return;
+            
+            const svgRect = svg.getBoundingClientRect();
+            if (svgRect.width === 0 || svgRect.height === 0) return;
+            
+            const getCenter = (el) => {
+                const rect = el.getBoundingClientRect();
+                return {
+                    x: rect.left - svgRect.left + rect.width / 2,
+                    y: rect.top - svgRect.top + rect.height / 2
+                };
+            };
+            
+            const coreCenter = getCenter(core);
+            
+            if (selectedAlpha) {
+                const alphaCenter = getCenter(slotAlpha);
+                drawPath(alphaCenter, coreCenter, selectedAlpha.color || '#10b981');
+            }
+            
+            if (selectedBeta) {
+                const betaCenter = getCenter(slotBeta);
+                drawPath(betaCenter, coreCenter, selectedBeta.color || '#c026ff');
+            }
+            
+            function drawPath(start, end, color) {
+                const dx = end.x - start.x;
+                const dy = end.y - start.y;
+                
+                let pathD;
+                if (Math.abs(dx) > Math.abs(dy)) {
+                    // Horizontal layout (desktop)
+                    const cp1x = start.x + dx * 0.5;
+                    const cp1y = start.y;
+                    const cp2x = start.x + dx * 0.5;
+                    const cp2y = end.y;
+                    pathD = `M ${start.x} ${start.y} C ${cp1x} ${cp1y}, ${cp2x} ${cp2y}, ${end.x} ${end.y}`;
+                } else {
+                    // Vertical layout (mobile)
+                    const cp1x = start.x;
+                    const cp1y = start.y + dy * 0.5;
+                    const cp2x = end.x;
+                    const cp2y = start.y + dy * 0.5;
+                    pathD = `M ${start.x} ${start.y} C ${cp1x} ${cp1y}, ${cp2x} ${cp2y}, ${end.x} ${end.y}`;
+                }
+                
+                const baseLine = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+                baseLine.setAttribute('d', pathD);
+                baseLine.setAttribute('stroke', color);
+                baseLine.setAttribute('stroke-width', '4');
+                baseLine.setAttribute('fill', 'none');
+                baseLine.setAttribute('opacity', '0.25');
+                baseLine.setAttribute('stroke-linecap', 'round');
+                
+                const activeLine = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+                activeLine.setAttribute('d', pathD);
+                activeLine.setAttribute('stroke', color);
+                activeLine.setAttribute('stroke-width', '4');
+                activeLine.setAttribute('fill', 'none');
+                activeLine.setAttribute('stroke-linecap', 'round');
+                activeLine.setAttribute('class', 'pulse-flow-line');
+                activeLine.setAttribute('style', `filter: drop-shadow(0 0 6px ${color});`);
+                
+                svg.appendChild(baseLine);
+                svg.appendChild(activeLine);
+            }
         }
 
         function updateFuseButton() {
@@ -881,44 +1210,48 @@
         function setFusionMode(mode) {
             currentFusionMode = mode;
 
-            const basic = document.getElementById("mode-basic");
-            const advanced = document.getElementById("mode-advanced");
-            const ritual = document.getElementById("mode-ritual");
-            const resetInactive = (el, borderClass) => {
-                if (!el) return;
-                el.classList.remove(
-                    "bg-emerald-500",
-                    "bg-fuchsia-500",
-                    "bg-amber-500",
-                    "text-black",
-                    "active-mode",
-                );
-                el.classList.add("bg-[#1a1f2e]", "border", borderClass);
-            };
+            // Use rAF to avoid blocking the main thread (fixes INP 200ms issue on mode buttons)
+            requestAnimationFrame(() => {
+                const basic = document.getElementById("mode-basic");
+                const advanced = document.getElementById("mode-advanced");
+                const ritual = document.getElementById("mode-ritual");
 
-            resetInactive(basic, "border-emerald-400/40");
-            resetInactive(advanced, "border-fuchsia-400/50");
-            resetInactive(ritual, "border-amber-400/50");
+                const resetInactive = (el, borderClass) => {
+                    if (!el) return;
+                    el.classList.remove(
+                        "bg-emerald-500",
+                        "bg-fuchsia-500",
+                        "bg-amber-500",
+                        "text-black",
+                        "active-mode",
+                    );
+                    el.classList.add("bg-[#1a1f2e]", "border", borderClass);
+                };
 
-            const active = document.getElementById(`mode-${mode}`);
-            if (active) {
-                active.classList.remove(
-                    "bg-[#1a1f2e]",
-                    "border",
-                    "border-emerald-400/40",
-                    "border-fuchsia-400/50",
-                    "border-amber-400/50",
-                );
-                if (mode === "basic") {
-                    active.classList.add("bg-emerald-500", "text-black");
-                } else if (mode === "advanced") {
-                    active.classList.add("bg-fuchsia-500", "text-black");
-                } else if (mode === "ritual") {
-                    active.classList.add("bg-amber-500", "text-black");
+                resetInactive(basic, "border-emerald-400/40");
+                resetInactive(advanced, "border-fuchsia-400/50");
+                resetInactive(ritual, "border-amber-400/50");
+
+                const active = document.getElementById(`mode-${mode}`);
+                if (active) {
+                    active.classList.remove(
+                        "bg-[#1a1f2e]",
+                        "border",
+                        "border-emerald-400/40",
+                        "border-fuchsia-400/50",
+                        "border-amber-400/50",
+                    );
+                    if (mode === "basic") {
+                        active.classList.add("bg-emerald-500", "text-black");
+                    } else if (mode === "advanced") {
+                        active.classList.add("bg-fuchsia-500", "text-black");
+                    } else if (mode === "ritual") {
+                        active.classList.add("bg-amber-500", "text-black");
+                    }
                 }
-            }
+            });
 
-            updateEnergyCost();
+            requestAnimationFrame(() => updateEnergyCost());
         }
 
         function updateEnergyCost() {
@@ -935,7 +1268,12 @@
             if (currentFusionMode === 'ritual') baseCost = Math.floor(baseCost * 2.8);
             
             // Scale with power
-            const finalCost = Math.floor(baseCost + (powerAvg * 1.8));
+            let finalCost = Math.floor(baseCost + (powerAvg * 1.8));
+            
+            // Apply fusion efficiency upgrade reduction
+            const efficiencyLvl = (gameState.upgrades && gameState.upgrades.efficiency) || 0;
+            finalCost = Math.max(10, Math.floor(finalCost * (1 - efficiencyLvl * 0.02)));
+
             costEl.innerText = `${finalCost} EP`;
             costEl.style.color = currentFusionMode === 'ritual' ? '#fbbf24' : '#10b981';
         }
@@ -973,6 +1311,25 @@
                 let xpGain = Math.floor(Math.random() * 120) + 85;
                 if (currentFusionMode === 'advanced') xpGain = Math.floor(xpGain * 1.4);
                 if (currentFusionMode === 'ritual') xpGain = Math.floor(xpGain * 2.1);
+                
+                let epGain = 50;
+                if (currentFusionMode === 'advanced') epGain = 100;
+                if (currentFusionMode === 'ritual') epGain = 250;
+                if (newPanda.isCritical) {
+                    epGain += 100;
+                    xpGain += 50;
+                }
+
+                // Apply Fusion Efficiency upgrade (+3% XP per level)
+                const efficiencyLvl = (gameState.upgrades && gameState.upgrades.efficiency) || 0;
+                xpGain = Math.floor(xpGain * (1 + efficiencyLvl * 0.03));
+                
+                // Apply Lightning Core booster (+12% XP)
+                if (gameState.boosters && gameState.boosters.lightning) {
+                    xpGain = Math.floor(xpGain * 1.12);
+                }
+
+                gameState.ep = (Number(gameState.ep) || 0) + epGain;
                 bumpLifetimeEarnedXp(xpGain);
                 gameState.xp += xpGain;
                 
@@ -987,6 +1344,7 @@
                 gameState.recentFusions.unshift({
                     name: newPanda.name,
                     emoji: newPanda.emoji,
+                    image: newPanda.image,
                     power: newPanda.power,
                     time: "just now"
                 });
@@ -1003,6 +1361,30 @@
                 btn.disabled = true;
                 
             }, delay);
+        }
+
+        function generateProceduralPandaImage(emoji, type, color, rarity) {
+            const isEvolved = emoji && emoji.endsWith('✨');
+            const cleanEmoji = emoji ? emoji.replace('✨', '') : '';
+            const t = type ? type.toLowerCase() : '';
+            
+            let species = 'celestial'; // fallback
+            
+            if (t === 'steam') species = 'steam';
+            else if (t === 'eclipse') species = 'eclipse';
+            else if (t === 'plasma') species = 'plasma';
+            else if (t === 'inferno mystic' || t === 'fire' || cleanEmoji.includes('🔥')) species = 'inferno';
+            else if (t === 'dark' || cleanEmoji.includes('🕳️')) species = 'void';
+            else if (t === 'light' || cleanEmoji.includes('☀️') || t === 'solar') species = 'solar';
+            else if (t === 'mythic' || cleanEmoji.includes('👑')) species = 'quantum';
+            else if (t === 'arcane' || cleanEmoji.includes('🔮') || cleanEmoji.includes('🌀')) species = 'chaos';
+            else if (t === 'ice' || cleanEmoji.includes('❄️')) species = 'frost';
+            else if (t === 'balanced' || cleanEmoji.includes('🌿') || cleanEmoji.includes('🌿🐼') || cleanEmoji.includes('🐼') || cleanEmoji.includes('🔴')) species = 'bamboo';
+            else if (t === 'crystal' || cleanEmoji.includes('🌌') || cleanEmoji.includes('💎')) species = 'nebula';
+            else if (t === 'hybrid' || cleanEmoji.includes('🌈')) species = 'celestial';
+            
+            const suffix = isEvolved ? '_evolved' : '';
+            return `assets/pandas/fusion_${species}${suffix}.jpg`;
         }
 
         function createFusionResult(pandaA, pandaB, mode = 'basic') {
@@ -1043,7 +1425,7 @@
                 hybridName = prefixes[Math.floor(Math.random() * prefixes.length)];
             }
             
-            const fullName = `${hybridName} ${pandaA.name.split(' ').pop() || 'Panda'}`;
+            let fullName = `${hybridName} ${pandaA.name.split(' ').pop() || 'Panda'}`;
             
             // === POWER CALCULATION (Advanced Mechanics) ===
             let basePower = Math.floor((pandaA.power + pandaB.power) / 2);
@@ -1065,25 +1447,30 @@
             let rarity = 'epic';
             let rand = Math.random();
             
+            const stabilityLvl = (gameState.upgrades && gameState.upgrades.stability) || 0;
+            const rarityShift = stabilityLvl * 0.015;
+            
             // Mode-based rarity chances
             if (mode === 'ritual') {
-                if (rand > 0.72) rarity = 'mythic';
+                if (rand > 0.68) rarity = 'mythic';
                 else if (rand > 0.38) rarity = 'legendary';
                 else rarity = 'epic';
             } else if (mode === 'advanced') {
-                if (rand > 0.91) rarity = 'mythic';
-                else if (rand > 0.58) rarity = 'legendary';
-                else if (rand > 0.22) rarity = 'epic';
+                if (rand > 0.91 - rarityShift) rarity = 'mythic';
+                else if (rand > 0.58 - rarityShift) rarity = 'legendary';
+                else if (rand > 0.22 - rarityShift) rarity = 'epic';
                 else rarity = 'rare';
             } else {
-                if (rand > 0.88) rarity = 'mythic';
-                else if (rand > 0.65) rarity = 'legendary';
-                else if (rand > 0.35) rarity = 'epic';
+                if (rand > 0.88 - rarityShift) rarity = 'mythic';
+                else if (rand > 0.65 - rarityShift) rarity = 'legendary';
+                else if (rand > 0.35 - rarityShift) rarity = 'epic';
                 else rarity = 'rare';
             }
             
             // Critical Fusion chance (extra visual + power)
-            if (Math.random() < 0.18 || (mode === 'ritual' && Math.random() < 0.35)) {
+            const critChance = 0.18 + stabilityLvl * 0.02;
+            const ritualCritChance = 0.35 + stabilityLvl * 0.02;
+            if (Math.random() < critChance || (mode === 'ritual' && Math.random() < ritualCritChance)) {
                 isCritical = true;
                 rarity = (rarity === 'rare') ? 'epic' : (rarity === 'epic' ? 'legendary' : 'mythic');
             }
@@ -1101,16 +1488,37 @@
             if (synergyName) newType = synergyName;
             else if (types[0] !== types[1]) newType = `${types[0]}-${types[1]}`;
             
+            // Intercept Classic + Inferno combo for Red Panda
+            const isRedPandaCombo = (pandaA.name === "Classic Panda" && pandaB.name === "Inferno Panda") ||
+                                    (pandaA.name === "Inferno Panda" && pandaB.name === "Classic Panda");
+            if (isRedPandaCombo) {
+                fullName = "Red Panda";
+                emoji = "🔴🐼";
+                newType = "Balanced";
+                rarity = "epic";
+            }
+            
+            // Apply Blazing Catalyst (+22% Fire power)
+            if (gameState.boosters && gameState.boosters.blazing && (emoji.includes('🔥') || emoji === '🌋' || newType.toLowerCase().includes('fire'))) {
+                finalPower = Math.floor(finalPower * 1.22);
+            }
+            // Apply Cryo Stabilizer (+18% Ice power)
+            if (gameState.boosters && gameState.boosters.cryo && (emoji.includes('❄️') || emoji === '🌨️' || newType.toLowerCase().includes('ice'))) {
+                finalPower = Math.floor(finalPower * 1.18);
+            }
+            
             // Final panda object
             const newPanda = {
                 id: 'f' + Date.now(),
                 name: fullName,
                 emoji: emoji,
+                image: generateProceduralPandaImage(emoji, newType, getRarityColor(rarity), rarity),
                 type: newType,
                 power: finalPower,
                 rarity: rarity,
                 color: getRarityColor(rarity),
                 desc: `Advanced ${mode} fusion of ${pandaA.name} and ${pandaB.name}. ${synergyName ? 'Powerful ' + synergyName + ' synergy detected!' : ''} ${isCritical ? 'CRITICAL FUSION!' : ''}`,
+                level: 1,
                 acquired: new Date().toISOString().split('T')[0],
                 isCritical: isCritical,
                 fusionMode: mode
@@ -1132,7 +1540,7 @@
         function showFusionResult(newPanda) {
             const modal = document.getElementById('fusion-result-modal');
             
-            document.getElementById('fusion-result-emoji').innerHTML = newPanda.emoji;
+            document.getElementById('fusion-result-emoji').innerHTML = `<img src="${newPanda.image}" alt="${newPanda.name}" class="w-32 h-32 rounded-3xl object-cover border border-white/10 shadow-2xl mx-auto">`;
             document.getElementById('fusion-result-name').innerText = newPanda.name;
             document.getElementById('fusion-result-type').innerText = newPanda.type.toUpperCase();
             document.getElementById('fusion-result-power').innerText = newPanda.power;
@@ -1235,9 +1643,10 @@
             
             showToast("Panda added to your collection! 🐼", "success");
             
-            // Bonus: small XP
+            // Bonus: small XP & EP
             bumpLifetimeEarnedXp(35);
             gameState.xp += 35;
+            gameState.ep = (Number(gameState.ep) || 0) + 15;
             if (gameState.xp >= 10000) {
                 gameState.level++;
                 gameState.xp -= 10000;
@@ -1277,10 +1686,13 @@
             current.desc = 'Evolved form of the original fusion. Even more powerful!';
             current.emoji = current.emoji + '✨';
             
+            // Regenerate evolved procedural image card art
+            current.image = generateProceduralPandaImage(current.emoji, current.type, getRarityColor(current.rarity), current.rarity);
+            
             // Update modal live
             document.getElementById('fusion-result-name').innerText = current.name;
             document.getElementById('fusion-result-power').innerText = current.power;
-            document.getElementById('fusion-result-emoji').innerHTML = current.emoji;
+            document.getElementById('fusion-result-emoji').innerHTML = `<img src="${current.image}" alt="${current.name}" class="w-32 h-32 rounded-3xl object-cover border border-white/10 shadow-2xl mx-auto">`;
             
             const rarityColor = getRarityColor(current.rarity);
             document.getElementById('fusion-result-rarity').innerText = current.rarity.toUpperCase();
@@ -1328,7 +1740,7 @@
                 <div class="fixed inset-0 bg-black/90 z-[130] flex items-center justify-center" onclick="this.remove()">
                     <div class="text-center max-w-xs px-6" onclick="event.stopImmediatePropagation()">
                         <div class="mx-auto w-20 h-20 rounded-full bg-gradient-to-br from-amber-300 to-yellow-400 flex items-center justify-center mb-6 shadow-[0_0_80px_#fbbf24]">
-                            <span class="text-6xl">🏆</span>
+                            <i class="fas fa-trophy text-4xl text-black"></i>
                         </div>
                         
                         <div class="text-5xl font-black mb-1">LEVEL UP!</div>
@@ -1384,10 +1796,11 @@
                 return;
             }
 
-            showToast("Daily Challenge Completed! +280 XP & 1 Rare Panda", "success");
+            showToast("Daily Challenge Completed! +280 XP, +500 EP & 1 Rare Panda", "success");
 
             bumpLifetimeEarnedXp(280);
             gameState.xp += 280;
+            gameState.ep = (Number(gameState.ep) || 0) + 500;
             if (gameState.xp >= 10000) {
                 gameState.level++;
                 gameState.xp -= 10000;
@@ -1397,13 +1810,15 @@
             // Reward panda
             const rewardPanda = {
                 id: 'daily-' + Date.now(),
-                name: "Blaze Guardian",
+                name: ["Blaze Guardian", "Tempest Warden", "Quantum Overlord Panda", "Eternal Flame Sovereign"][Math.floor(Math.random()*4)],
                 emoji: "🦍🔥",
                 type: "Fire",
                 power: 29,
                 rarity: "rare",
                 color: "#f97316",
+                level: 1,
                 desc: "Rewarded for completing today's Inferno Fusion challenge. A loyal guardian of the flame.",
+                image: generateProceduralPandaImage("🦍🔥", "Fire", "#f97316", "rare"),
                 acquired: new Date().toISOString().split('T')[0]
             };
             
@@ -1421,7 +1836,9 @@
                 rewardModal.className = `fixed inset-0 z-[140] flex items-center justify-center bg-black/70`;
                 rewardModal.innerHTML = `
                     <div class="cyber-card max-w-xs w-full mx-4 rounded-3xl p-8 text-center border border-amber-400">
-                        <div class="text-7xl mb-4">🦍🔥</div>
+                        <div class="mb-4">
+                            <img src="${rewardPanda.image}" alt="${rewardPanda.name}" class="w-32 h-32 rounded-3xl object-cover border border-white/10 shadow-2xl mx-auto">
+                        </div>
                         <div class="font-black text-2xl">NEW PANDA UNLOCKED!</div>
                         <div class="mt-1 text-amber-400">Blaze Guardian</div>
                         
@@ -1574,13 +1991,7 @@
             const playerLevel = Math.max(0, Number(gameState.level) || 0);
             const champion = selectedChampion || [...userPandas].sort((a, b) => (b.power || 0) - (a.power || 0))[0] || basePandas[0];
             const championPower = Math.max(1, Number(champion.power) || 1);
-            const enemyLevelFloor = Math.max(0, playerLevel - 1);
-            const enemyLevelCeil = Math.max(enemyLevelFloor, playerLevel + (playerLevel < 3 ? 0 : 1));
-            const enemyLevel = enemyLevelFloor + Math.floor(Math.random() * (enemyLevelCeil - enemyLevelFloor + 1));
-            const playerMax = 120 + Math.floor(championPower * 2.2) + playerLevel * 9;
-            const enemyMax = Math.max(72, Math.floor(playerMax * (playerLevel < 3 ? 0.55 : 0.72)));
-            const playerBaseDamage = Math.max(16, Math.floor(championPower * 0.8) + 12 + playerLevel);
-            const enemyBaseDamage = Math.max(7, Math.floor(playerBaseDamage * (playerLevel < 3 ? 0.48 : 0.64)));
+            const championLevel = Math.max(1, Number(champion.level) || 1);
 
             // Pick a named rival from the roster (using new Grok-generated arts + lore)
             let rival;
@@ -1589,6 +2000,36 @@
             } else {
                 rival = BATTLE_RIVALS[Math.floor(Math.random() * BATTLE_RIVALS.length)];
             }
+
+            // Adjust difficulty scaling based on rival's difficulty tier
+            let diffMult = 1.0;
+            if (rival.difficulty === 'INTRO') {
+                diffMult = 0.75;
+            } else if (rival.difficulty === 'MEDIUM') {
+                diffMult = 1.0;
+            } else if (rival.difficulty === 'HARD') {
+                diffMult = 1.25;
+            }
+
+            // Scale opponent level based on a combination of selected Champion's Level and Player Account Level
+            const combinedLevel = Math.max(1, Math.floor((championLevel + playerLevel) / 2));
+            const enemyLevelFloor = Math.max(1, combinedLevel - 1);
+            const enemyLevelCeil = combinedLevel + (combinedLevel < 3 ? 0 : 1);
+            const enemyLevel = enemyLevelFloor + Math.floor(Math.random() * (enemyLevelCeil - enemyLevelFloor + 1));
+
+            const playerMax = 120 + Math.floor(championPower * 2.2) + playerLevel * 9;
+
+            // Opponent HP scales with champion power, player account level, rival difficulty tier, and a random variance (+/- 15%)
+            const hpVariance = 0.85 + Math.random() * 0.3; // 0.85 to 1.15
+            const enemyMax = Math.max(72, Math.floor(playerMax * (playerLevel < 3 ? 0.65 : 0.85) * diffMult * hpVariance));
+
+            let playerBaseDamage = Math.max(16, Math.floor(championPower * 0.8) + 12 + playerLevel);
+            const trainingLvl = (gameState.upgrades && gameState.upgrades.training) || 0;
+            playerBaseDamage = Math.floor(playerBaseDamage * (1 + trainingLvl * 0.05));
+
+            // Opponent damage scales with player base damage, rival difficulty tier, and a random variance (+/- 15%)
+            const dmgVariance = 0.85 + Math.random() * 0.3; // 0.85 to 1.15
+            const enemyBaseDamage = Math.max(7, Math.floor(playerBaseDamage * (playerLevel < 3 ? 0.55 : 0.75) * diffMult * dmgVariance));
 
             return {
                 playerCur: playerMax,
@@ -1599,8 +2040,11 @@
                 ended: false,
                 playerName: champion.name || "Classic Panda",
                 playerEmoji: champion.emoji || "🐼",
+                playerImage: champion.image || null,
                 playerLevel,
                 playerPower: championPower,
+                playerType: champion.type || "Balanced",
+                playerRarity: champion.rarity || "common",
                 enemyId: rival.id,
                 enemyName: rival.name,
                 enemySubtitle: rival.subtitle,
@@ -1612,11 +2056,120 @@
                 enemyFailureVideo: rival.failureVideo || null,
                 enemyKeyart: rival.keyart || rival.art,
                 enemyLevel,
-                enemyPower: Math.max(6, Math.floor(championPower * (playerLevel < 3 ? 0.72 : 0.9))),
+                enemyPower: Math.max(6, Math.floor(championPower * (playerLevel < 3 ? 0.72 : 0.9) * diffMult * (0.9 + Math.random() * 0.2))),
                 playerBaseDamage,
                 enemyBaseDamage,
             };
         }
+
+        function getChampionMoves(champion) {
+            const t = String(champion.type || "").toLowerCase();
+            const name = String(champion.name || "");
+            
+            let attacks = [];
+            let specials = [];
+            
+            if (t.includes('steam')) {
+                attacks = ["Scald Jet", "Pressure Slam", "Vapor Punch"];
+                specials = ["Superheat Geyser", "Scalding Tempest", "Steam Core Eruption"];
+            } else if (t.includes('eclipse')) {
+                attacks = ["Twilight Cut", "Lunar Eclipse", "Corona Strike"];
+                specials = ["Umbral Judgement", "Celestial Alignment", "Eclipse Oblivion"];
+            } else if (t.includes('plasma')) {
+                attacks = ["Plasma Spark", "Ion Strike", "Volt Claw"];
+                specials = ["Plasma Vaporizer", "Lightning Storm", "Supercharge Eruption"];
+            } else if (t.includes('inferno mystic') || t.includes('fire') || name.toLowerCase().includes('blaze')) {
+                attacks = ["Flame Strike", "Ember Claw", "Volcanic Dash"];
+                specials = ["Supernova Burst", "Hellfire Devastation", "Pyroclastic Surge"];
+            } else if (t.includes('ice') || t.includes('frost')) {
+                attacks = ["Frost Jab", "Icicle Pierce", "Glacial Sweep"];
+                specials = ["Blizzard Storm", "Absolute Zero Blast", "Cryogenic Stasis"];
+            } else if (t.includes('dark') || t.includes('void')) {
+                attacks = ["Void Slash", "Shadow Strike", "Umbral Dagger"];
+                specials = ["Abyssal Devour", "Black Hole Collapse", "Nightmare Nexus"];
+            } else if (t.includes('light') || t.includes('solar')) {
+                attacks = ["Sun Burst", "Radiant Lance", "Solar Blade"];
+                specials = ["Supernova Radiance", "Daybreak Judgement", "Corona Overdrive"];
+            } else if (t.includes('electric') || t.includes('thunder')) {
+                attacks = ["Volt Spark", "Lightning Claw", "Tesla Strike"];
+                specials = ["Thunderbolt Storm", "Plasma Burst", "Overcharge Discharge"];
+            } else if (t.includes('arcane') || t.includes('chaos')) {
+                attacks = ["Aether Bolt", "Mana Slash", "Chaos Shift"];
+                specials = ["Runic Ruin", "Cosmic Singularity", "Chaotic Cataclysm"];
+            } else if (t.includes('crystal') || t.includes('nebula')) {
+                attacks = ["Quartz Spike", "Prism Shard", "Nebula Strike"];
+                specials = ["Crystal Refraction", "Supernova Shatter", "Galactic Prism"];
+            } else if (t.includes('hybrid') || t.includes('celestial')) {
+                attacks = ["Cosmic Claw", "Stellar Strike", "Nebula Bash"];
+                specials = ["Dimensional Rift", "Astral Convergence", "Celestial Fusion Beam"];
+            } else if (t.includes('balanced') || t.includes('bamboo')) {
+                attacks = ["Bamboo Slam", "Paw Strike", "Swift Kick"];
+                specials = ["Panda Fury", "Nature Resonance", "Zen Focus Blast"];
+            } else {
+                attacks = ["Quick Attack", "Heavy Hit", "Struggle Strike"];
+                specials = ["Ultimate Move", "Elemental Surge", "Signature Overload"];
+            }
+            
+            // Customize the first move with the champion's name prefix for character identity
+            const namePrefix = name.split(' ')[0] || "Panda";
+            attacks[0] = `${namePrefix} ${attacks[0]}`;
+            specials[0] = `${namePrefix} ${specials[0]}`;
+            
+            return { attacks, specials };
+        }
+
+        function toggleFractalMenu(type) {
+            const b = window.__activeBattle;
+            if (!b || b.ended) return;
+            
+            const triggerBtn = document.getElementById(type === 'attack' ? "battle-attack-btn" : "battle-special-btn");
+            if (triggerBtn && triggerBtn.disabled) return;
+
+            const atkBranches = document.getElementById("attack-branches");
+            const spBranches = document.getElementById("special-branches");
+            if (!atkBranches || !spBranches) return;
+            
+            if (type === 'attack') {
+                atkBranches.classList.toggle("hidden");
+                atkBranches.classList.toggle("flex");
+                spBranches.classList.add("hidden");
+                spBranches.classList.remove("flex");
+            } else {
+                spBranches.classList.toggle("hidden");
+                spBranches.classList.toggle("flex");
+                atkBranches.classList.add("hidden");
+                atkBranches.classList.remove("flex");
+            }
+        }
+
+        function triggerFractalMove(btn, isSpecial, moveIndex) {
+            const b = window.__activeBattle;
+            if (!b || b.ended) return;
+            
+            const moves = getChampionMoves({
+                name: b.playerName,
+                type: b.playerType,
+                rarity: b.playerRarity
+            });
+            const moveName = isSpecial ? moves.specials[moveIndex] : moves.attacks[moveIndex];
+            
+            simulateBattleAttack(btn, isSpecial, moveName);
+            
+            const atkBranches = document.getElementById("attack-branches");
+            const spBranches = document.getElementById("special-branches");
+            if (atkBranches) {
+                atkBranches.classList.add("hidden");
+                atkBranches.classList.remove("flex");
+            }
+            if (spBranches) {
+                spBranches.classList.add("hidden");
+                spBranches.classList.remove("flex");
+            }
+        }
+
+        window.getChampionMoves = getChampionMoves;
+        window.toggleFractalMenu = toggleFractalMenu;
+        window.triggerFractalMove = triggerFractalMove;
 
         function renderBattleChampionSelect() {
             const arenaSection = document.getElementById("section-arena");
@@ -1656,7 +2209,7 @@
                                         onclick="startDemoBattle(${index})"
                                         class="cyber-card text-left rounded-3xl p-5 border border-gray-700 hover:border-red-400 transition-all group">
                                     <div class="flex items-start gap-4">
-                                        <div class="text-6xl transition-transform group-hover:scale-110" aria-hidden="true">${panda.emoji || "🐼"}</div>
+                                        <img src="${panda.image || 'assets/pandas/classic_panda.jpg'}" alt="${panda.name}" class="w-16 h-16 rounded-2xl object-cover flex-shrink-0 border border-white/10 shadow-md transition-all group-hover:scale-110">
                                         <div class="min-w-0 flex-1">
                                             <div class="font-black text-xl truncate">${__escapeBattleText(panda.name || "Unknown Panda")}</div>
                                             <div class="flex flex-wrap gap-2 mt-2 text-[10px] font-bold">
@@ -1730,8 +2283,8 @@
                     
                     <div class="mt-10 inline-flex items-center gap-x-2 px-6 py-3 bg-[#1a1f2e] rounded-3xl text-sm border border-gray-700">
                         <div class="flex -space-x-2">
-                            <div class="w-7 h-7 bg-red-400 rounded-full flex items-center justify-center ring-2 ring-[#1a1f2e]"><span class="text-xs">🐼</span></div>
-                            <div class="w-7 h-7 bg-orange-400 rounded-full flex items-center justify-center ring-2 ring-[#1a1f2e]"><span class="text-xs">🔥</span></div>
+                            <div class="w-7 h-7 bg-red-400 rounded-full flex items-center justify-center ring-2 ring-[#1a1f2e]"><i class="fas fa-paw text-xs text-black"></i></div>
+                            <div class="w-7 h-7 bg-orange-400 rounded-full flex items-center justify-center ring-2 ring-[#1a1f2e]"><i class="fas fa-fire-alt text-xs text-black"></i></div>
                         </div>
                         <span class="text-gray-400">6 signature rivals • Grok-powered cinematics live</span>
                     </div>
@@ -1778,9 +2331,11 @@
 
         function startDemoBattle(championIndex = 0, specificRivalId = null) {
             const arenaSection = document.getElementById("section-arena");
+            if (!arenaSection) return;
             const selectedChampion = userPandas[championIndex] || userPandas[0] || basePandas[0];
             const battle = __createBattleMatch(selectedChampion, specificRivalId);
             window.__activeBattle = battle;
+            const moves = getChampionMoves(selectedChampion);
             console.log('Started battle vs:', battle.enemyName, 'video will be:', battle.enemyVideo, 'failureVideo will be:', battle.enemyFailureVideo);
             const safePlayerName = __escapeBattleText(battle.playerName);
             const safeEnemyName = __escapeBattleText(battle.enemyName);
@@ -1801,8 +2356,8 @@
                         <div id="battle-fighter-player" class="battle-fighter md:col-span-3 cyber-card rounded-3xl p-4 md:p-6 text-center border border-emerald-500/50">
                             <div class="battle-anim-flash battle-anim-flash--emerald pointer-events-none" id="battle-flash-player" aria-hidden="true"></div>
                             <div class="text-xs mb-1 text-emerald-400">YOUR CHAMPION</div>
-                            <div class="text-6xl sm:text-8xl mb-2 min-h-[5rem] flex items-center justify-center" aria-hidden="true">
-                                <span class="battle-fighter__emoji" id="battle-emoji-player">${battle.playerEmoji}</span>
+                            <div class="mb-2 min-h-[5rem] flex items-center justify-center relative" aria-hidden="true" style="background: radial-gradient(circle at 50% 40%, rgba(0,0,0,0.1), transparent);">
+                                <img src="${battle.playerImage || 'assets/pandas/classic_panda.jpg'}" alt="${safePlayerName}" class="max-h-28 md:max-h-32 w-auto rounded-2xl object-cover shadow-lg border border-white/10" style="max-width: 70%;" id="battle-image-player"/>
                             </div>
                             <div class="font-black text-lg md:text-2xl">${safePlayerName}</div>
                             <div class="text-xs sm:text-sm text-emerald-400/90 mb-3">LVL ${battle.playerLevel} · ${battle.playerPower} PWR</div>
@@ -1827,11 +2382,7 @@
                             <div class="battle-anim-flash battle-anim-flash--red pointer-events-none" id="battle-flash-enemy" aria-hidden="true"></div>
                             <div class="text-xs mb-1 text-red-400">RIVAL</div>
                             <div class="mb-2 min-h-[5rem] flex items-center justify-center relative" aria-hidden="true" style="background: radial-gradient(circle at 50% 40%, rgba(0,0,0,0.1), transparent);">
-                                ${battle.enemyArt ? `
-                                    <img src="${battle.enemyArt}" alt="${safeEnemyName}" class="max-h-28 md:max-h-32 w-auto rounded-2xl object-cover shadow-lg border border-white/10" style="max-width: 70%;"/>
-                                ` : `
-                                    <span class="battle-fighter__emoji text-6xl sm:text-8xl" id="battle-emoji-enemy">${battle.enemyEmoji}</span>
-                                `}
+                                <img src="${battle.enemyArt || 'assets/pandas/classic_panda.jpg'}" alt="${safeEnemyName}" class="max-h-28 md:max-h-32 w-auto rounded-2xl object-cover shadow-lg border border-white/10" style="max-width: 70%;"/>
                             </div>
                             <div class="font-black text-lg md:text-2xl">${safeEnemyName}</div>
                             ${battle.enemySubtitle ? `<div class="text-[10px] text-red-300/80 -mt-0.5 mb-1">${__escapeBattleText(battle.enemySubtitle)}</div>` : ''}
@@ -1856,20 +2407,304 @@
                         </div>
                     </div>
                     
-                    <div class="flex flex-col sm:flex-row flex-wrap justify-center gap-2 sm:gap-3 mt-6">
-                        <button type="button" id="battle-attack-btn" onclick="void simulateBattleAttack(this, false)" class="w-full sm:w-auto min-w-[10rem] px-6 sm:px-8 py-3 text-sm bg-red-600 hover:bg-red-500 transition-colors rounded-2xl font-bold flex items-center justify-center gap-x-2">
-                            <span>ATTACK</span> <i class="fas fa-fist-raised" aria-hidden="true"></i>
-                        </button>
-                        <button type="button" id="battle-special-btn" onclick="void simulateBattleAttack(this, true)" class="w-full sm:w-auto min-w-[10rem] px-6 sm:px-8 py-3 text-sm border border-fuchsia-400 text-fuchsia-300 hover:bg-fuchsia-500/20 transition-all rounded-2xl font-bold flex items-center justify-center gap-x-2">
-                            <span>SPECIAL</span> <i class="fas fa-magic" aria-hidden="true"></i>
-                        </button>
+                    <div class="flex flex-col sm:flex-row items-center justify-center gap-6 mt-10 relative select-none">
+                        <!-- Attack Branching Container -->
+                        <div class="fractal-menu-container relative text-red-500/50" id="attack-menu-container">
+                            <button type="button" id="battle-attack-btn" onclick="toggleFractalMenu('attack')" class="parent-action-btn w-full sm:w-auto min-w-[11rem] px-6 py-3.5 text-sm bg-red-600 hover:bg-red-500 transition-all rounded-2xl font-bold flex items-center justify-center gap-x-2 relative z-20 shadow-lg border border-red-500/30">
+                                <span>ATTACK</span> <i class="fas fa-fist-raised" aria-hidden="true"></i>
+                            </button>
+                            
+                            <!-- Branching Nodes -->
+                            <div class="fractal-branches hidden z-10 absolute left-1/2 -translate-x-1/2 bottom-0 w-max" id="attack-branches">
+                                <div class="fractal-line fractal-line--left"></div>
+                                <div class="fractal-line fractal-line--center"></div>
+                                <div class="fractal-line fractal-line--right"></div>
+                                
+                                <button type="button" onclick="void triggerFractalMove(this, false, 0)" class="fractal-node fractal-node--left px-4 py-2 text-xs bg-slate-900/95 hover:bg-red-950/80 text-red-200 border border-red-500/50 rounded-xl font-bold transition-all shadow-md backdrop-blur-md">
+                                    ${moves.attacks[0]}
+                                </button>
+                                <button type="button" onclick="void triggerFractalMove(this, false, 1)" class="fractal-node fractal-node--center px-4 py-2 text-xs bg-slate-900/95 hover:bg-red-950/80 text-red-200 border border-red-500/50 rounded-xl font-bold transition-all shadow-md backdrop-blur-md">
+                                    ${moves.attacks[1]}
+                                </button>
+                                <button type="button" onclick="void triggerFractalMove(this, false, 2)" class="fractal-node fractal-node--right px-4 py-2 text-xs bg-slate-900/95 hover:bg-red-950/80 text-red-200 border border-red-500/50 rounded-xl font-bold transition-all shadow-md backdrop-blur-md">
+                                    ${moves.attacks[2]}
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Special Branching Container -->
+                        <div class="fractal-menu-container relative text-fuchsia-500/50" id="special-menu-container" style="--champion-color: ${selectedChampion.color || '#d946ef'};">
+                            <button type="button" id="battle-special-btn" onclick="toggleFractalMenu('special')" class="parent-action-btn w-full sm:w-auto min-w-[11rem] px-6 py-3.5 text-sm border border-fuchsia-400 text-fuchsia-300 hover:bg-fuchsia-500/10 transition-all rounded-2xl font-bold flex items-center justify-center gap-x-2 relative z-20 shadow-lg backdrop-blur-md">
+                                <span>SPECIAL</span> <i class="fas fa-magic" aria-hidden="true"></i>
+                            </button>
+                            
+                            <!-- Branching Nodes -->
+                            <div class="fractal-branches hidden z-10 absolute left-1/2 -translate-x-1/2 bottom-0 w-max" id="special-branches">
+                                <div class="fractal-line fractal-line--left"></div>
+                                <div class="fractal-line fractal-line--center"></div>
+                                <div class="fractal-line fractal-line--right"></div>
+                                
+                                <button type="button" onclick="void triggerFractalMove(this, true, 0)" class="fractal-node fractal-node--left px-4 py-2 text-xs bg-slate-900/95 hover:bg-fuchsia-950/80 text-fuchsia-200 border border-fuchsia-500/50 rounded-xl font-bold transition-all shadow-md backdrop-blur-md">
+                                    ${moves.specials[0]}
+                                </button>
+                                <button type="button" onclick="void triggerFractalMove(this, true, 1)" class="fractal-node fractal-node--center px-4 py-2 text-xs bg-slate-900/95 hover:bg-fuchsia-950/80 text-fuchsia-200 border border-fuchsia-500/50 rounded-xl font-bold transition-all shadow-md backdrop-blur-md">
+                                    ${moves.specials[1]}
+                                </button>
+                                <button type="button" onclick="void triggerFractalMove(this, true, 2)" class="fractal-node fractal-node--right px-4 py-2 text-xs bg-slate-900/95 hover:bg-fuchsia-950/80 text-fuchsia-200 border border-fuchsia-500/50 rounded-xl font-bold transition-all shadow-md backdrop-blur-md">
+                                    ${moves.specials[2]}
+                                </button>
+                            </div>
+                        </div>
                     </div>
                 </div>
             `;
             __syncBattleHpBars();
         }
 
-        async function simulateBattleAttack(element, isSpecial = false) {
+        function triggerSpecialActionClips(battle, attackName) {
+            if (typeof document === 'undefined' || typeof document.createElement !== 'function') {
+                return;
+            }
+            const stage = document.getElementById('battle-stage');
+            if (!stage) return;
+
+            function getComicActionText(type, stepIndex) {
+                const t = String(type || "").toLowerCase();
+                if (t.includes('fire') || t.includes('inferno') || t.includes('blaze')) {
+                    const words = ["FWOOSH!", "IGNITE!", "BOOM!", "KABOOM!", "BURN!"];
+                    return words[stepIndex] || "BURN!";
+                } else if (t.includes('ice') || t.includes('frost')) {
+                    const words = ["SHIVER!", "FREEZE!", "CRACK!", "SHATTER!", "COLD!"];
+                    return words[stepIndex] || "FREEZE!";
+                } else if (t.includes('steam')) {
+                    const words = ["HISS!", "SCALD!", "BOIL!", "STEAM!", "BURST!"];
+                    return words[stepIndex] || "STEAM!";
+                } else if (t.includes('plasma') || t.includes('electric') || t.includes('lightning') || t.includes('thunder')) {
+                    const words = ["ZZZAP!", "SHOCK!", "CRACKLE!", "BOOM!", "BOLT!"];
+                    return words[stepIndex] || "SHOCK!";
+                } else if (t.includes('dark') || t.includes('void') || t.includes('eclipse')) {
+                    const words = ["VOID!", "GRAVITY!", "CRUSH!", "OBLIVION!", "SHADOW!"];
+                    return words[stepIndex] || "VOID!";
+                } else if (t.includes('light') || t.includes('celestial') || t.includes('nebula') || t.includes('solar')) {
+                    const words = ["FLASH!", "BEAM!", "GLARE!", "SUPERNOVA!", "RAY!"];
+                    return words[stepIndex] || "FLASH!";
+                } else {
+                    const words = ["SLAM!", "CRASH!", "POW!", "WHACK!", "SMASH!"];
+                    return words[stepIndex] || "SLAM!";
+                }
+            }
+
+            function getComicActionIcon(type) {
+                const t = String(type || "").toLowerCase();
+                if (t.includes('fire') || t.includes('inferno') || t.includes('blaze')) {
+                    return 'fa-solid fa-fire-flame-curved text-orange-500';
+                } else if (t.includes('ice') || t.includes('frost')) {
+                    return 'fa-solid fa-snowflake text-cyan-300';
+                } else if (t.includes('steam')) {
+                    return 'fa-solid fa-smog text-slate-300';
+                } else if (t.includes('plasma') || t.includes('electric') || t.includes('lightning') || t.includes('thunder')) {
+                    return 'fa-solid fa-bolt-lightning text-yellow-400';
+                } else if (t.includes('dark') || t.includes('void') || t.includes('eclipse')) {
+                    return 'fa-solid fa-circle-nodes text-purple-600';
+                } else if (t.includes('light') || t.includes('celestial') || t.includes('nebula') || t.includes('solar')) {
+                    return 'fa-solid fa-wand-magic-sparkles text-amber-300';
+                } else {
+                    return 'fa-solid fa-burst text-red-500';
+                }
+            }
+
+            function getComicActionBg(type, championColor) {
+                const t = String(type || "").toLowerCase();
+                if (t.includes('fire') || t.includes('inferno') || t.includes('blaze')) {
+                    return `radial-gradient(circle, rgba(239, 68, 68, 0.35) 0%, rgba(10, 10, 15, 0.95) 85%)`;
+                } else if (t.includes('ice') || t.includes('frost')) {
+                    return `radial-gradient(circle, rgba(6, 182, 212, 0.35) 0%, rgba(10, 10, 15, 0.95) 85%)`;
+                } else if (t.includes('steam')) {
+                    return `radial-gradient(circle, rgba(156, 163, 175, 0.35) 0%, rgba(10, 10, 15, 0.95) 85%)`;
+                } else if (t.includes('plasma') || t.includes('electric') || t.includes('lightning') || t.includes('thunder')) {
+                    return `radial-gradient(circle, rgba(234, 179, 8, 0.35) 0%, rgba(10, 10, 15, 0.95) 85%)`;
+                } else if (t.includes('dark') || t.includes('void') || t.includes('eclipse')) {
+                    return `radial-gradient(circle, rgba(147, 51, 234, 0.35) 0%, rgba(10, 10, 15, 0.95) 85%)`;
+                } else if (t.includes('light') || t.includes('celestial') || t.includes('nebula') || t.includes('solar')) {
+                    return `radial-gradient(circle, rgba(245, 158, 11, 0.35) 0%, rgba(10, 10, 15, 0.95) 85%)`;
+                } else {
+                    return `radial-gradient(circle, ${championColor}55 0%, rgba(10, 10, 15, 0.95) 85%)`;
+                }
+            }
+
+            function getSeed(str) {
+                let hash = 0;
+                for (let i = 0; i < str.length; i++) {
+                    hash = str.charCodeAt(i) + ((hash << 5) - hash);
+                }
+                return Math.abs(hash);
+            }
+
+            const seed = getSeed(attackName + (battle.playerName || ""));
+            const numPanels = 1 + (seed % 5);
+            
+            const shapePool = [
+                { name: 'hexagon', clipPath: 'polygon(25% 0%, 75% 0%, 100% 50%, 75% 100%, 25% 100%, 0% 50%)' },
+                { name: 'rhombus', clipPath: 'polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%)' },
+                { name: 'octagon', clipPath: 'polygon(30% 0%, 70% 0%, 100% 30%, 100% 70%, 70% 100%, 30% 100%, 0% 70%, 0% 30%)' },
+                { name: 'trapezoid', clipPath: 'polygon(20% 0%, 80% 0%, 100% 100%, 0% 100%)' },
+                { name: 'triangle', clipPath: 'polygon(50% 0%, 0% 100%, 100% 100%)' },
+                { name: 'parallelogram', clipPath: 'polygon(25% 0%, 100% 0%, 75% 100%, 0% 100%)' },
+                { name: 'bevel', clipPath: 'polygon(20% 0%, 80% 0%, 100% 20%, 100% 80%, 80% 100%, 20% 100%, 0% 80%, 0% 20%)' }
+            ];
+
+            const championColor = battle.playerRarity ? getRarityColor(battle.playerRarity) : '#d946ef';
+            const championImage = battle.playerImage || 'assets/pandas/classic_panda.jpg';
+            const actionIcon = getComicActionIcon(battle.playerType);
+            const actionBg = getComicActionBg(battle.playerType, championColor);
+
+            const impactIndex = numPanels >= 3 ? 2 : (numPanels - 1);
+
+            for (let index = 0; index < numPanels; index++) {
+                const pSeed = seed + index * 37;
+                const shape = shapePool[pSeed % shapePool.length];
+                
+                const width = (110 + (pSeed % 51)) + 'px';
+                const height = (100 + ((pSeed >> 2) % 51)) + 'px';
+                
+                const colWidth = 70 / numPanels;
+                const baseLeft = 5 + (index * colWidth);
+                const offsetLeft = (pSeed >> 4) % Math.max(5, Math.floor(colWidth - 5));
+                const left = (baseLeft + offsetLeft) + '%';
+                
+                const top = (10 + ((pSeed >> 6) % 46)) + '%';
+                const rotate = (-12 + ((pSeed >> 8) % 25)) + 'deg';
+                const panClass = 'action-pan-' + (1 + ((pSeed >> 10) % 5));
+
+                setTimeout(() => {
+                    const popup = document.createElement('div');
+                    popup.className = 'special-clip-popup absolute pointer-events-none comic-border bg-halftone';
+                    popup.setAttribute('data-testid', 'special-popup');
+                    popup.style.width = width;
+                    popup.style.height = height;
+                    popup.style.left = left;
+                    popup.style.top = top;
+                    popup.style.clipPath = shape.clipPath;
+                    popup.style.setProperty('--champion-color', championColor);
+                    popup.style.boxShadow = `0 0 25px ${championColor}A0`;
+                    popup.style.transform = `scale(0) rotate(${rotate})`;
+                    popup.style.transition = 'transform 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.2s ease';
+                    popup.style.zIndex = '100';
+                    popup.style.opacity = '0';
+                    popup.style.background = '#0a0a0f';
+                    popup.style.overflow = 'hidden';
+
+                    let panelHTML = '';
+                    const actionWord = getComicActionText(battle.playerType, index);
+                    
+                    if (index === impactIndex) {
+                        panelHTML = `
+                            <div class="relative w-full h-full flex items-center justify-center" style="background: ${actionBg}">
+                                <div class="absolute inset-0 bg-halftone"></div>
+                                <div class="spiked-burst-clip absolute w-[90%] h-[90%] flex items-center justify-center">
+                                    <div class="font-comic text-2xl md:text-3xl font-black text-white tracking-wider transform -rotate-12">${actionWord}</div>
+                                </div>
+                                <div class="absolute top-2 left-2 px-1.5 py-0.5 rounded text-[6px] font-mono tracking-widest text-yellow-400 bg-black border border-yellow-400/30">
+                                    PANEL ${index + 1}: IMPACT
+                                </div>
+                            </div>
+                        `;
+                    } else {
+                        let panelContent = '';
+                        let panelTitle = '';
+                        
+                        if (index === 0) {
+                            panelTitle = 'PANEL 1: CHARGE';
+                            panelContent = `
+                                <div class="relative w-full h-full flex items-center justify-center" style="background: ${actionBg}">
+                                    <div class="absolute inset-0 bg-halftone opacity-45 pointer-events-none"></div>
+                                    <!-- Rotating energy ring -->
+                                    <div class="w-16 h-16 rounded-full border-4 border-dashed border-white/20 animate-spin absolute" style="animation-duration: 4s;"></div>
+                                    <i class="${actionIcon} text-5xl animate-pulse filter drop-shadow-[0_0_15px_currentColor] z-10 ${panClass}"></i>
+                                    <!-- Champion inset portrait -->
+                                    <div class="absolute top-2 right-2 w-8 h-8 rounded-full border border-black/50 overflow-hidden z-20 shadow-md">
+                                        <img src="${championImage}" class="w-full h-full object-cover">
+                                    </div>
+                                </div>
+                            `;
+                        } else if (index === 1) {
+                            panelTitle = 'PANEL 2: UNLEASH';
+                            panelContent = `
+                                <div class="relative w-full h-full flex items-center justify-center" style="background: ${actionBg}">
+                                    <!-- Comic speed lines repeating gradient -->
+                                    <div class="absolute inset-0 opacity-20 pointer-events-none" style="background-image: repeating-linear-gradient(90deg, rgba(255,255,255,0.05) 0px, rgba(255,255,255,0.05) 2px, transparent 2px, transparent 12px);"></div>
+                                    <!-- Motion trails -->
+                                    <i class="${actionIcon} text-3xl opacity-30 transform -translate-x-8 translate-y-1 scale-75 skew-x-12 absolute z-5"></i>
+                                    <i class="${actionIcon} text-4xl opacity-60 transform -translate-x-4 scale-90 skew-x-12 absolute z-10"></i>
+                                    <i class="${actionIcon} text-5xl transform translate-x-4 scale-100 skew-x-12 absolute z-20 filter drop-shadow-[0_0_10px_currentColor] ${panClass}"></i>
+                                </div>
+                            `;
+                        } else if (index === 3 || (index > impactIndex && index < numPanels - 1)) {
+                            panelTitle = `PANEL ${index + 1}: BURST`;
+                            panelContent = `
+                                <div class="relative w-full h-full flex items-center justify-center" style="background: ${actionBg}">
+                                    <div class="absolute inset-0 bg-halftone opacity-45 pointer-events-none"></div>
+                                    <!-- Concentric shockwaves -->
+                                    <div class="w-20 h-20 rounded-full border border-white/20 absolute animate-ping" style="animation-duration: 1.5s;"></div>
+                                    <i class="fa-solid fa-burst text-7xl text-orange-500 absolute opacity-50 z-5"></i>
+                                    <i class="fa-solid fa-burst text-8xl text-red-600 absolute z-10 ${panClass}"></i>
+                                    <i class="${actionIcon} text-3xl text-white absolute z-20 filter drop-shadow-[0_0_8px_rgba(255,255,255,0.9)]"></i>
+                                </div>
+                            `;
+                        } else {
+                            panelTitle = `PANEL ${index + 1}: RESOLVE`;
+                            panelContent = `
+                                <div class="relative w-full h-full flex items-center justify-center flex-col" style="background: ${actionBg}">
+                                    <div class="absolute inset-0 bg-halftone opacity-60 pointer-events-none"></div>
+                                    <i class="${actionIcon} text-4xl opacity-50 transform rotate-12 z-10 ${panClass}"></i>
+                                    <div class="mt-2 bg-emerald-500 text-black border border-black font-comic text-[8px] font-black px-1.5 py-0.5 rotate-3 z-20">
+                                        STRIKE COMPLETE!
+                                    </div>
+                                </div>
+                            `;
+                        }
+
+                        panelHTML = `
+                            <div class="relative w-full h-full flex items-center justify-center">
+                                ${panelContent}
+                                
+                                <div class="absolute inset-0 bg-scanlines pointer-events-none opacity-20 z-10"></div>
+                                
+                                <div class="absolute bottom-2 left-3 bg-yellow-400 text-black border-2 border-black font-comic text-[10px] font-black px-2 py-0.5 transform -rotate-3 z-20">
+                                    ${actionWord}
+                                </div>
+                                
+                                <div class="absolute top-2 left-2 px-1.5 py-0.5 rounded text-[6px] font-mono tracking-widest text-white/90 bg-black/80 border border-white/10 z-20">
+                                    ${panelTitle}
+                                </div>
+                                
+                                <div class="absolute inset-0 bg-white opacity-0 animate-rapid-flash pointer-events-none z-30"></div>
+                            </div>
+                        `;
+                    }
+
+                    popup.innerHTML = panelHTML;
+                    stage.appendChild(popup);
+
+                    void popup.offsetWidth;
+                    popup.style.transform = `scale(1) rotate(${rotate})`;
+                    popup.style.opacity = '1';
+
+                    setTimeout(() => {
+                        if (popup && popup.parentElement) {
+                            popup.style.transform = `scale(0) rotate(${rotate})`;
+                            popup.style.opacity = '0';
+                            setTimeout(() => {
+                                if (popup && popup.parentElement) popup.remove();
+                            }, 250);
+                        }
+                    }, 850);
+
+                }, index * 80);
+            }
+        }
+
+        async function simulateBattleAttack(element, isSpecial = false, customMoveName = null) {
             const b = window.__activeBattle;
             const log = document.getElementById("battle-log");
             if (!log || !b || b.ended) return;
@@ -1884,13 +2719,15 @@
             if (element && element.disabled) return;
             if (atkBtn) atkBtn.disabled = true;
             if (spBtn) spBtn.disabled = true;
-            const attacks = isSpecial
-                ? ["CRITICAL FUSION BEAM", "DIMENSION RIFT", "PANDAS UNITE"]
-                : ["BAMBOO SLAM", "PAW STRIKE", "ROAR OF FURY"];
-            const attackName = attacks[Math.floor(Math.random() * attacks.length)];
+            const attackName = customMoveName || (isSpecial
+                ? "SPECIAL SURGE"
+                : "BASIC STRIKE");
             const dmg = isSpecial
                 ? Math.floor(Math.random() * 14) + b.playerBaseDamage + 12
                 : Math.floor(Math.random() * 10) + b.playerBaseDamage;
+            if (isSpecial) {
+                triggerSpecialActionClips(b, attackName);
+            }
             pCard.classList.add("battle-anim-attack-left");
             __resetBeam(beam);
             if (beam) {
@@ -1930,11 +2767,12 @@
                 document.getElementById("battle-stage")?.classList.add("battle-stage--victory");
                 __appendBattleLogLine(
                     "text-amber-300 font-bold border-t border-amber-500/20 pt-2 mt-1",
-                    `🏆 VICTORY! ${__escapeBattleText(b.enemyName)} defeated! ${b.enemySubtitle ? '— ' + __escapeBattleText(b.enemySubtitle) : ''} +650 XP`,
+                    `🏆 VICTORY! ${__escapeBattleText(b.enemyName)} defeated! ${b.enemySubtitle ? '— ' + __escapeBattleText(b.enemySubtitle) : ''} +650 XP & +350 EP`,
                 );
-                showToast("Battle won! +650 XP earned", "success");
+                showToast("Battle won! +650 XP & +350 EP earned", "success");
                 bumpLifetimeEarnedXp(650);
                 gameState.xp += 650;
+                gameState.ep = (Number(gameState.ep) || 0) + 350;
                 if (gameState.xp >= 10000) {
                     gameState.level++;
                     gameState.xp = gameState.xp % 10000;
@@ -2746,6 +3584,213 @@
             }
         };
 
+        function renderUpgrades() {
+            const balanceEl = document.getElementById('upgrades-ep-balance');
+            if (balanceEl) balanceEl.innerText = gameState.ep.toLocaleString();
+            
+            // 1. Fusion Efficiency
+            const effLvl = (gameState.upgrades && gameState.upgrades.efficiency) || 0;
+            const effLvlEl = document.getElementById('upgrade-efficiency-level');
+            const effValEl = document.getElementById('upgrade-efficiency-value');
+            const effBarEl = document.getElementById('upgrade-efficiency-bar');
+            const effBtn = document.getElementById('upgrade-efficiency-btn');
+            const effSub = document.getElementById('upgrade-efficiency-sub');
+            
+            if (effLvlEl) effLvlEl.innerText = `LVL ${effLvl} / 25`;
+            if (effValEl) effValEl.innerText = `+${effLvl * 3}% XP`;
+            if (effBarEl) effBarEl.style.width = `${(effLvl / 25) * 100}%`;
+            
+            if (effLvl >= 25) {
+                if (effBtn) {
+                    effBtn.innerText = 'MAX LEVEL';
+                    effBtn.disabled = true;
+                    effBtn.className = 'px-4 py-2 text-xs rounded-xl bg-gray-800 text-gray-500 font-medium w-full xs:w-auto cursor-not-allowed';
+                }
+                if (effSub) effSub.innerText = 'Fully optimized.';
+            } else {
+                const nextCost = 250 + effLvl * 150;
+                if (effBtn) {
+                    effBtn.innerText = `UPGRADE • ${nextCost} EP`;
+                    effBtn.disabled = gameState.ep < nextCost;
+                    effBtn.className = `px-4 py-2 text-xs rounded-xl font-medium w-full xs:w-auto ${gameState.ep >= nextCost ? 'bg-emerald-500 text-black hover:bg-emerald-400' : 'bg-emerald-500/10 text-emerald-400 opacity-60 cursor-not-allowed'}`;
+                }
+                if (effSub) effSub.innerText = `Next: +3% XP & -2% EP cost`;
+            }
+            
+            // 2. Genetic Stability
+            const stabLvl = (gameState.upgrades && gameState.upgrades.stability) || 0;
+            const stabLvlEl = document.getElementById('upgrade-stability-level');
+            const stabValEl = document.getElementById('upgrade-stability-value');
+            const stabBarEl = document.getElementById('upgrade-stability-bar');
+            const stabBtn = document.getElementById('upgrade-stability-btn');
+            const stabSub = document.getElementById('upgrade-stability-sub');
+            
+            if (stabLvlEl) stabLvlEl.innerText = `LVL ${stabLvl} / 15`;
+            if (stabValEl) stabValEl.innerText = `+${stabLvl * 2}% Crit`;
+            if (stabBarEl) stabBarEl.style.width = `${(stabLvl / 15) * 100}%`;
+            
+            if (stabLvl >= 15) {
+                if (stabBtn) {
+                    stabBtn.innerText = 'MAX LEVEL';
+                    stabBtn.disabled = true;
+                    stabBtn.className = 'px-4 py-2 text-xs rounded-xl bg-gray-800 text-gray-500 font-medium w-full xs:w-auto cursor-not-allowed';
+                }
+                if (stabSub) stabSub.innerText = 'Genetic sequence finalized.';
+            } else {
+                const nextCost = 400 + stabLvl * 250;
+                if (stabBtn) {
+                    stabBtn.innerText = `UPGRADE • ${nextCost} EP`;
+                    stabBtn.disabled = gameState.ep < nextCost;
+                    stabBtn.className = `px-4 py-2 text-xs rounded-xl font-medium w-full xs:w-auto ${gameState.ep >= nextCost ? 'bg-fuchsia-500 text-black hover:bg-fuchsia-400' : 'bg-fuchsia-500/10 text-fuchsia-400 opacity-60 cursor-not-allowed'}`;
+                }
+                if (stabSub) stabSub.innerText = `Next: +2% crit & rarity roll +1.5%`;
+            }
+            
+            // 3. Battle Training
+            const trainLvl = (gameState.upgrades && gameState.upgrades.training) || 0;
+            const trainLvlEl = document.getElementById('upgrade-training-level');
+            const trainValEl = document.getElementById('upgrade-training-value');
+            const trainBarEl = document.getElementById('upgrade-training-bar');
+            const trainBtn = document.getElementById('upgrade-training-btn');
+            const trainSub = document.getElementById('upgrade-training-sub');
+            
+            if (trainLvlEl) trainLvlEl.innerText = `LVL ${trainLvl} / 15`;
+            if (trainValEl) trainValEl.innerText = `+${trainLvl * 5}% DMG`;
+            if (trainBarEl) trainBarEl.style.width = `${(trainLvl / 15) * 100}%`;
+            
+            if (trainLvl >= 15) {
+                if (trainBtn) {
+                    trainBtn.innerText = 'MAX LEVEL';
+                    trainBtn.disabled = true;
+                    trainBtn.className = 'px-4 py-2 text-xs rounded-xl bg-gray-800 text-gray-500 font-medium w-full xs:w-auto cursor-not-allowed';
+                }
+                if (trainSub) trainSub.innerText = 'Combat training complete.';
+            } else {
+                const nextCost = 300 + trainLvl * 200;
+                if (trainBtn) {
+                    trainBtn.innerText = `UPGRADE • ${nextCost} EP`;
+                    trainBtn.disabled = gameState.ep < nextCost;
+                    trainBtn.className = `px-4 py-2 text-xs rounded-xl font-medium w-full xs:w-auto ${gameState.ep >= nextCost ? 'bg-red-500 text-black hover:bg-red-400' : 'bg-red-500/10 text-red-400 opacity-60 cursor-not-allowed'}`;
+                }
+                if (trainSub) trainSub.innerText = `Next: +5% Player damage in arena`;
+            }
+            
+            // 4. Boosters
+            const b = gameState.boosters || { blazing: false, cryo: false, lightning: false };
+            
+            const blazingBtn = document.getElementById('booster-blazing-btn');
+            if (blazingBtn) {
+                if (b.blazing) {
+                    blazingBtn.innerText = 'ACTIVE';
+                    blazingBtn.disabled = true;
+                    blazingBtn.className = 'text-xs px-3 py-2 bg-gray-850 text-gray-500 font-bold rounded-xl w-full text-center cursor-not-allowed';
+                } else {
+                    blazingBtn.innerText = 'BUY • 450 EP';
+                    blazingBtn.disabled = gameState.ep < 450;
+                    blazingBtn.className = `text-xs px-3 py-2 font-bold rounded-xl w-full text-center ${gameState.ep >= 450 ? 'bg-amber-400 text-black hover:bg-amber-300' : 'bg-amber-400/20 text-amber-300 opacity-60 cursor-not-allowed'}`;
+                }
+            }
+            
+            const cryoBtn = document.getElementById('booster-cryo-btn');
+            if (cryoBtn) {
+                if (b.cryo) {
+                    cryoBtn.innerText = 'ACTIVE';
+                    cryoBtn.disabled = true;
+                    cryoBtn.className = 'text-xs px-3 py-2 bg-gray-850 text-gray-500 font-bold rounded-xl w-full text-center cursor-not-allowed';
+                } else {
+                    cryoBtn.innerText = 'BUY • 320 EP';
+                    cryoBtn.disabled = gameState.ep < 320;
+                    cryoBtn.className = `text-xs px-3 py-2 font-bold rounded-xl w-full text-center ${gameState.ep >= 320 ? 'bg-cyan-400 text-black hover:bg-cyan-300' : 'bg-cyan-400/20 text-cyan-300 opacity-60 cursor-not-allowed'}`;
+                }
+            }
+            
+            const lightningBtn = document.getElementById('booster-lightning-btn');
+            if (lightningBtn) {
+                if (b.lightning) {
+                    lightningBtn.innerText = 'ACTIVE';
+                    lightningBtn.disabled = true;
+                    lightningBtn.className = 'text-xs px-3 py-2 bg-gray-850 text-gray-500 font-bold rounded-xl w-full text-center cursor-not-allowed';
+                } else {
+                    lightningBtn.innerText = 'BUY • 890 EP';
+                    lightningBtn.disabled = gameState.ep < 890;
+                    lightningBtn.className = `text-xs px-3 py-2 font-bold rounded-xl w-full text-center ${gameState.ep >= 890 ? 'bg-purple-400 text-black hover:bg-purple-300' : 'bg-purple-400/20 text-purple-300 opacity-60 cursor-not-allowed'}`;
+                }
+            }
+        }
+
+        function buyUpgrade(type) {
+            if (!gameState.upgrades) {
+                gameState.upgrades = { efficiency: 0, stability: 0, training: 0 };
+            }
+            const currentLvl = gameState.upgrades[type] || 0;
+            let cost = 0;
+            let maxLvl = 0;
+            
+            if (type === 'efficiency') {
+                cost = 250 + currentLvl * 150;
+                maxLvl = 25;
+            } else if (type === 'stability') {
+                cost = 400 + currentLvl * 250;
+                maxLvl = 15;
+            } else if (type === 'training') {
+                cost = 300 + currentLvl * 200;
+                maxLvl = 15;
+            }
+            
+            if (currentLvl >= maxLvl) {
+                showToast("Upgrade already at max level!", "error");
+                return;
+            }
+            
+            if (gameState.ep < cost) {
+                showToast("Insufficient Energy Points (EP)!", "error");
+                return;
+            }
+            
+            gameState.ep -= cost;
+            gameState.upgrades[type]++;
+            
+            saveGameState();
+            const upgradeNames = {
+                efficiency: 'Fusion Efficiency',
+                stability: 'Genetic Stability',
+                training: 'Battle Training'
+            };
+            const upgradeName = upgradeNames[type] || type;
+            showToast(`Upgrade purchased successfully! ${upgradeName} is now level ${gameState.upgrades[type]}.`, "success");
+            updateDashboard();
+            renderUpgrades();
+        }
+
+        function buyBooster(type) {
+            if (!gameState.boosters) {
+                gameState.boosters = { blazing: false, cryo: false, lightning: false };
+            }
+            
+            if (gameState.boosters[type]) {
+                showToast("Booster already purchased and active!", "error");
+                return;
+            }
+            
+            let cost = 0;
+            if (type === 'blazing') cost = 450;
+            else if (type === 'cryo') cost = 320;
+            else if (type === 'lightning') cost = 890;
+            
+            if (gameState.ep < cost) {
+                showToast("Insufficient Energy Points (EP)!", "error");
+                return;
+            }
+            
+            gameState.ep -= cost;
+            gameState.boosters[type] = true;
+            
+            saveGameState();
+            showToast(`Booster ${type === 'blazing' ? 'Blazing Catalyst' : type === 'cryo' ? 'Cryo Stabilizer' : 'Lightning Core'} is now active!`, "success");
+            updateDashboard();
+            renderUpgrades();
+        }
+
         function navigateTo(section) {
             // Hide all sections
             document.querySelectorAll('.section').forEach(s => s.classList.add('hidden'));
@@ -2766,8 +3811,14 @@
             });
             
             // Special actions per section
+            if (section === 'fusion-lab') {
+                setTimeout(updateFusionFlowPaths, 50);
+            }
             if (section === 'collection') {
                 renderCollection();
+            }
+            if (section === 'upgrades') {
+                renderUpgrades();
             }
             if (section === "codex") {
                 switchCodexTab("bestiary");
@@ -2968,6 +4019,7 @@
                         power: 88,
                         rarity: "mythic",
                         color: "#f43f5e",
+                        level: 1,
                         desc: "The ultimate panda. Achieved only by true masters of the fusion arts.",
                         acquired: new Date().toISOString().split('T')[0]
                     };
@@ -3012,6 +4064,9 @@
             
             wireNavLinkAccessibility();
             initKeyboardShortcuts();
+            if (typeof window !== 'undefined' && typeof window.addEventListener === 'function') {
+                window.addEventListener('resize', updateFusionFlowPaths);
+            }
             
             // Make sure fuse button starts disabled
             document.getElementById('fuse-btn').disabled = true;
@@ -3048,7 +4103,7 @@
         // Expose some functions for console debugging (fun)
         window.FusionPanda = {
             addPanda: (name) => {
-                const newP = {...basePandas[0], name: name || "Debug Panda", id: 'debug-' + Date.now(), rarity: 'legendary', power: 55};
+                const newP = {...basePandas[0], name: name || "Debug Panda", id: 'debug-' + Date.now(), rarity: 'legendary', power: 55, level: 1};
                 userPandas.push(newP);
                 renderCollection();
                 console.log('%c[Panda added]', 'color:#00ff9d', newP);

@@ -94,3 +94,33 @@ Your support helps keep the project alive and growing. Thank you!
 ---
 
 **Built with ❤️ and a lot of panda fusion energy by kwizzlesurp10-ctrl**
+
+## Production Architecture & Migration
+
+This repository is being elevated to full production grade on the `feat/production-grade-rebuild` branch.
+
+### Completed Production Upgrades
+- GitHub Actions CI (build + test on every push)
+- Full PWA with Service Worker (true offline support)
+- Security headers (X-Frame-Options, CSP-ready, Referrer-Policy)
+- Modern package.json with TypeScript dev dependency and integrated build pipeline
+
+### Typed Production Core (src/core/)
+- `GameState.ts` — Core types and state manager
+- `FusionEngine.ts` — All fusion modes, synergy, criticals, rarity
+- `CollectionManager.ts` — Search, filters, power tracking, persistence
+- `DailyChallenge.ts` — Gated rewards and progress tracking
+- `BattleEngine.ts` — Arena combat with type advantages
+
+All modules are strictly typed, tested, and compiled as part of `npm run build`.
+
+Full migration of `app.js` and React UI port are planned for subsequent phases (v4.4+).
+
+
+
+## Latest (v4.3.1)
+- 15 base pandas in Fusion Lab (including 2 Mythics)
+- Mythic pandas have special visual treatment
+- Daily Challenge can now award new high-tier pandas
+- Full production transformation on `feat/production-grade-rebuild` (see PR #9)
+

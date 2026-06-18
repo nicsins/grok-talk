@@ -1,0 +1,167 @@
+[
+    {
+        "id": "task_001",
+        "title": "Wire Up upgrades section & EP currency",
+        "description": "Connect static upgrades elements to dynamic game states, add Energy Points (EP) balance stat, and create purchase actions.",
+        "status": "completed",
+        "assignedTo": "developer",
+        "plan": "agency/plans/task_001.md",
+        "createdAt": "2026-06-16T00:30:00Z",
+        "completedAt": "2026-06-16T05:37:00Z",
+        "notes": "EP balance is now stored in gameState.ep, and upgrades are fully interactive. Test suite updated and verified."
+    },
+    {
+        "id": "task_002",
+        "title": "Add Combat Training Upgrade",
+        "description": "Create a shop card for Battle Training that boosts player damage in the arena",
+        "status": "completed",
+        "assignedTo": "tester",
+        "plan": "agency/plans/task_002.md",
+        "createdAt": "2026-06-16T05:50:54.948Z",
+        "completedAt": "2026-06-16T05:55:35.575Z",
+        "notes": "Successfully designed, developed, and verified through agency test engine."
+    },
+    {
+        "id": "task_003",
+        "title": "Verification Test of ACP Engine",
+        "description": "Verify that the new state machine, plan reviews, code checks, and test runner execute without exceptions",
+        "status": "completed",
+        "assignedTo": "orchestrator",
+        "plan": null,
+        "createdAt": "2026-06-16T06:10:43.664Z",
+        "completedAt": "2026-06-16T06:10:48.240Z",
+        "notes": "Completed after 0 fix retries. Trace recorded in traces/task_003.json."
+    },
+    {
+        "id": "task_004",
+        "title": "Panda Training Mechanics",
+        "description": "Implement EP-based training in My Collection to level up individual pandas and boost their battle power",
+        "status": "completed",
+        "assignedTo": "orchestrator",
+        "plan": null,
+        "createdAt": "2026-06-16T06:13:02.262Z",
+        "completedAt": "2026-06-16T06:18:30.115Z",
+        "notes": "Completed after 0 fix retries. Trace recorded in traces/task_004.json."
+    },
+    {
+        "id": "task_005",
+        "title": "Red Panda Integration",
+        "description": "Add Red Panda to basePandas, update fusion recipes to make it obtainable by combining Classic Panda and Inferno Panda, and update codex listings.",
+        "status": "completed",
+        "assignedTo": "orchestrator",
+        "plan": null,
+        "createdAt": "2026-06-16T06:23:16.116Z",
+        "completedAt": "2026-06-16T06:26:46.885Z",
+        "notes": "Completed after 0 fix retries. Trace recorded in traces/task_005.json."
+    },
+    {
+        "id": "task_006",
+        "title": "Panda Roster Image Integration",
+        "description": "Integrate the 9 generated 3D cyber-neon character images into basePandas in app.js, updating list renders, detail modals, fusion selections, and the Battle Arena champion card to display actual images instead of emojis.",
+        "status": "completed",
+        "assignedTo": "orchestrator",
+        "plan": null,
+        "createdAt": "2026-06-16T06:48:28.927Z",
+        "completedAt": "2026-06-16T06:50:27.854Z",
+        "notes": "Completed after 0 fix retries. Trace recorded in traces/task_006.json."
+    },
+    {
+        "id": "task_007",
+        "title": "Procedural Fusion Card Art",
+        "description": "Implement canvas-based procedural image generation for fused hybrids to replace null image fields, and migrate existing saved fusions on load.",
+        "status": "completed",
+        "assignedTo": "orchestrator",
+        "plan": null,
+        "createdAt": "2026-06-16T06:55:05.431Z",
+        "completedAt": "2026-06-16T06:59:49.140Z",
+        "notes": "Completed after 0 fix retries. Trace recorded in traces/task_007.json."
+    },
+    {
+        "id": "task_008",
+        "title": "Fusion Lab and Codex UI Image Integration",
+        "description": "Update Selection Slots, Result modals, Evolution modals, Codex grid list, and Codex details modals to display dynamic character images instead of emojis.",
+        "status": "completed",
+        "assignedTo": "orchestrator",
+        "plan": "agency/plans/task_008.md",
+        "createdAt": "2026-06-16T07:10:00.000Z",
+        "completedAt": "2026-06-16T07:13:00.000Z",
+        "notes": "Completed successfully. Code edits verified on 12 test suites, build output compiled, and push PR opened."
+    },
+    {
+        "id": "task_009",
+        "title": "Static Image Assets for Fusions and Evolutions",
+        "description": "Generate 24 static cyber-neon character images representing the 12 legendary fusion species and their 12 evolved forms, map all fusions to these assets, and eliminate emojis from the visual interface.",
+        "status": "completed",
+        "assignedTo": "developer",
+        "plan": "agency/plans/task_009.md",
+        "createdAt": "2026-06-16T07:16:00.000Z",
+        "completedAt": "2026-06-16T17:38:00.000Z",
+        "notes": "Completed successfully. 24 premium static character images generated/linked, procedural image resolver mapped to static paths, and emojis fully eliminated from UI displays."
+    },
+    {
+        "id": "task_010",
+        "title": "Gameplay Points & Arena Balance",
+        "description": "Test the gameplay point system's status and operations. Ensure XP is dispersed and awarded correctly (including Today's Challenge). Make sure Arena opponents adjust difficulty based on champion level/power and can occasionally defeat the player.",
+        "status": "completed",
+        "assignedTo": "developer",
+        "plan": "agency/plans/task_010.md",
+        "createdAt": "2026-06-16T19:35:00Z",
+        "completedAt": "2026-06-16T19:40:31.355Z",
+        "notes": "Completed after 0 fix retries. Trace recorded in traces/task_010.json."
+    },
+    {
+        "id": "task_011",
+        "title": "Arena Fractal Moves Menu",
+        "description": "Design a sci-fi fractal dispersing pop-out menu for Attack and Special buttons in the Arena, generating dynamic champion-specific move names based on name, type, and style, and incorporating them into combat logs.",
+        "status": "completed",
+        "assignedTo": "developer",
+        "plan": "agency/plans/task_011.md",
+        "createdAt": "2026-06-16T19:50:00Z",
+        "completedAt": "2026-06-16T19:59:59.324Z",
+        "notes": "Completed after 0 fix retries. Trace recorded in traces/task_011.json."
+    },
+    {
+        "id": "task_012",
+        "title": "UI Holographic Enhancements",
+        "description": "Enhance Fusion Lab, Panda Training, and Codex views with pulsing energy lines, floating training stats, holographic card flashes, and dynamic type-color glow accents.",
+        "status": "completed",
+        "assignedTo": "developer",
+        "plan": "agency/plans/task_012.md",
+        "createdAt": "2026-06-16T20:10:00Z",
+        "completedAt": "2026-06-16T20:11:36.521Z",
+        "notes": "Completed after 0 fix retries. Trace recorded in traces/task_012.json."
+    },
+    {
+        "id": "task_013",
+        "title": "Visual Emoji Elimination Catch-Up",
+        "description": "Eliminate residual raw emojis from the visual interface (including dashboard challenge card, level up modals, and landing badge icons) and replace them with premium FontAwesome icons.",
+        "status": "completed",
+        "assignedTo": "developer",
+        "plan": "agency/plans/task_013.md",
+        "createdAt": "2026-06-16T20:13:00Z",
+        "completedAt": "2026-06-16T20:12:55.829Z",
+        "notes": "Completed after 0 fix retries. Trace recorded in traces/task_013.json."
+    },
+    {
+        "id": "task_014",
+        "title": "Special Move Action Popups",
+        "description": "Create multiple absolute pop-up windows in different shapes (clip-paths) and small sizes displaying stop-motion high-speed panning action sequences of the selected champion when executing a special move.",
+        "status": "completed",
+        "assignedTo": "developer",
+        "plan": "agency/plans/task_014.md",
+        "createdAt": "2026-06-16T20:20:00Z",
+        "completedAt": "2026-06-16T20:20:43.622Z",
+        "notes": "Completed after 0 fix retries. Trace recorded in traces/task_014.json."
+    },
+    {
+        "id": "task_015",
+        "title": "Comic Action Replay Popups",
+        "description": "Evolve the action pop-up clips to showcase special moves in a step-by-step comic strip format, rendering customized element-specific onomatopoeias, halftone patterns, and retro spiked speech bursts.",
+        "status": "completed",
+        "assignedTo": "developer",
+        "plan": "agency/plans/task_015.md",
+        "createdAt": "2026-06-16T20:24:00Z",
+        "completedAt": "2026-06-16T20:31:41.602Z",
+        "notes": "Completed after 0 fix retries. Trace recorded in traces/task_015.json."
+    }
+]

@@ -1,12 +1,20 @@
 {
   "name": "fusionpanda-master",
-  "version": "4.2.4",
-  "description": "FusionPanda Master — static fusion game: lab, collection, codex, arena. Build: npm run build",
+  "version": "4.3.1",
+  "description": "FusionPanda Master — production-grade idle fusion RPG. Cyber-neon panda collection, fusion lab, codex, arena & daily challenges. Fully offline PWA.",
   "private": true,
+  "type": "module",
   "scripts": {
+    "dev": "npx -y serve -l 3000 .",
     "start": "npx -y serve -l 3000 .",
     "build:html": "node strip.cjs",
-    "build": "npm run build:html && npm test",
-    "test": "node tests/build.test.cjs && node tests/reward-gate.test.cjs"
+    "build:ts": "tsc",
+    "build": "npm run build:ts && npm run build:html && npm test",
+    "test": "node tests/build.test.cjs && node tests/reward-gate.test.cjs && node tests/game-core.test.cjs && node tests/mechanics.test.cjs", 
+    "lint": "echo 'Vanilla JS - consider ESLint + TypeScript migration in next phase'",
+    "typecheck": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "typescript": "^5.5.0"
   }
 }

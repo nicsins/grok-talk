@@ -132,7 +132,7 @@
                 </div>
 
                 <!-- Stats Grid -->
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 mb-8">
                     <div class="cyber-card rounded-3xl p-5 border border-gray-700">
                         <div class="flex justify-between">
                             <div>
@@ -193,6 +193,19 @@
                             <span>Top 0.4% globally</span>
                         </div>
                     </div>
+
+                    <div class="cyber-card rounded-3xl p-5 border border-gray-700">
+                        <div class="flex items-center justify-between mb-4">
+                            <div>
+                                <div class="text-xs text-gray-400">ENERGY POINTS</div>
+                                <div class="text-5xl font-black stat-value mt-1 text-emerald-400" id="dash-ep">0</div>
+                            </div>
+                            <i class="fas fa-bolt text-4xl text-emerald-400/70"></i>
+                        </div>
+                        <div class="text-xs flex items-center gap-x-1 text-emerald-400">
+                            <span>Spent on upgrades & boosters</span>
+                        </div>
+                    </div>
                 </div>
 
                 <!-- Quick Actions + Recent -->
@@ -214,7 +227,7 @@
                         <div class="font-semibold mb-4">Today's Challenge</div>
                         
                         <div class="flex-1 flex flex-col justify-center items-center text-center py-2">
-                            <div class="text-6xl mb-3">🌋</div>
+                            <div class="mb-3"><i class="fas fa-fire-alt text-6xl text-orange-500 animate-pulse"></i></div>
                             <div class="font-bold">Inferno Fusion</div>
                             <div class="text-xs text-gray-400 mt-1 max-w-[180px]">Fuse 3 Fire-type pandas to unlock the legendary Volcanic Overlord</div>
                             
@@ -253,7 +266,9 @@
                     </div>
                 </div>
 
-                <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 relative" id="fusion-slots-container">
+                    <!-- Dynamic SVG Connector Paths -->
+                    <svg id="fusion-flow-svg" class="absolute inset-0 w-full h-full pointer-events-none z-10" style="min-height: 210px;"></svg>
                     
                     <!-- Left Panda Slot -->
                     <div class="lg:col-span-5">
@@ -480,12 +495,16 @@
 
             <!-- UPGRADES SECTION -->
             <div id="section-upgrades" class="section hidden">
-                <div class="mb-8">
+                <div class="mb-4">
                     <h1 class="section-header">Master Upgrades</h1>
                     <p class="text-gray-400">Enhance your fusion capabilities and panda potential</p>
                 </div>
                 
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div class="mb-6 text-sm bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 px-4 py-2.5 rounded-2xl inline-flex items-center gap-x-2 font-mono">
+                    <i class="fas fa-bolt"></i> Balance: <span id="upgrades-ep-balance" class="font-bold">0</span> EP
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                     <div class="cyber-card rounded-3xl p-6 border border-gray-700">
                         <div class="flex gap-4">
                             <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-emerald-400 to-cyan-400 flex-shrink-0 flex items-center justify-center">
@@ -495,18 +514,18 @@
                                 <div class="flex justify-between">
                                     <div>
                                         <div class="font-bold">Fusion Efficiency</div>
-                                        <div class="text-xs text-emerald-400">LVL 12 / 25</div>
+                                        <div class="text-xs text-emerald-400" id="upgrade-efficiency-level">LVL 0 / 25</div>
                                     </div>
                                     <div class="text-right">
-                                        <div class="text-emerald-400 font-mono text-sm">+34%</div>
+                                        <div class="text-emerald-400 font-mono text-sm" id="upgrade-efficiency-value">+0%</div>
                                     </div>
                                 </div>
                                 <div class="mt-3 h-1.5 bg-gray-800 rounded">
-                                    <div class="h-1.5 bg-emerald-400 rounded w-[48%]"></div>
+                                    <div class="h-1.5 bg-emerald-400 rounded w-[0%]" id="upgrade-efficiency-bar"></div>
                                 </div>
                                 <div class="flex flex-col gap-2 xs:flex-row xs:items-center xs:justify-between text-xs mt-3">
-                                    <button type="button" onclick="showToast('Shop upgrades are not wired yet — coming in a future protocol drop.', 'info')" class="px-4 py-2 text-xs rounded-xl bg-emerald-400/10 hover:bg-emerald-400/20 text-emerald-400 font-medium w-full xs:w-auto">UPGRADE • 1,250 EP</button>
-                                    <span class="text-gray-500 text-xs self-center text-center xs:text-left">Next: +8% efficiency</span>
+                                    <button type="button" id="upgrade-efficiency-btn" onclick="buyUpgrade('efficiency')" class="px-4 py-2 text-xs rounded-xl bg-emerald-400/10 hover:bg-emerald-400/20 text-emerald-400 font-medium w-full xs:w-auto">UPGRADE • 250 EP</button>
+                                    <span class="text-gray-500 text-xs self-center text-center xs:text-left" id="upgrade-efficiency-sub">Next: +3% XP & -2% EP cost</span>
                                 </div>
                             </div>
                         </div>
@@ -521,18 +540,44 @@
                                 <div class="flex justify-between">
                                     <div>
                                         <div class="font-bold">Genetic Stability</div>
-                                        <div class="text-xs text-fuchsia-400">LVL 8 / 15</div>
+                                        <div class="text-xs text-fuchsia-400" id="upgrade-stability-level">LVL 0 / 15</div>
                                     </div>
                                     <div class="text-right">
-                                        <div class="text-fuchsia-400 font-mono text-sm">+19%</div>
+                                        <div class="text-fuchsia-400 font-mono text-sm" id="upgrade-stability-value">+0%</div>
                                     </div>
                                 </div>
                                 <div class="mt-3 h-1.5 bg-gray-800 rounded">
-                                    <div class="h-1.5 bg-fuchsia-400 rounded w-[53%]"></div>
+                                    <div class="h-1.5 bg-fuchsia-400 rounded w-[0%]" id="upgrade-stability-bar"></div>
                                 </div>
                                 <div class="flex flex-col gap-2 xs:flex-row xs:items-center xs:justify-between text-xs mt-3">
-                                    <button type="button" onclick="showToast('Shop upgrades are not wired yet — coming in a future protocol drop.', 'info')" class="px-4 py-2 text-xs rounded-xl bg-fuchsia-400/10 hover:bg-fuchsia-400/20 text-fuchsia-400 font-medium w-full xs:w-auto">UPGRADE • 3,800 EP</button>
-                                    <span class="text-gray-500 text-xs self-center text-center xs:text-left">Next: Higher rare chance</span>
+                                    <button type="button" id="upgrade-stability-btn" onclick="buyUpgrade('stability')" class="px-4 py-2 text-xs rounded-xl bg-fuchsia-400/10 hover:bg-fuchsia-400/20 text-fuchsia-400 font-medium w-full xs:w-auto">UPGRADE • 400 EP</button>
+                                    <span class="text-gray-500 text-xs self-center text-center xs:text-left" id="upgrade-stability-sub">Next: +2% crit & rarity roll +1.5%</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="cyber-card rounded-3xl p-6 border border-gray-700">
+                        <div class="flex gap-4">
+                            <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-red-400 to-orange-500 flex-shrink-0 flex items-center justify-center">
+                                <i class="fas fa-swords text-3xl text-black"></i>
+                            </div>
+                            <div class="flex-1">
+                                <div class="flex justify-between">
+                                    <div>
+                                        <div class="font-bold">Battle Training</div>
+                                        <div class="text-xs text-red-400" id="upgrade-training-level">LVL 0 / 15</div>
+                                    </div>
+                                    <div class="text-right">
+                                        <div class="text-red-400 font-mono text-sm" id="upgrade-training-value">+0%</div>
+                                    </div>
+                                </div>
+                                <div class="mt-3 h-1.5 bg-gray-800 rounded">
+                                    <div class="h-1.5 bg-red-400 rounded w-[0%]" id="upgrade-training-bar"></div>
+                                </div>
+                                <div class="flex flex-col gap-2 xs:flex-row xs:items-center xs:justify-between text-xs mt-3">
+                                    <button type="button" id="upgrade-training-btn" onclick="buyUpgrade('training')" class="px-4 py-2 text-xs rounded-xl bg-red-400/10 hover:bg-red-400/20 text-red-400 font-medium w-full xs:w-auto">UPGRADE • 300 EP</button>
+                                    <span class="text-gray-500 text-xs self-center text-center xs:text-left" id="upgrade-training-sub">Next: +5% player damage in arena</span>
                                 </div>
                             </div>
                         </div>
@@ -542,29 +587,35 @@
                 <div class="mt-6 cyber-card rounded-3xl p-5 border border-gray-700">
                     <div class="text-sm font-semibold mb-4 px-1">LEGENDARY BOOSTERS</div>
                     <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                        <div class="flex items-center gap-3 p-3 bg-[#1a1f2e] rounded-2xl">
-                            <div class="text-3xl">🔥</div>
-                            <div class="flex-1 min-w-0">
-                                <div class="font-medium text-sm">Blazing Catalyst</div>
-                                <div class="text-xs text-gray-400">Fire fusions +22% power</div>
+                        <div class="flex flex-col items-stretch p-3 bg-[#1a1f2e] rounded-2xl gap-y-3">
+                            <div class="flex items-center gap-3">
+                                <div class="text-3xl">🔥</div>
+                                <div class="flex-1 min-w-0">
+                                    <div class="font-medium text-sm">Blazing Catalyst</div>
+                                    <div class="text-xs text-gray-400">Fire fusions +22% power</div>
+                                </div>
                             </div>
-                            <button type="button" onclick="showToast('Booster shop is not wired yet — cosmetic preview only.', 'info')" class="text-xs px-3 py-1.5 bg-amber-400 text-black font-bold rounded-xl shrink-0">BUY 450</button>
+                            <button type="button" id="booster-blazing-btn" onclick="buyBooster('blazing')" class="text-xs px-3 py-2 bg-amber-400 text-black font-bold rounded-xl w-full text-center">BUY • 450 EP</button>
                         </div>
-                        <div class="flex items-center gap-3 p-3 bg-[#1a1f2e] rounded-2xl">
-                            <div class="text-3xl">❄️</div>
-                            <div class="flex-1 min-w-0">
-                                <div class="font-medium text-sm">Cryo Stabilizer</div>
-                                <div class="text-xs text-gray-400">Ice fusions +18% stability</div>
+                        <div class="flex flex-col items-stretch p-3 bg-[#1a1f2e] rounded-2xl gap-y-3">
+                            <div class="flex items-center gap-3">
+                                <div class="text-3xl">❄️</div>
+                                <div class="flex-1 min-w-0">
+                                    <div class="font-medium text-sm">Cryo Stabilizer</div>
+                                    <div class="text-xs text-gray-400">Ice fusions +18% power</div>
+                                </div>
                             </div>
-                            <button type="button" onclick="showToast('Booster shop is not wired yet — cosmetic preview only.', 'info')" class="text-xs px-3 py-1.5 bg-cyan-400 text-black font-bold rounded-xl shrink-0">BUY 320</button>
+                            <button type="button" id="booster-cryo-btn" onclick="buyBooster('cryo')" class="text-xs px-3 py-2 bg-cyan-400 text-black font-bold rounded-xl w-full text-center">BUY • 320 EP</button>
                         </div>
-                        <div class="flex items-center gap-3 p-3 bg-[#1a1f2e] rounded-2xl">
-                            <div class="text-3xl">⚡</div>
-                            <div class="flex-1 min-w-0">
-                                <div class="font-medium text-sm">Lightning Core</div>
-                                <div class="text-xs text-gray-400">All fusions +12% XP</div>
+                        <div class="flex flex-col items-stretch p-3 bg-[#1a1f2e] rounded-2xl gap-y-3">
+                            <div class="flex items-center gap-3">
+                                <div class="text-3xl">⚡</div>
+                                <div class="flex-1 min-w-0">
+                                    <div class="font-medium text-sm">Lightning Core</div>
+                                    <div class="text-xs text-gray-400">All fusions +12% XP</div>
+                                </div>
                             </div>
-                            <button type="button" onclick="showToast('Booster shop is not wired yet — cosmetic preview only.', 'info')" class="text-xs px-3 py-1.5 bg-purple-400 text-black font-bold rounded-xl shrink-0">BUY 890</button>
+                            <button type="button" id="booster-lightning-btn" onclick="buyBooster('lightning')" class="text-xs px-3 py-2 bg-purple-400 text-black font-bold rounded-xl w-full text-center">BUY • 890 EP</button>
                         </div>
                     </div>
                 </div>
@@ -719,5 +770,15 @@
     <div id="toast-container" class="fixed bottom-[5.5rem] lg:bottom-5 right-3 sm:right-5 left-3 sm:left-auto z-[200] flex flex-col gap-y-2 max-w-md sm:max-w-xs mx-auto sm:mx-0"></div>
 
     <script defer src="/app.js"></script>
+    <!-- Production PWA Service Worker Registration -->
+    <script>
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+          navigator.serviceWorker.register('/sw.js')
+            .then(reg => console.log('[PWA] Service worker registered:', reg.scope))
+            .catch(err => console.warn('[PWA] Service worker registration failed:', err));
+        });
+      }
+    </script>
 </body>
 </html>

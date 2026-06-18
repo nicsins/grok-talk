@@ -1,0 +1,7 @@
+{
+    "activeTaskId": null,
+    "currentState": "idle",
+    "retries": 0,
+    "maxRetries": 3,
+    "trace": []
+}
